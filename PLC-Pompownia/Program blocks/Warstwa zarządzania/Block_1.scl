@@ -1,0 +1,134 @@
+﻿FUNCTION "Block_1" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+
+BEGIN
+	
+	
+	//
+	
+	IF "dbTimersForDrivers".Timer_OFF_Inverter_P1.Q OR "dbTimersForDrivers".Timer_OFF_Inverter_P2.Q OR
+	  "dbTimersForDrivers".Timer_OFF_Inverter_P3.Q OR "dbTimersForDrivers".Timer_OFF_Inverter_P4.Q
+	  
+	THEN
+	  "IsModeAut" := TRUE;
+	  
+	  IF "bitH_Aut_Man_P1" THEN
+	    // Statement section IF
+	    %DB100.DBX0.7 := TRUE;
+	    %DB100.DBX1.7 := TRUE;
+	    ;
+	  END_IF;
+	  IF "bitH_Aut_Man_P2" THEN
+	    // Statement section IF
+	    %DB100.DBX2.7 := TRUE;
+	    %DB100.DBX3.7 := TRUE;
+	    ;
+	  END_IF;
+	  IF "bitH_Aut_Man_P3" THEN
+	    // Statement section IF
+	    %DB100.DBX4.7 := TRUE;
+	    %DB100.DBX5.7 := TRUE;
+	    ;
+	  END_IF;
+	  IF "bitH_Aut_Man_P4" THEN
+	    // Statement section IF
+	    %DB100.DBX6.7 := TRUE;
+	    %DB100.DBX7.7 := TRUE;
+	    ;
+	  END_IF;
+	  
+	END_IF;
+	
+	CASE "dbHold_RRG".set_res_bity_tryb_napędów_1 OF
+	    //256:  // Ustawienie bitu Aut dla Drive Z1
+	    //"dbHold_RRG".Sending.set_res_bity_tryb_napędów_1 := 256;
+	    //;
+	    //512:  // Ustawienie bitu Aut dla Drive Z2
+	    //"dbHold_RRG".Sending.set_res_bity_tryb_napędów_1 := 512;
+	    //;
+	  1024:  // Ustawienie bitu Aut dla Drive Z3
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_1 := 1024;
+	    ;
+	  2048:  //Ustawienie bitu Aut dla Drive Z4
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_1 := 2048;
+	    ;
+	  4096:  //Ustawienie bitu Aut dla Drive Z5
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_1 := 4096;
+	    ;
+	  8192:  //Ustawienie bitu Aut dla Drive Z6
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_1 := 8192;
+	    ;
+	  16384:  //Ustawienie bitu Reset dla Drive Z7
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_1 := 16384;
+	    ;
+	  32768:  //Ustawienie bitu Aut dla Drive Z8
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_1 := 32768;
+	    
+	    
+	    ;
+	  ELSE  // Statement section ELSE
+	    ;
+	END_CASE;
+	
+	
+	CASE "dbHold_RRG".set_res_bity_tryb_napędów_2 OF
+	  1:  // Ustawienie bitu Aut dla Drive Z1
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 1;
+	    ;
+	  2:  // Ustawienie bitu Aut dla Drive Z2
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 2;
+	    
+	  4:  // Ustawienie bitu Aut dla Drive Z2
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 4;
+	    
+	  8:  // Ustawienie bitu Aut dla Drive Z2
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 8;
+	    
+	  16:  // Ustawienie bitu Aut dla Drive Z2
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 16;
+	    
+	  32:  // Ustawienie bitu Aut dla Drive Z2
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 32;
+	    
+	  64:  // Ustawienie bitu Aut dla Drive Z2
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 64;
+	    
+	  128:  // Ustawienie bitu Aut dla Drive Z2
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 128;
+	    
+	  256:  // Ustawienie bitu Aut dla Drive Z2
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 256;
+	    
+	  512:  // Ustawienie bitu Aut dla Drive Z2
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 512;
+	    
+	  1024:  // Ustawienie bitu Aut dla Drive Z2
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 1024;
+	    
+	  2048:  // Ustawienie bitu Aut dla Drive Z2
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 2048;
+	    
+	  4096:  // Ustawienie bitu Aut dla Drive Z2
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 4096;
+	    
+	  8192:  // Ustawienie bitu Aut dla Drive Z2
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 8192;
+	    
+	  16384:  // Ustawienie bitu Aut dla Drive Z2
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 16384;
+	    
+	  32768:  // Ustawienie bitu Aut dla Drive Z2
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 32768;
+	    
+	    
+	    ;
+	  ELSE  // Statement section ELSE
+	    ;
+	END_CASE;
+	
+	
+	
+	
+END_FUNCTION
+

@@ -1,0 +1,40 @@
+﻿FUNCTION "Korekta_PV_HWrn_LWrn" : Void
+TITLE = Correction
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Funkcja wprowadza korektę ostrzerzeń wysoki i niski poziom wartości procesowej. Wartości te są następnie wykorzystane podczas sterowania pompami dodatkowymi.
+   VAR_INPUT 
+      PV_HWrn_correction : Real;   // Wspóczninik służący wprowadzeniu korekty ostrzeżenia przekroczenia wartości zadanej bar
+      PV_LWrn_correction : Real;   // Wspóczninik służący wprowadzeniu korekty ostrzeżenia zbyt niskia wartości bar w stosunku do zadanej
+   END_VAR
+
+
+BEGIN
+	// Funkcja pozwala na wprowadzenie korekty sygnału ostrzeżenia
+	// górnrgo i dolnego wartości procesowej
+	
+	
+	
+	
+	//Przetwornik błąd górny
+	"dbdane"."PID_Compact_1_sPid_Cmpt.r_Pv_Hlm" := "dbtags_Sterowanie".SetupControlPompownia.r_Pv_Hlm;
+	"PID_Compact_1".sPid_Cmpt.r_Pv_Hlm := "dbdane"."PID_Compact_1_sPid_Cmpt.r_Pv_Hlm";
+	
+	//Przetwornik błąd dolny
+	"dbdane"."PID_Compact_1_sPid_Cmpt.r_Pv_Llm" := "dbtags_Sterowanie".SetupControlPompownia.r_Pv_Llm;
+	"PID_Compact_1".sPid_Cmpt.r_Pv_Llm := "dbdane"."PID_Compact_1_sPid_Cmpt.r_Pv_Llm";
+	
+	//***Wyliczenie ostrzerzeń HWrm i LWrm ***//
+	//
+	"dbdane"."PID_Compact_1_sPid_Cmpt.r_Pv_HWrn" := ("db10organizacyjna".setpoint_SV_bar + #PV_HWrn_correction);
+	"dbdane"."PID_Compact_1_sPid_Cmpt.r_Pv_LWrn" := ("db10organizacyjna".setpoint_SV_bar - #PV_LWrn_correction);
+	
+	//Ostrzegawczy wysoki
+	"PID_Compact_1".sPid_Cmpt.r_Pv_HWrn := "dbdane"."PID_Compact_1_sPid_Cmpt.r_Pv_HWrn";
+	"dbtags_Sterowanie".SetupControlPompownia.r_Pv_HWrn := "dbdane"."PID_Compact_1_sPid_Cmpt.r_Pv_HWrn";
+	//Ostrzegawczy niski
+	"PID_Compact_1".sPid_Cmpt.r_Pv_LWrn := "dbdane"."PID_Compact_1_sPid_Cmpt.r_Pv_LWrn";
+	"dbtags_Sterowanie".SetupControlPompownia.r_Pv_LWrn := "dbdane"."PID_Compact_1_sPid_Cmpt.r_Pv_LWrn";
+END_FUNCTION
+

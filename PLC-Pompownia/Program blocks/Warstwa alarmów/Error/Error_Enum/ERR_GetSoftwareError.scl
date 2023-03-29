@@ -1,0 +1,26 @@
+﻿FUNCTION "ERR_GetSoftwareError" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      Error : Bool;
+      Status : DWord;
+   END_VAR
+
+   VAR_IN_OUT 
+      Buffer : "stt_ERR_SoftwareError";
+   END_VAR
+
+
+BEGIN
+	IF (#Error = TRUE) THEN
+	    IF ("ERR_CompareSoftwareError"(Actual := #Status, Buffer := #Buffer)) THEN
+	        "ERR_OverflowBufferControl"(Counter := #Buffer.Counter,
+	                                    Overflow := #Buffer.Overflow);
+	        "ERR_SaveSoftwareErrorToBuffer"(DataToSave := #Status,
+	                                        Buffer := #Buffer);
+	    END_IF;
+	END_IF;
+	
+	
+END_FUNCTION
+

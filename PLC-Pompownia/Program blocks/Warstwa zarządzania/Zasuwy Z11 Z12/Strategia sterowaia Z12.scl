@@ -1,0 +1,125 @@
+﻿FUNCTION_BLOCK "Strategia sterowaia Z12"
+TITLE = Strategia sterowania 
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Funkcja sterowania przełączaniem kieunku pompowania Z11 - przetłaczania kierunek miasto, Z12 - dosilanie w kierunku magistrali
+   VAR_INPUT 
+      bit_alarm_magistrala_min { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool := false;   // bit alarmmagistrala awaria niskie ciśnienie
+   END_VAR
+
+   VAR_IN_OUT 
+      CMD_Open_Z12 : Bool;   // znacznik sterowania zamykaniem
+      CMD_Close_Z12 : Bool := false;   // znacznik sterowania zamykaniem
+   END_VAR
+
+   VAR 
+      bit_set_open_Z11 { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool;   // bit inicjacji otwierania zasuwy w trybie strategii
+      bit_set_open_Z12 { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool;   // bit inicjacji otwierania zasuwy w trybie strategii
+      bit_hist_open_Z11 { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool;   // bit opóźnienia reakcji
+      bit_hist_open_Z12 { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool;   // bit opóźnienia reakcji
+      bit_set_close_Z11 { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool;   // bit inicjacji otwierania zasuwy w trybie strategii
+      bit_set_close_Z12 { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool;   // bit inicjacji otwierania zasuwy w trybie strategii
+      bit_hist_close_Z11 { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool;   // bit opóźnienia reakcji
+      bit_hist_close_Z12 { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool;   // bit opóźnienia reakcji
+   END_VAR
+
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.4)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+	//Funkcjonalnośc: (Sterowanie kierunkiem pompowania Z11 - miasto, 
+	                    Z12 - magistrala. W oparciu o sygnał 
+	                   wyboru [dbHoldRegSlave_to_MT101.instSygSter_1 - %DB100.DBW52]
+	                   0- wyłączone, 1- dosilanie, 2 - przetłaczanie, 3- automat, 
+	                   4- ręczne następuje otwarcie właściwej zasuwy. Warunek pracy 
+	                   dosilanie zmknięta zasuwa Z10, otwarta Z9. Przetłaczanie warunek
+	                   otwarta Z9)
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 17.11.2021 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	
+	
+	
+	
+	// Z12 DOSILANIE 
+	
+	REGION Dosilanie
+	  // OTWIERANIE
+	  // Warunek wystawienia rozkazu na otwarcie Z12
+	  IF "dbtags_Sterowanie"."Paramaetry _Zbiorniki".set_strategia_sterowania = 1
+	    AND "dbtags_Sterowanie"."Paramaetry _Zbiorniki".set_położenie_Z10 < 2
+	    AND "inputZamkniętaZ11"
+	    AND "bitH_REM_Z12"
+	    AND "bitH_Aut_Man_Z12"
+	    AND "inputOtwartaZ12" = FALSE
+	    AND %DB10.DBX316.1 // otwarta Z9
+	    AND %DB10.DBX316.0 = FALSE // brak awarii Z9  
+	    AND %DB10.DBX316.7 // tryb automat Z9
+	  THEN
+	    // 
+	    #bit_hist_open_Z12 := TRUE;
+	  ELSE
+	    #bit_hist_open_Z12 := FALSE;
+	    ;
+	  END_IF;
+	   "IEC_Timer_OpenZ12_DB".TON(IN:=#bit_hist_open_Z12,
+	                             PT:=T#10S,
+	                             Q=>#bit_set_open_Z12);
+	  
+	  
+	  IF #bit_set_open_Z12  THEN
+	    // start otwieranie
+	    #CMD_Open_Z12 := TRUE;
+	  ELSE
+	    #CMD_Open_Z12 := FALSE;
+	    ;
+	  END_IF;
+	  
+	  // ZAMYKANIE
+	  // Warune na zamykanie Z12
+	  IF %DB10.DBX316.1 = FALSE OR  // brak otwarcia Z9
+	    "dbtags_Sterowanie"."Paramaetry _Zbiorniki".set_strategia_sterowania = 2 OR
+	    "dbtags_Sterowanie"."Paramaetry _Zbiorniki".set_strategia_sterowania = 0
+	    AND "bitH_REM_Z12"
+	    AND "bitH_Aut_Man_Z12"
+	    AND "inputOtwartaZ12"
+	
+	  THEN
+	    // start zamykanie
+	    #bit_hist_close_Z12 := TRUE;
+	  ELSE
+	    #bit_hist_close_Z12 := FALSE;
+	    ;
+	  END_IF;
+	  
+	  "IEC_Timer_ZamykanieZ12_DB".TON(IN:=#bit_hist_close_Z12,
+	                                  PT:=T#10S,
+	                                  Q=>#bit_set_close_Z12);
+	  
+	  
+	  IF #bit_hist_close_Z12 THEN
+	    // start na zamykanie
+	    #CMD_Close_Z12 := TRUE;
+	  ELSE
+	    #CMD_Close_Z12 := FALSE;
+	    ;
+	  END_IF;
+	  
+	  
+	  
+	END_REGION
+	
+END_FUNCTION_BLOCK
+

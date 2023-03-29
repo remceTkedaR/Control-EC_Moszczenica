@@ -1,0 +1,43 @@
+﻿FUNCTION_BLOCK "Kontrola przekroczenia barMax"
+TITLE = Control press oxygen 
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//KOntrola ciśnienia w rurociągu. Sterowanie ograniczeniem wydajności falownika w przypadku przekroczenia ciśnienia max
+   VAR_INPUT 
+      dane_Pressure_bar : Real;   // Aktualne ciśnienie w rurociągu
+      Press_Max { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Real;   // Ciśnienie graniczne max
+   END_VAR
+
+   VAR_OUTPUT 
+      bar_max : Bool;   // Bit sygnału alarm ciśnienie za wysokie w rurociągu
+   END_VAR
+
+   VAR_TEMP 
+      Temp_Press_max : Bool;   // Znacznik pomocniczy
+   END_VAR
+
+
+BEGIN
+	//Kontrola cieśnienia granicznego w rurociągu 
+	//
+	
+	REGION Control Press
+	  // Porównanie aktualnego z Max
+	  IF #dane_Pressure_bar > #Press_Max THEN
+	    // Ustawienie znacznika jeśli Act > Max
+	    #Temp_Press_max := TRUE;
+	  ELSE
+	    #Temp_Press_max := FALSE;
+	    ;
+	  END_IF;
+	  
+	 "IEC_Timer_PressO2_Max_DB".TON(IN:= #Temp_Press_max,
+	                                 PT:= T#30S,
+	                                 Q=> #bar_max);
+	  
+	  
+	END_REGION
+	
+END_FUNCTION_BLOCK
+

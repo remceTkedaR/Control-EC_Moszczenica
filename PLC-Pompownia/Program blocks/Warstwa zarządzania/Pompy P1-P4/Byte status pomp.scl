@@ -1,0 +1,80 @@
+﻿FUNCTION_BLOCK "Byte status pomp"
+TITLE = Calculation Byte Status Pomp
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Byte określający ile napędów dostępnych. Wykorzystywany do blokowania przełączenia na sieć ostatniej dostępnej dmuchawy.
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.4)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+	//Funkcjonalnośc: (Byte statusu napędów P1-P4 Pompowna )
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 17.11.2021 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	REGION przekazanie satusu P1 P2 P3 P4 Z11 Z12  do znacznika
+	  //przekazanie
+	  // P1 Przekazanie Byte H ststusu do Byte znacznika 
+	  "ByteH_Status_P1" := %DB100.DBB1;
+	  // P2 Przekazanie Byte H ststusu do Byte znacznika 
+	  "ByteH_Status_P2" := %DB100.DBB3;
+	  // P3 Przekazanie Byte H ststusu do Byte znacznika 
+	  "ByteH_Status_P3" := %DB100.DBB5;
+	  // P4 Przekazanie Byte H ststusu do Byte znacznika 
+	  "ByteH_Status_P4" := %DB100.DBB7;
+	  
+	  
+	END_REGION
+	
+	IF "IsReady_P1" AND "bitH_Aut_Man_P1" AND (NOT "IsRunNetwork_P1")AND (NOT "IsRunInverter_P1") THEN
+	  // Przekaż wartość 1 gdy gotowość P1
+	  "dbzarządzanie".sterowanie_1.aktywna_P1:= TRUE;
+	ELSE
+	  "dbzarządzanie".sterowanie_1.aktywna_P1 := FALSE;
+	END_IF;
+	
+	"activePump_P1" :="dbzarządzanie".sterowanie_1.aktywna_P1 ;
+	
+	
+	IF "IsReady_P2" AND "bitH_Aut_Man_P2" AND (NOT "IsRunNetwork_P2")AND (NOT "IsRunInverter_P2") THEN
+	  // Przekaż wartość 1 gdy gotowość P2
+	  "dbzarządzanie".sterowanie_1.aktywna_P2 := TRUE;
+	ELSE
+	  "dbzarządzanie".sterowanie_1.aktywna_P2 := FALSE;
+	END_IF;
+	
+	"activePump_P2" :="dbzarządzanie".sterowanie_1.aktywna_P2;
+	
+	IF "IsReady_P3" AND "bitH_Aut_Man_P3" AND (NOT "IsRunNetwork_P3")AND (NOT "IsRunInverter_P3") THEN
+	  // Przekaż wartość 1 gdy gotowość P3
+	  "dbzarządzanie".sterowanie_1.aktywna_P3 := TRUE;
+	ELSE
+	  "dbzarządzanie".sterowanie_1.aktywna_P3 := FALSE;
+	END_IF;
+	
+	"activePump_P3" :="dbzarządzanie".sterowanie_1.aktywna_P3 ;
+	
+	IF "IsReady_P4" AND "bitH_Aut_Man_P4" AND (NOT "IsRunNetwork_P4")AND (NOT "IsRunInverter_P4") THEN
+	  // Przekaż wartość 1 gdy gotowość P4
+	  "dbzarządzanie".sterowanie_1.aktywna_P4  := TRUE;
+	ELSE
+	  "dbzarządzanie".sterowanie_1.aktywna_P4  := FALSE;
+	END_IF;
+	
+	"activePump_P4" :="dbzarządzanie".sterowanie_1.aktywna_P4 ;
+	
+	
+	
+END_FUNCTION_BLOCK
+

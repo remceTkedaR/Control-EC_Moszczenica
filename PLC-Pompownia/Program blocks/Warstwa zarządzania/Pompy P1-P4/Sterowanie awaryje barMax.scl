@@ -1,0 +1,49 @@
+﻿FUNCTION "Sterowanie awaryje barMax" : Void
+TITLE = Processing of the currently set oxygen value
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Funkcja wyznacza aktualne źródło zygnału zadawania wartości bar na podstawie wybranej obcji zbiornika sterującego.
+   VAR_INPUT 
+      Switch_model_control : Int;   // Wybór model sterowania
+      Set_Miasto : Real;   // Zadana wartość cisnienia [bar] przetłaczanie
+      Set_Magistrala : Real;   // Zadana wartość ciśnienia [bar] dosilanie
+   END_VAR
+
+   VAR_OUTPUT 
+      posBar : Real;   // Przechwycona wartość bar
+   END_VAR
+
+   VAR_TEMP 
+      tmpBar_control : Bool;   // Przełącznik kontroli źródła sygnału wartości zadanej
+   END_VAR
+
+
+BEGIN
+	//Funkcja wyznacza aktualne źródło zygnału zadawania wartości bar na podstawie
+	//wybranej obcji zbiornika sterującego.
+	
+	//
+	#tmpBar_control := TRUE;
+	
+	REGION Przechwycenie zadanej wartości bar 
+	  // ustalenie począdkowej wartości podczas stsrt redukcji
+	  IF #tmpBar_control THEN
+	    // Przechwycenia wartości zadanej bar 
+	    CASE #Switch_model_control OF
+	      0: // Wyłaczone
+	        ;
+	      1:  // Dosilanie magistrala
+	        #posBar := #Set_Magistrala;
+	      2:  // Zadany z komory 2
+	        #posBar := #Set_Miasto;
+	      3: // automat
+	        ;
+	      ELSE  // 
+	        ;
+	    END_CASE;
+	  END_IF;
+	  
+	END_REGION
+END_FUNCTION
+

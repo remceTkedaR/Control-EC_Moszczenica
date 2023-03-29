@@ -1,0 +1,428 @@
+﻿FUNCTION "Zmienne_SCADA" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_TEMP 
+      TimeHz_DInt : DInt;
+      TimeK1_ONDInt : DInt;
+      TimeK2_ONDInt : DInt;
+      TimeK1_OFFDInt : DInt;
+      TimeK2_OFFDInt : DInt;
+      tmpTimerSet_O2_Up : DInt;   // Pomocnicza wynik po mnozeniu [ms] czasu do zwiekszenia bar
+      tmpQ1 : Int;   // pompcnicza przy konwersji z real do int
+      tmpQ2 : Int;   // pompcnicza przy konwersji z real do int
+   END_VAR
+
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.2)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1214 FW 3.2 .)
+	//Funkcjonalnośc: (Kopiowanie bloków danych z - do bloku SCADA )
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 17.11.2021 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	//
+	// Staus napędów P1 P2 P3 P4 POSTÓJ, FALOWNIK, SIEĆ
+	//P1
+	REGION Status napędów
+	IF "IsRunInverter_P1" THEN
+	  // Przekazanie wartości do instancji DB10 (1= falownik)
+	  "db10organizacyjna".ins_ModeWorkContactronP1 := 1;
+	  ;
+	END_IF;
+	IF "IsRunNetwork_P1" THEN
+	  // Przekazanie wartości do instancji DB10 (2= sieć)
+	  "db10organizacyjna".ins_ModeWorkContactronP1 := 2;
+	  ;
+	END_IF;
+	IF ("IsRunNetwork_P1" = FALSE) AND ("IsRunInverter_P1" = FALSE) THEN
+	  // Przekazanie wartości do instancji DB10 (0= postój)
+	  "db10organizacyjna".ins_ModeWorkContactronP1 := 0;
+	  ;
+	END_IF;
+	// P2
+	IF "IsRunInverter_P2" THEN
+	  // Przekazanie wartości do instancji DB10 (1= falownik)
+	  "db10organizacyjna".ins_ModeWorkContactronP2 := 1;
+	  ;
+	END_IF;
+	IF "IsRunNetwork_P2" THEN
+	  // Przekazanie wartości do instancji DB10 (2= sieć)
+	  "db10organizacyjna".ins_ModeWorkContactronP2 := 2;
+	  ;
+	END_IF;
+	IF ("IsRunNetwork_P2" = FALSE) AND ("IsRunInverter_P2" = FALSE) THEN
+	  // Przekazanie wartości do instancji DB10 (0= postój)
+	  "db10organizacyjna".ins_ModeWorkContactronP2 := 0;
+	  ;
+	END_IF;
+	//P3
+	IF "IsRunInverter_P3" THEN
+	  // Przekazanie wartości do instancji DB10 (1= falownik)
+	  "db10organizacyjna".ins_ModeWorkContactronP3 := 1;
+	  ;
+	END_IF;
+	IF "IsRunNetwork_P3" THEN
+	  // Przekazanie wartości do instancji DB10 (2= sieć)
+	  "db10organizacyjna".ins_ModeWorkContactronP3 := 2;
+	  ;
+	END_IF;
+	IF ("IsRunNetwork_P3" = FALSE) AND ("IsRunInverter_P3" = FALSE) THEN
+	  // Przekazanie wartości do instancji DB10 (0= postój)
+	  "db10organizacyjna".ins_ModeWorkContactronP3 := 0;
+	  ;
+	END_IF;
+	
+	//P4
+	IF "IsRunInverter_P4" THEN
+	  // Przekazanie wartości do instancji DB10 (1= falownik)
+	  "db10organizacyjna".ins_ModeWorkContactronP4 := 1;
+	  ;
+	END_IF;
+	IF "IsRunNetwork_P4" THEN
+	  // Przekazanie wartości do instancji DB10 (2= sieć)
+	  "db10organizacyjna".ins_ModeWorkContactronP4 := 2;
+	  ;
+	END_IF;
+	IF ("IsRunNetwork_P4" = FALSE) AND ("IsRunInverter_P4" = FALSE) THEN
+	  // Przekazanie wartości do instancji DB10 (0= postój)
+	  "db10organizacyjna".ins_ModeWorkContactronP4 := 0;
+	  ;
+	END_IF;
+	
+	//Zmienne na potrzreby trendów WinCC - Praca pomp
+	//pompa P1
+	IF ("IsRun_P1") = TRUE
+	  
+	THEN
+	  "db10organizacyjna".act_stanP1 := 5;
+	ELSE
+	  "db10organizacyjna".act_stanP1 := 0;
+	END_IF;
+	//pompa P2
+	IF ("IsRun_P2") = TRUE
+	  
+	THEN
+	  "db10organizacyjna".act_statnP2 := 6;
+	ELSE
+	  "db10organizacyjna".act_statnP2 := 0;
+	END_IF;
+	//pompa P3
+	IF ("IsRun_P3") = TRUE
+	  
+	THEN
+	  "db10organizacyjna".act_stanP3 := 7;
+	ELSE
+	  "db10organizacyjna".act_stanP3 := 0;
+	END_IF;
+	
+	//pompa P4
+	IF ("IsRun_P3") = TRUE
+	  
+	THEN
+	  "db10organizacyjna".act_stanP4 := 9;
+	ELSE
+	  "db10organizacyjna".act_stanP4 := 0;
+	END_IF;
+	
+	
+	// Zasuwy Pompownia
+	// 
+	// Status napędów Z11, 
+	"dbdane".Z11_Status := "dbHoldRegSlave_to_MT101".instvValveZ11;
+	// Status napędów Z12, 
+	"dbdane".Z12_Status := "dbHoldRegSlave_to_MT101".instvValveZ12;
+	
+	// Staus napędów Z11 Z12
+	"dbtags_Sterowanie".SetupControlPompownia.Z11_Status := "dbdane".Z11_Status;
+	"dbtags_Sterowanie".SetupControlPompownia.Z12_Status := "dbdane".Z12_Status;
+	
+	END_REGION
+	
+	
+	//********************
+	
+	
+	REGION Region PID Zmienne
+	  // Zmienne PID
+	  //Limit górny wartości procesowej MV [%]
+	  "dbdane"."PID_Compact_1_sPid_Cmpt.r_Lmn_Hlm" := "dbtags_Sterowanie".SetupControlPompownia.r_Lmn_Hlm;
+	  "PID_Compact_1".sPid_Cmpt.r_Lmn_Hlm := "dbdane"."PID_Compact_1_sPid_Cmpt.r_Lmn_Hlm";
+	  //Limit dolny wartości procesowej MV [%]
+	  "dbdane"."PID_Compact_1_sPid_Cmpt.r_Lmn_Llm" := "dbtags_Sterowanie".SetupControlPompownia.r_Lmn_Llm;
+	  "PID_Compact_1".sPid_Cmpt.r_Lmn_Llm := "dbdane"."PID_Compact_1_sPid_Cmpt.r_Lmn_Llm";
+	  //Obiekt zreczywisty***
+	  // Max wartość procesowa 
+	  "dbdane"."PID_Compact_1sPid_Cmpt.r_Pv_Norm_OUT_2" := "dbtags_Sterowanie".SetupControlPompownia.r_Pv_Norm_OUT_2;
+	  "PID_Compact_1".sPid_Cmpt.r_Pv_Norm_OUT_2 := "dbdane"."PID_Compact_1sPid_Cmpt.r_Pv_Norm_OUT_2";
+	  //Min wartość procesowa
+	  "dbdane"."PID_Compact_1_sPid_Cmpt.r_Pv_Norm_OUT_1" := "dbtags_Sterowanie".SetupControlPompownia.r_Pv_Norm_OUT_1;
+	  "PID_Compact_1".sPid_Cmpt.r_Pv_Norm_OUT_1 := "dbdane"."PID_Compact_1_sPid_Cmpt.r_Pv_Norm_OUT_1";
+	  //******
+	  
+	  
+	  //Limmit górny zadawania
+	  "dbdane"."PID_Compact_1_sPid_Cmpt.r_Sp_Hlm" := "dbtags_Sterowanie".SetupControlPompownia.r_Sp_Hlm;
+	  "PID_Compact_1".sPid_Cmpt.r_Sp_Hlm := "dbdane"."PID_Compact_1_sPid_Cmpt.r_Sp_Hlm";
+	  //Limit dolny zadawania
+	  "dbdane"."PID_Compact_1_sPid_Cmpt.r_Sp_Llm" := "dbtags_Sterowanie".SetupControlPompownia.r_Sp_Llm;
+	  "PID_Compact_1".sPid_Cmpt.r_Sp_Llm := "dbdane"."PID_Compact_1_sPid_Cmpt.r_Sp_Llm";
+	  
+	  // Setpoint SV
+	  "db10organizacyjna".setpoint_SV_bar := "dbdane".Setpoint_SV;
+	  
+	END_REGION
+	
+	REGION Sterowanie czasem zmiany wartości ciśnienia w modelu regulacji nadążnej 
+	  
+	  //Opóznienie zwiększania watrości ciśnieniea  konwersja i przekaznie do zmiennej tymczasowej 
+	  #tmpTimerSet_O2_Up := INT_TO_DINT("db10organizacyjna".TimeHistere_set_bar);
+	  
+	  //Przekazanie do Timera -Zadany czas [ms] zwłoki zwiekszenia ciśnienia
+	  "dbtags_Sterowanie".SetupControlPompownia.TimerSet_O2_Up.PT := DINT_TO_TIME(#tmpTimerSet_O2_Up * "MS_TO_M");
+	  //Przekazanie do Timera -Zadany czas [ms] zwłoki zmniejszenia ciśnienie
+	  "dbtags_Sterowanie".SetupControlPompownia.TimerSet_O2_Down.PT := DINT_TO_TIME(#tmpTimerSet_O2_Up * "MS_TO_M");
+	  
+	END_REGION
+	
+	REGION Timery dołączenia dodatkowych pomp 
+	  //***Czasy dołącz wyłacz pompy dodatkowa i oczekiwanie na Hz50 ***//
+	  
+	  "dbtags_Sterowanie".SetupControlPompownia.Time_ONK1 := "db10organizacyjna".Time_ONK1;
+	  "dbtags_Sterowanie".SetupControlPompownia.Time_ONK2 := "db10organizacyjna".Time_ONK2;
+	  "dbtags_Sterowanie".SetupControlPompownia.Time_OFFK1 := "db10organizacyjna".Time_OFFK1;
+	  "dbtags_Sterowanie".SetupControlPompownia.Time_OFFK2 := "db10organizacyjna".Time_OFFK2;
+	  "dbtags_Sterowanie".SetupControlPompownia.TimeHz := "db10organizacyjna".TimeHz;
+	  
+	  
+	END_REGION
+	
+	
+	//**
+	"dbtags_Sterowanie".SetupControlPompownia.tagsdbSwitch_ModelSterowania := "dbdane".Switch_model_control_P1P4;
+	
+	
+	
+	REGION Przekazanie zmiennych sterowania
+	  
+	  //Wspólczynnik korekty ostrzeżęń wyokiego i niskiego PV HWrn, PV LWrn 
+	  //Wsółcynnik ten koryguje poziom alarmu PID górnego i dolnego odpowiadających
+	  //za dołączenie i odączenie dodatkowych kompresorów 
+	  "dbtags_Sterowanie".SetupControlPompownia.PV_HWrn_correction := "db10organizacyjna".PV_HWrn_set_correct;
+	  "dbtags_Sterowanie".SetupControlPompownia.PV_LWrn_correction := "db10organizacyjna".PV_LWrn_set_correct;
+	  
+	  //Czas oczekiwania na 50 Hz  konwersja i przekaznie do zmiennej tymczasowej 
+	  #TimeHz_DInt := INT_TO_DINT("db10organizacyjna".TimeHz);
+	  
+	  //Czas oczekiwania na 50Hz 
+	  "dbdane".TMR_Hz := DINT_TO_TIME(#TimeHz_DInt * "MS_TO_S");
+	  
+	  //Czas oczekiwania na K1_ON  konwersja i przekaznie do zmiennej tymczasowej 
+	  #TimeK1_ONDInt := INT_TO_DINT("db10organizacyjna".Time_ONK1);
+	  
+	  //Czas oczekiwania na K1_ON 
+	  "dbdane".TMR_ON_K1 := DINT_TO_TIME(#TimeK1_ONDInt * "MS_TO_S");
+	  
+	  //Czas oczekiwania na K1_OFF  konwersja i przekaznie do zmiennej tymczasowej 
+	  #TimeK1_OFFDInt := INT_TO_DINT("db10organizacyjna".Time_OFFK1);
+	  
+	  //Czas oczekiwania na K1_OFF 
+	  "dbdane".TMR_OFF_K1 := DINT_TO_TIME(#TimeK1_OFFDInt * "MS_TO_S");
+	  
+	  //Czas oczekiwania na K2_ON  konwersja i przekaznie do zmiennej tymczasowej 
+	  #TimeK2_ONDInt := INT_TO_DINT("db10organizacyjna".Time_ONK2);
+	  
+	  //Czas oczekiwania na K2_ON 
+	  "dbdane".TMR_ON_K2 := DINT_TO_TIME(#TimeK2_ONDInt * "MS_TO_S");
+	  
+	  //Czas oczekiwania na K2_OFF  konwersja i przekaznie do zmiennej tymczasowej 
+	  #TimeK2_OFFDInt := INT_TO_DINT("db10organizacyjna".Time_OFFK2);
+	  
+	  //Czas oczekiwania na K2_OFF 
+	  "dbdane".TMR_OFF_K2 := DINT_TO_TIME(#TimeK2_OFFDInt * "MS_TO_S");
+	  
+	  //Aktualne Hz przekazane do instancji SCADA
+	  "db10organizacyjna".set_Hz_P1P4 := "dbdane".OUT_PURE_Real;
+	  
+	  //Aktualna zadana wartość ciśnienia do regulatora
+	  CASE "dbHoldRegSlave_to_MT101".instSygSter_1 OF
+	    1:
+	      "dbdane".Setpoint_SV := "dbHoldRegSlave_to_MT101".instSetbarDN500_B5;
+	    2:
+	      "dbdane".Setpoint_SV := "dbHoldRegSlave_to_MT101".instSetbarDN225_B6;
+	    3:
+	      "dbdane".Setpoint_SV := "dbdane".Setpoint_bar_automat;
+	      
+	    ELSE
+	      "dbdane".Setpoint_SV := 0.0;
+	      ;
+	  END_CASE;
+	  
+	END_REGION
+	
+	
+	REGION Analogi 
+	  
+	//************ parametry analogowe**************
+	//Przekazane z PLC - Zasuwy
+	  "dbdane".Act_Value_B5_magistrala_bar := "dbHold_RRG".actB5_bar_magistrala;
+	
+	//Aktualna mierzona wartość ciśnienia zasilania B5
+	"db10organizacyjna".instB5_bar_act_magistrala := "dbdane".Act_Value_B5_magistrala_bar;
+	
+	//Aktualna mierzona wartość ciśnienia  kierunek miasto B6
+	"db10organizacyjna".instB6_bar_act_miasto := "dbdane".act_Value_B6;
+	
+	//Aktualna mierzona wartość ciśnienia  pompownia B7
+	"db10organizacyjna".instB7_bar_act_pompownia := "dbdane".act_Value_B7;
+	
+	//Aktualna średnia wyliczona wartość ciśnienia 
+	//Wyliczanie następuje dopiero po wybraniu sterowania od wartości średniej
+	"db10organizacyjna".avg_bar:= "dbdane".actPrzepływQ1_IA_real;
+	
+	// Aktualne ciśnienie suchobiegu
+	"db10organizacyjna".instB8_bar_act_suchobieg := "dbdane".act_Value_B8;
+	END_REGION
+	
+	//Przekazanie zmiennej tryb pracy PID - SYMULACJA TESTY
+	//IF "Sumul_OnOFF_manual_PID" = FALSE THEN
+	  // ustaw trzb PID na automat
+	//  "PID_Compact_1".sRet.i_Mode := "dbtags_Sterowanie".PID_Compact.Mode;
+	//  ;
+	//END_IF;
+	
+	
+	REGION Alarmy 
+	  // Sygnały alarmów systemu sterowania i komunikacji
+	  "HMI.alarm_02" := "dbzarządzanie".sterowanie_1."alarm-warning";
+	  "HMI.alarm_01" := "dbzarządzanie".sterowanie_1."alarm-modbus";
+	  
+	  
+	END_REGION
+	
+	
+	//Przekazanie bitu kasowania Alarmu PIEZO
+	//...........
+	
+	
+	// Falownik i zasilania RS
+	REGION Counter Event OverTemp's OverVolt's from Inverters
+	  // Falownik pomp
+	  "db10organizacyjna".CounterOverTempFa := "dbMasterData".data26_Inver_OverTemp_415040_Fal.typeDataInverter_int[0];
+	  "db10organizacyjna".CounterOverVoltFal := "dbMasterData".data26_Inver_OverVolts_415050_Fal.typeDataInverter_int[0];
+	  "HMI.gotowość_falownik_1" := "dbzarządzanie".awaria_falownika_F1;
+	  // RS
+	  "HMI.brak_zasilania" := "dbzarządzanie".brak_zasilania_RS;
+	  
+	
+	END_REGION
+	
+	
+	REGION Manual zadane Hz (SV)
+	  // konwertowanie wartości manualnie zadawanych Hz z Real do Word
+	  "dbdane".tmpManualSV := REAL_TO_LREAL("dbdane".Manual_SV);
+	  "dbdane".ManualSV_Int := LREAL_TO_INT( "dbdane".tmpManualSV);
+	 
+	  
+	END_REGION
+	
+	
+	
+	REGION Modbus staus, error
+	  // Status Modbus slave
+	  "db10organizacyjna".RTU_MPP04_1errorStatus := "dbTags_master_MPP04_1".modbusMaster.errorStatus;
+	  "db10organizacyjna".RTU_MPP04_2errorStatus := "dbTags_master_MPP04_2".modbusMaster.errorStatus;
+	  "db10organizacyjna".RTU_Fal_1errorStatus := "dbTags_master_Fal_1".modbusMaster.errorStatus;
+	  //Status Modbus master
+	  "db10organizacyjna".RTU_MT101 := "dbTags_slave_RTU".modbusMaster.errorStatus;
+	  %DB10.DBX25.0 := "dbzarządzanie".sterowanie_1.awaria_modbus_falownik;
+	  %DB10.DBX25.1 := "dbzarządzanie".sterowanie_1.awaria_modbus_przepływ_pomp;
+	  %DB10.DBX25.2 := "dbzarządzanie".sterowanie_1.awaria_modbus_przepływ_magist;
+	  %DB10.DBX25.3 := "dbzarządzanie".sterowanie_1.awaria_modbus_mt101;
+	  
+	  
+	END_REGION
+	
+	REGION Modbus master PLC S7 1200 - Przepływomierz Q1 pompownia
+	  // przekazanie wartości Real
+	  "db10organizacyjna".instFlowDN225_act_Q1 := "dbdane".Wielkość_przeływu_Q1;
+	  
+	  // konwertowanie do Int
+	  "db10organizacyjna".actQ1_przepyw_pompownia_Int := "dbdane".actPrzeoływQ1;
+	  
+	  // Sumay przepływu 
+	  "db10organizacyjna".instSumFlowDN225_Q1 := "dbdane".Licznik_objętość_VF_Q1;
+	  
+	  
+	  //******* Dopisać jeśli potzrebne do wizualizacji 
+	  // Adres 2 - Licznik_objętość_VF
+	  // Adres 4- stan bierzący licznika objetości w stecz VR
+	  // Adres 6- stan bierzący licznika różnicowego  objętości VD
+	  // Adres 8- główny liczni objetości w przód GF
+	  // Adres 10- główny liczni objetości w stecz GR
+	  // Adres 12- główny lróznicowy liczni objetościGD
+	  // Status MP04 Q1 - pompownia
+	  
+	  
+	END_REGION
+	
+	
+	REGION Modbus master PLC S7 1200 - Przepływomierz Q2 Zasuwy
+	  // przekazanie wartości
+	  "db10organizacyjna".instFlowDN500_act_Q2 := "dbdane".Wielkość_przeływu_Q2;
+	  
+	  // konwertowanie do Int
+	  #tmpQ2 := REAL_TO_INT("db10organizacyjna".instFlowDN500_act_Q2);
+	  "db10organizacyjna".actQ2_przepyw_pompownia_Int := #tmpQ2;
+	  
+	  //******* Dopisać jeśli potzrebne do wizualizacji 
+	  // Adres 2 - Licznik_objętość_VF
+	  // Adres 4- stan bierzący licznika objetości w stecz VR
+	  // Adres 6- stan bierzący licznika różnicowego  objętości VD
+	  // Adres 8- główny liczni objetości w przód GF
+	  // Adres 10- główny liczni objetości w stecz GR
+	  // Adres 12- główny lróznicowy liczni objetościGD
+	  // Status MP04 Q1 - pompownia
+	  
+	  
+	  
+	  // Sumay przepływu 
+	  "db10organizacyjna".instSumFlowDN500_Q2 := "dbdane".Licznik_objętość_VF_Q2;
+	  
+	END_REGION
+	
+	REGION Modbus RTU Falownik 
+	  // Słowo statusu 
+	  "HMI.SłowoStatus_Falownik1" := "dbModbusRTU_Reg".received26_Inver_Status_word_416030.typeDataInverter_int[0];
+	  
+	END_REGION
+	
+	REGION położenie Z10
+	  // kopiowanie odebranych danych z PLC Zasuwy
+	  "dbHoldRegSlave_to_MT101".instPozitionZ10_act := INT_TO_REAL("db10organizacyjna".actPozycja_Z10);
+	  
+	END_REGION
+	
+	
+	
+	
+	
+	
+	  
+	  
+	
+	
+	
+	
+END_FUNCTION
+

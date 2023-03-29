@@ -1,0 +1,35 @@
+﻿FUNCTION "ERR_ClassCheckError" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_TEMP 
+      tempCounter : Int;
+   END_VAR
+
+
+BEGIN
+	//Get Error
+	FOR #tempCounter := 0 TO 27 BY 1 DO
+	    IF ("ERR_ErrorBufferFull".GetError[#tempCounter].Counter > 0) THEN
+	        "V_SoftwareError".GetErrorFunction := TRUE;
+	        EXIT;
+	    END_IF;
+	END_FOR;
+	//SoftwareError   
+	FOR #tempCounter := 0 TO 4 BY 1 DO
+	    IF ("ERR_ErrorBufferFull".SoftwareError[#tempCounter].Counter > 0) THEN
+	        "V_SoftwareError".SoftwareFunctions := TRUE;
+	        EXIT;
+	    END_IF;
+	END_FOR;
+	//OB error
+	FOR #tempCounter := 0 TO 5 BY 1 DO
+	    IF ("ERR_ErrorOB".OB80[#tempCounter].Counter > 0) THEN
+	        "V_ErrorOB".OB80 := TRUE;
+	        EXIT;
+	    END_IF;
+	END_FOR;
+	//Diagnostic buffer
+	"V_SoftwareError".DiagnosticBuffer := "ERR_ErrorBufferFull".CounterDiagStatusUpdate > 0;
+	
+END_FUNCTION
+

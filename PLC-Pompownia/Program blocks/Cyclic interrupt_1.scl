@@ -1,0 +1,32 @@
+﻿ORGANIZATION_BLOCK "Cyclic interrupt_1"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.4)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+	//Funkcjonalnośc: (Pobranie wartości z wejść analogowych )
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 11.01.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	// Analogi 
+	// ciśnienie przetłaczania miasto 
+	"dbdane".PV_analaog_B6 := "IW64":P;
+	// ciśnienie pompownia
+	"dbdane".PV_analaog_B7 := "IW66":P;
+	//ciśnienie ssania
+	"dbdane".PV_analaog_B8 := "IW68":P;
+	
+	
+END_ORGANIZATION_BLOCK
+

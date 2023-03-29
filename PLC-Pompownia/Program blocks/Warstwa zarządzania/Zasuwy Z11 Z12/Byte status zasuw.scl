@@ -1,0 +1,42 @@
+﻿FUNCTION_BLOCK "Byte status zasuw"
+TITLE = Calculation Byte Status M1-M4
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Byte określający ile napędów dostępnych. Wykorzystywany do blokowania przełączenia na sieć ostatniej dostępnej pompy.
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.4)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+	//Funkcjonalnośc: (Byte statusu napędów Z11 Z12 Zasuwy )
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 17.11.2021 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	
+	
+	
+	
+	REGION przekazanie satusu Z11 Z12  do znacznika
+	  //przekazanie
+	  // Z11 Przekazanie Byte H ststusu do Byte znacznika 
+	  "Byte_Status_Z11" := %DB100.DBB29;
+	  // Z12 Przekazanie Byte H ststusu do Byte znacznika 
+	  "Byte_Status_Z12" := %DB100.DBB31;
+	
+	  
+	  
+	END_REGION
+	
+END_FUNCTION_BLOCK
+

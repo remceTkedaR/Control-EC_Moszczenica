@@ -1,0 +1,102 @@
+﻿FUNCTION "Write_to DB_HoldReg_MT101" : Void
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.2)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1214 FW 3.2 .)
+	//Funkcjonalnośc: (Kopiowanie bloków danych )
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 17.11.2021 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	
+	
+	REGION  Stacja Zasów Status Napędów
+	  // PLC Zasówy z modbus TCP
+	  "db10organizacyjna".instvValveZ1 := "dbHold_RRG".status_Z1;
+	  "db10organizacyjna".instvValveZ2 := "dbHold_RRG".status_Z2;
+	  "db10organizacyjna".instvValveZ3 := "dbHold_RRG".status_Z3;
+	  "db10organizacyjna".instvValveZ4 := "dbHold_RRG".status_Z4;
+	  "db10organizacyjna".instvValveZ5 := "dbHold_RRG".status_Z5;
+	  "db10organizacyjna".instvValveZ6 := "dbHold_RRG".status_Z6;
+	  "db10organizacyjna".instvValveZ7 := "dbHold_RRG".status_Z7;
+	  "db10organizacyjna".instvValveZ8 := "dbHold_RRG".status_Z8;
+	  "db10organizacyjna".instvValveZ9 := "dbHold_RRG".status_Z9;
+	  "db10organizacyjna".instvValveZ10 := "dbHold_RRG".status_Z10;
+	  
+	  // Do instancji SCADA na MT101
+	  "dbHoldRegSlave_to_MT101".instvValveZ1 := "db10organizacyjna".instvValveZ1;
+	  "dbHoldRegSlave_to_MT101".instvValveZ2 := "db10organizacyjna".instvValveZ2;
+	  "dbHoldRegSlave_to_MT101".instvValveZ3 := "db10organizacyjna".instvValveZ3;
+	  "dbHoldRegSlave_to_MT101".instvValveZ4 := "db10organizacyjna".instvValveZ4;
+	  "dbHoldRegSlave_to_MT101".instvValveZ5 := "db10organizacyjna".instvValveZ5;
+	  "dbHoldRegSlave_to_MT101".instvValveZ6 := "db10organizacyjna".instvValveZ6;
+	  "dbHoldRegSlave_to_MT101".instvValveZ7 := "db10organizacyjna".instvValveZ7;
+	  "dbHoldRegSlave_to_MT101".instvValveZ8 := "db10organizacyjna".instvValveZ8;
+	  "dbHoldRegSlave_to_MT101".instvValveZ9 := "db10organizacyjna".instvValveZ9;
+	  "dbHoldRegSlave_to_MT101".instvValveZ10 := "db10organizacyjna".instvValveZ10;
+	  
+	END_REGION
+	
+	REGION Z10 położenie
+	  //aktualne
+	  "db10organizacyjna".actPozycja_Z10 := "dbHold_RRG".act_położenie_Z10;
+	  "dbHoldRegSlave_to_MT101".instPozitionZ10_act:= INT_TO_REAL ("db10organizacyjna".actPozycja_Z10);
+	END_REGION
+	
+	REGION Analogi
+	  // Przekazanie
+	  "dbHoldRegSlave_to_MT101".instB5bar_act := "db10organizacyjna".instB5_bar_act_magistrala;
+	  "dbHoldRegSlave_to_MT101".instB6bar_act := "db10organizacyjna".instB6_bar_act_miasto;
+	  "dbHoldRegSlave_to_MT101".instB7bar_act := "db10organizacyjna".instB7_bar_act_pompownia;
+	  "dbHoldRegSlave_to_MT101".instB8bar_act := "dbdane".act_Value_B8;
+	  "dbHoldRegSlave_to_MT101".instFlowDN225_act := "db10organizacyjna".instFlowDN225_act_Q1;
+	  "dbHoldRegSlave_to_MT101".instFlowDN225_sum := "db10organizacyjna".instSumFlowDN225_Q1;
+	  "dbHoldRegSlave_to_MT101".instFlowDN500_act := "db10organizacyjna".instFlowDN500_act_Q2;
+	  "dbHoldRegSlave_to_MT101".instFlowDN500_sum := "db10organizacyjna".instSumFlowDN500_Q2;
+	  "dbHoldRegSlave_to_MT101".instCurrent_Inverter := REAL_TO_INT("db10organizacyjna".inst_act_Current_Inverters);
+	  "dbHoldRegSlave_to_MT101".instHz_Inverter := REAL_TO_INT("db10organizacyjna".act_Hz_Inverter_1);
+	  "dbHold_RRG".Sending.set_magistrala_alarm_min_bar := "dbHoldRegSlave_to_MT101".instSetBarMinB9;
+	  // Magistrala zasilająca DN 500
+	  // aktualny
+	  "dbHoldRegSlave_to_MT101".instFlowDN500_act := "dbHold_RRG".act_przepływ_VF_Q2;
+	  //Suma
+	  "dbHoldRegSlave_to_MT101".instFlowDN500_sum := "dbHold_RRG".sum_przepływ_Q2;
+	  // Miasto DN225
+	  // aktualny
+	  
+	  "dbHoldRegSlave_to_MT101".instFlowDN225_act := "dbModbusRTU_Reg"."Przepływomierz nr1 pompownia".received_5_przeływu_VF_Adres_0;
+	  //Suma
+	  "dbHoldRegSlave_to_MT101".instFlowDN225_sum := "dbModbusRTU_Reg"."Przepływomierz nr1 pompownia".received_5_objętość_VF_Adres_2;
+	END_REGION
+	
+	REGION Poziom w zbiornikach
+	  // przekazanie
+	  "dbHoldRegSlave_to_MT101".instLevelTank1 := REAL_TO_INT ("dbHold_RRG".act_poziom_ZB1);
+	  "dbHoldRegSlave_to_MT101".instLevelTank2 := REAL_TO_INT ("dbHold_RRG".act_poziom_ZB2);
+	  "dbHoldRegSlave_to_MT101".instLevelTank3 := REAL_TO_INT ("dbHold_RRG".act_poziom_ZB3);
+	  "dbHoldRegSlave_to_MT101".instLevelTank4 := REAL_TO_INT ("dbHold_RRG".act_poziom_ZB4);
+	  
+	  
+	END_REGION
+	
+	
+	
+	
+	
+	
+	
+END_FUNCTION
+

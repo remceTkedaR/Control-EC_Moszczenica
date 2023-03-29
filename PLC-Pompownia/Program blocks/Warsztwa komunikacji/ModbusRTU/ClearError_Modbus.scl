@@ -1,0 +1,212 @@
+﻿FUNCTION "ClearError_Modbus" : Void
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+   VAR_TEMP 
+      set_error_RTU : Bool;
+   END_VAR
+
+
+BEGIN
+	
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.4)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+	//Funkcjonalnośc: (Obsługa błedów na magistrali Modbus RTU, inicjacja pętli po konfliktach )
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 17.11.2021 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	REGION Główny błąd - wszystkie pętle nie działają
+	  //kasowanie wartości zmiennych errorStatus odblokowanie magistrali
+	  IF "setErrorModbsmasterMPP04_1" AND "setErrorModbsmasterFal" THEN
+	    //ustaw znacznik błędu
+	    "db10organizacyjna".setRTU_Error := TRUE;
+	    // resetuj mdbusMastererror dla wszystkich pętli
+	    "dbTags_master_Fal_1".modbusMaster.error := FALSE;
+	    "dbTags_master_MPP04_1".modbusMaster.error := FALSE;
+	    
+	  ELSE
+	    "db10organizacyjna".setRTU_Error := FALSE;
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	IF ("db10organizacyjna".RTU_Fal_1errorStatus = 0) AND ("db10organizacyjna".RTU_MPP04_1errorStatus = 0) THEN
+	  // kasowanie znacznika błędu komunikacj modbus rtu
+	  "db10organizacyjna".setRTU_Error := FALSE;
+	  ;
+	END_IF;
+	
+	
+	
+	
+	
+	REGION Falownik Modbau RTU
+	  // Sprawdzanie czy 
+	  IF "dbTags_master_Fal_1".step = 27 THEN
+	    // Statement section IF
+	    "dbTags_master_Fal_1".modbusMaster.error := FALSE;
+	    "dbTags_master_Fal_1".modbusMaster.busy := FALSE;
+	    "dbTags_master_Fal_1".modbusMaster.status:= 0;
+	    
+	   
+	   // jeśli MPP04_1 kod błedu 80C8 (brak urządzenia na linni) to uruchom pętlę modbus dla falownika
+	    IF "dbTags_master_MPP04_1".modbusMaster.status = 16#80C8 AND ("dbTags_master_Fal_1".step = 27 OR "dbTags_master_Fal_1".step = 25 )
+	    THEN
+	      // Statement section 
+	      "setErrorModbsmasterFal" := FALSE;
+	      "dbTags_master_Fal_1".step := 1;
+	      
+	      ;
+	    END_IF;
+	    
+	    ;
+	  END_IF;
+	  
+	  // awaria komunikacji z falownikiem Modbus-RTU
+	  IF "setErrorModbsmasterFal" THEN
+	    // ustaw bit awarii 
+	    "dbzarządzanie".sterowanie_1.awaria_modbus_falownik:= TRUE
+	    ;
+	  END_IF;
+	  
+	  // kasowanie biti awarii komunikacji falownika Modbus-RTU
+	  IF "memStep_errorFal" = 100 THEN
+	    // kasowanie
+	    "dbzarządzanie".sterowanie_1.awaria_modbus_falownik:= FALSE
+	    ;
+	  END_IF;
+	  
+	  
+	END_REGION
+	
+	REGION MPP04-1 Modbau RTU
+	  // Sprawdzanie czy 
+	  IF "dbTags_master_MPP04_1".step = 27 AND "dbTags_master_Fal_1".step = 27
+	     THEN
+	    // 
+	    "dbTags_master_MPP04_1".modbusMaster.error := FALSE;
+	    "dbTags_master_MPP04_1".modbusMaster.busy := FALSE;
+	    "dbTags_master_MPP04_1".modbusMaster.status := 0;
+	    "dbTags_master_Fal_1".step := 1;
+	    
+	    ;
+	  END_IF;
+	  
+	  IF "dbTags_master_MPP04_1".step = 27
+	  THEN
+	    // 
+	    "dbTags_master_MPP04_1".modbusMaster.error := FALSE;
+	    "dbTags_master_MPP04_1".modbusMaster.busy := FALSE;
+	    "dbTags_master_MPP04_1".modbusMaster.status := 0;
+	    //"dbTags_master_MPP04_1".step := 25;
+	    
+	    ;
+	  END_IF;
+	  
+	  
+	  // awaria komunikacji z MPO04 Modbus-RTU
+	  IF "setErrorModbsmasterMPP04_1"  THEN
+	    // ustaw bit awarii po czasie zwłoki 
+	    "IEC_Timer_errorRTU_histereza_DB".TON(IN:="setErrorModbsmasterMPP04_1",
+	                                          PT:=T#30S);
+	    #set_error_RTU := "IEC_Timer_errorRTU_histereza_DB".Q;
+	    "dbzarządzanie".sterowanie_1.awaria_modbus_przepływ_pomp := #set_error_RTU;
+	  ELSE
+	    #set_error_RTU := FALSE;
+	    ;
+	  END_IF;
+	  
+	  // kasowanie biti awarii komunikacjiModbus-RTU
+	  IF "memStep_errorMPP04-1" = 100  AND "setErrorModbsmasterMPP04_1" = FALSE THEN
+	    // kasowanie
+	    "dbzarządzanie".sterowanie_1.awaria_modbus_przepływ_pomp:= FALSE
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	
+	
+	//Modbus RTU Error Code RESET
+	REGION Modbus RTU Error Code
+	  // Ustaw reset modbus rtu
+	  IF "db10organizacyjna".RTU_stepRESET THEN
+	    // Ustawienie domyślnych satrtowych 
+	    "dbTags_master_MPP04_1".step := 1;
+	    
+	    "dbTags_master_Fal_1".step := 25;
+	    "dbTags_slave_RTU".step := 25;
+	    
+	    // Zerowanie kodu błędu
+	    "dbTags_master_MPP04_1".modbusMaster.errorStatus := 0;
+	    "dbTags_slave_RTU".modbusMaster.errorStatus := 0;
+	    
+	    "db10organizacyjna".RTU_stepRESET := 0;
+	    ;
+	  END_IF;
+	  
+	  
+	END_REGION
+	
+	// Ustawienie Błędu Modbus RTU 
+	REGION Set Fault Modbus RTU 
+	  // Jeśli zmienna kodu błędu różna od 0 to ustaw znacznik błędu Modbus w bloku danych SCADA
+	  // i przekaż wartość błędów
+	  IF "dbzarządzanie".sterowanie_1."alarm-modbus" = TRUE
+	    
+	  THEN
+	    
+	    "db10organizacyjna".RTU_MPP04_1errorStatus := "dbTags_master_MPP04_1".modbusMaster.errorStatus;
+	    // Trzeba dopisać przekazanie błędu z PLC Zasuwy
+	   // "DB10_instance_SCADA".RTU_MPP04_2errorStatus := "dbTags_master_MPP04_2".modbusMaster.errorStatus;
+	    "db10organizacyjna".RTU_Fal_1errorStatus := "dbTags_master_Fal_1".modbusMaster.errorStatus;
+	    "db10organizacyjna".RTU_MT101 := "dbTags_slave_RTU".modbusMaster.errorStatus;
+	  ELSE
+	    //
+	    ;
+	    ;
+	  END_IF;
+	  
+	  
+	  // Modbus przekaż bit do instancji SCADA Alarm ostrzeżenie kłoport z Modbau
+	  // Przynajmniej jeden slave nie odpowiada
+	  IF "dbTags_master_Fal_1".step = 27 OR "dbTags_master_MPP04_1".step = 27 
+	 
+	  THEN
+	    "dbzarządzanie".sterowanie_1."alarm-warning" := TRUE;
+	
+	    ;
+	    
+	  END_IF;
+	  
+	  IF "db10organizacyjna".RTU_Fal_1errorStatus = 0 AND "db10organizacyjna".RTU_MPP04_1errorStatus = 0 THEN
+	  // kasuj ostrzeżenie
+	    "dbzarządzanie".sterowanie_1."alarm-warning" := FALSE;
+	    ;
+	  ;
+	END_IF;
+	
+	  
+	  
+	  
+	  
+	END_REGION
+	
+	
+	
+	
+	
+END_FUNCTION
+

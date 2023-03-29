@@ -1,0 +1,766 @@
+﻿FUNCTION_BLOCK "operating_mode_select_aut-man"
+TITLE = Przełącznik Trybu Pracy Napędów
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Funkcja przeprowadza sptawdzenie stanu zmiany sygnału  na zmiennych wyboru trybu pracy napeów i jesli strwierdzi zmianę stanu zmennej to wykonuje zmianę trybu na AUT
+   VAR 
+      setTrig_M1 : Bool;   // bit pomocniczy przełączenia trybu
+      setTrig_M2 : Bool := false;   // bit pomocniczy przełączenia trybu
+      setTrig_M3 : Bool := false;   // bit pomocniczy przełączenia trybu
+      setTrig_M4 : Bool := false;   // bit pomocniczy przełączenia trybu
+      setTrig_Z11 : Bool := false;   // bit pomocniczy przełączenia trybu
+      setTrig_Z12 : Bool := false;   // bit pomocniczy przełączenia trybu
+      set_aut_man_M1 : Bool := false;   // bit pomocniczy przełączenia trybu
+      set_aut_man_M2 : Bool := false;   // bit pomocniczy przełączenia trybu
+      set_aut_man_M3 : Bool := false;   // bit pomocniczy przełączenia trybu
+      set_aut_man_M4 : Bool := false;   // bit pomocniczy przełączenia trybu
+      set_aut_man_Z11 : Bool := false;   // bit pomocniczy przełączenia trybu
+      set_aut_man_Z12 : Bool := false;   // bit pomocniczy przełączenia trybu
+   END_VAR
+
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.2)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1214 FW 3.2 .)
+	//Funkcjonalnośc: (Pzetwarzanie sygnałów z MT101 protokołem Modbus RTU. 
+	                    Wybór Trybu Pracy Napędu)
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 17.06.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	//--- Wybór Trybu Pracy Aut/Man
+	
+	//Drive Motor 1 ustaw na  Automat/Manual/Start/Stop
+	// Pompy
+	
+	REGION //Drive Motor 1 ustaw na  Automat/Manual/Start/Stop
+	  // przełączniki bistabilny każdy stan Hi powoduje zmianę przełącznika
+	  IF %DB100.DBX37.0 OR %DB100.DBX37.4 THEN
+	    // inicjacja przełączenia
+	    #set_aut_man_M1 := TRUE;
+	  ELSE
+	    #set_aut_man_M1 := FALSE
+	    ;
+	  END_IF;
+	  
+	  IF %DB100.DBX0.0 = FALSE THEN
+	    // przełącznik bistabilny 
+	    "R_TRIG_DB_AUT_M1"(CLK := #set_aut_man_M1,
+	                       Q => #setTrig_M1);
+	    ;
+	  END_IF;
+	  
+	  // jeśli przełaczenie na aut
+	  IF #setTrig_M1 = TRUE AND %DB100.DBX37.0 = TRUE THEN
+	    %DB100.DBX0.7 := TRUE;
+	    ;
+	  END_IF;
+	  // jeśli przełaczenie na manual
+	  IF #setTrig_M1 = TRUE AND %DB100.DBX37.4 = TRUE THEN
+	    %DB100.DBX0.7 := FALSE;
+	    ;
+	  END_IF;
+	  // warunek na czyszczenie
+	  IF (%DB100.DBX1.7 AND %DB100.DBX37.0) OR (%DB100.DBX1.7 = FALSE AND %DB100.DBX37.4) THEN
+	    // Wyczyść całą zmienną
+	    "dbHoldRegSlave_to_MT101".instConrol_ManAut_1 := 0;
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_1 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_1 := 0;
+	    // Kasowanie bitu 
+	    %DB100.DBX37.0 := False;
+	    %DB100.DBX37.4 := False;
+	    ;
+	  END_IF;
+	  
+	  // Start /
+	  // przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	IF %DB100.DBX33.0 THEN
+	  // ustaw bit stat
+	  %DB100.DBX0.5 := %DB100.DBX33.0; //ustawienie bitu start
+	END_IF;
+	IF %DB100.DBX33.0 AND %DB100.DBX0.3 THEN
+	    //jeśli ustawiony bit startu z modbus i potwierdzone run napędu
+	    %DB100.DBX33.0 := FALSE; // kasuj bit roskazu
+	    ;
+	  END_IF;
+	  //Stop
+	  // przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  IF %DB100.DBX33.4 THEN
+	    %DB100.DBX0.4 := %DB100.DBX33.4;//ustawienie bitu stop
+	    ;
+	  END_IF;
+	  IF %DB100.DBX33.4 AND %DB100.DBX0.3 = FALSE THEN
+	    //jeśli ustawiony bit stop z modbus i potwierdzone stop napędu
+	    %DB100.DBX33.4 := FALSE; // kasuj bit roskazu
+	    ;
+	  END_IF;
+	  
+	  
+	  
+	END_REGION
+	
+	
+	REGION //Drive Motor 2 ustaw na  Automat/Manual/Stop/Start
+	  // przełączniki bistabilny każdy stan Hi powoduje zmianę przełącznika
+	  IF %DB100.DBX37.1 OR %DB100.DBX37.5 THEN
+	    //inicjacja przełączenia
+	    #set_aut_man_M2 := TRUE;
+	  ELSE
+	    #set_aut_man_M2 := FALSE
+	    ;
+	  END_IF;
+	  
+	  IF %DB100.DBX2.0 = FALSE THEN
+	    // przełącznik bistabilny 
+	    "R_TRIG_DB_AUT_M2"(CLK := #set_aut_man_M2,
+	                       Q => #setTrig_M2);
+	    ;
+	  END_IF;
+	  // pzrełącz na automat
+	  IF #setTrig_M2 = TRUE AND %DB100.DBX37.1 = TRUE THEN
+	    %DB100.DBX2.7 := TRUE;
+	    ;
+	  END_IF;
+	  //przełącz na manual
+	  IF #setTrig_M2 = TRUE AND %DB100.DBX37.5 = TRUE THEN
+	    %DB100.DBX2.7 := FALSE;
+	    ;
+	  END_IF;
+	  
+	  IF (%DB100.DBX2.7 AND %DB100.DBX37.1) OR (%DB100.DBX2.7 = FALSE AND %DB100.DBX37.5)  THEN
+	    // Wyczyść całą zmienną
+	    "dbHoldRegSlave_to_MT101".instConrol_ManAut_1 := 0;
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_1 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_1 := 0;
+	    // Kasowanie bitu 
+	    %DB100.DBX37.1 := False;
+	    %DB100.DBX37.5 := FALSE;
+	    ;
+	  END_IF;
+	  
+	  // Start /
+	  // przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  IF %DB100.DBX33.1 THEN // 
+	    %DB100.DBX2.5 := TRUE; //ustawienie bitu start
+	  END_IF;
+	  IF %DB100.DBX33.1 AND %DB100.DBX2.3 THEN
+	    //jeśli ustawiony bit startu z modbus i potwierdzone run napędu
+	    %DB100.DBX33.1 := FALSE; // kasuj bit roskazu
+	    ;
+	  END_IF;
+	  //Stop
+	  //przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  IF %DB100.DBX33.5 THEN
+	    %DB100.DBX2.4 := TRUE; //ustawienie bitu stop
+	    ;
+	  END_IF;
+	  IF %DB100.DBX33.5 AND %DB100.DBX2.3 = FALSE THEN
+	    //jeśli ustawiony bit stop z modbus i potwierdzone stop napędu
+	    %DB100.DBX33.5 := FALSE; // kasuj bit roskazu
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	
+	REGION //Drive Motor 3 ustaw na  Automat/Manual/Stop/Start
+	  IF %DB100.DBX37.2 OR %DB100.DBX37.6 THEN
+	    // przełączniki bistabilny każdy stan Hi powoduje zmianę przełącznika
+	    #set_aut_man_M3 := TRUE; //ustawienie bitu start
+	  ELSE
+	    #set_aut_man_M3 := FALSE
+	    ;
+	  END_IF;
+	  
+	  IF %DB100.DBX4.0 = FALSE THEN
+	    // przełącznik bistabilny
+	    "R_TRIG_DB_AUT_M3"(CLK := #set_aut_man_M3,
+	                       Q => #setTrig_M3);
+	    ;
+	  END_IF;
+	  // przełącz na automat
+	  IF #setTrig_M3 = TRUE AND %DB100.DBX37.2 = TRUE THEN
+	    %DB100.DBX4.7 := TRUE;
+	    ;
+	  END_IF;
+	  //przełącz na manual
+	  IF #setTrig_M3 = TRUE AND %DB100.DBX37.6 = TRUE THEN
+	    %DB100.DBX4.7 := FALSE;
+	    ;
+	  END_IF;
+	  
+	  IF (%DB100.DBX5.7 AND %DB100.DBX37.2) OR (%DB100.DBX5.7 = FALSE AND %DB100.DBX37.6) THEN
+	    // Wyczyść całą zmienną
+	    "dbHoldRegSlave_to_MT101".instConrol_ManAut_1 := 0;
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_1 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_1 := 0;
+	    // Kasowanie bitu 
+	    %DB100.DBX37.2 := False;
+	    %DB100.DBX37.6 := False;
+	    ;
+	  END_IF;
+	  
+	  // Start /
+	  // przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  IF %DB100.DBX33.2 THEN
+	    %DB100.DBX4.5 := TRUE; //ustawienie bitu start
+	    ;
+	  END_IF;
+	  IF %DB100.DBX33.2 AND %DB100.DBX4.3 THEN
+	    //jeśli ustawiony bit startu z modbus i potwierdzone run napędu
+	    %DB100.DBX33.2 := FALSE; // kasuj bit roskazu
+	    ;
+	  END_IF;
+	  //Stop
+	  //przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  IF %DB100.DBX33.6 THEN
+	    %DB100.DBX4.4 := TRUE; //ustawienie bitu stop
+	    ;
+	  END_IF;
+	  IF %DB100.DBX33.6 AND %DB100.DBX4.3 = FALSE THEN
+	    //jeśli ustawiony bit stop z modbus i potwierdzone stop napędu
+	    %DB100.DBX33.6 := FALSE; // kasuj bit roskazu
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	
+	REGION //Drive Motor 4 ustaw na  Automat/Manual/Stop/Start
+	  IF %DB100.DBX37.3 OR %DB100.DBX37.7 THEN
+	    // przełączniki bistabilny każdy stan Hi powoduje zmianę przełącznika
+	    #set_aut_man_M4 := TRUE;
+	  ELSE
+	    #set_aut_man_M4 := FALSE
+	    ;
+	  END_IF;
+	  
+	  IF %DB100.DBX6.0 = FALSE THEN
+	    // przełącznik bistabilny
+	    "R_TRIG_DB_AUT_M4"(CLK := #set_aut_man_M4,
+	                       Q => #setTrig_M4);
+	    ;
+	  END_IF;
+	  
+	  // przełącz na automat
+	  IF #setTrig_M4 = TRUE AND %DB100.DBX37.3 = TRUE THEN
+	    %DB100.DBX6.7 := TRUE;
+	    ;
+	  END_IF;
+	  //przełącz na manual
+	  IF #setTrig_M4 = TRUE AND %DB100.DBX37.7 = TRUE THEN
+	    %DB100.DBX6.7 := FALSE;
+	    ;
+	  END_IF;
+	  
+	  IF (%DB100.DBX7.7 AND %DB100.DBX37.3) OR (%DB100.DBX7.7 = FALSE AND %DB100.DBX37.7) THEN
+	    // Wyczyść całą zmienną
+	    "dbHoldRegSlave_to_MT101".instConrol_ManAut_1 := 0;
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_1 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_1 := 0;
+	    // Kasowanie bitu 
+	    %DB100.DBX37.3 := False;
+	    %DB100.DBX37.7:= FALSE
+	    ;
+	  END_IF;
+	  
+	  // Start /
+	  // przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  IF %DB100.DBX33.3 THEN
+	    %DB100.DBX6.5 := TRUE; //ustawienie bitu start
+	    ;
+	  END_IF;
+	  IF %DB100.DBX33.3 AND %DB100.DBX6.3 THEN
+	    //jeśli ustawiony bit startu z modbus i potwierdzone run napędu
+	    %DB100.DBX33.3 := FALSE; // kasuj bit roskazu
+	    ;
+	  END_IF;
+	  //Stop
+	  //przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  IF %DB100.DBX33.7 THEN
+	    %DB100.DBX6.4 := TRUE; //ustawienie bitu stop
+	    ;
+	  END_IF;
+	  IF %DB100.DBX33.7 AND %DB100.DBX6.3 = FALSE THEN
+	    //jeśli ustawiony bit stop z modbus i potwierdzone stop napędu
+	    %DB100.DBX33.7 := FALSE; // kasuj bit roskazu
+	    ;
+	  END_IF;
+	  
+	  
+	END_REGION
+	
+	// Zasuwy
+	
+	REGION //Drive Motor Z11 ustaw na  Automat/Manual/Otwieranie/Zamykanie
+	  IF %DB100.DBX39.2 OR %DB100.DBX38.6 THEN
+	    // przełączniki bistabilny każdy stan Hi powoduje zmianę przełącznika
+	    #set_aut_man_Z11 := TRUE;
+	  ELSE
+	    #set_aut_man_Z11 := FALSE
+	    ;
+	  END_IF;
+	  
+	  IF %DB100.DBX28.0 = FALSE THEN
+	    // przełącznik bistabilny
+	    "R_TRIG_DB_AUT_Z11"(CLK := #set_aut_man_Z11,
+	                        Q => #setTrig_Z11);
+	    ;
+	  END_IF;
+	  //przełącz na automay
+	  IF #setTrig_Z11 = TRUE AND %DB100.DBX39.2 = TRUE THEN
+	    %DB100.DBX28.7 := TRUE;
+	    ;
+	  END_IF;
+	  //przełącz na manual
+	  IF #setTrig_Z11 = TRUE AND %DB100.DBX38.6 = TRUE THEN
+	    %DB100.DBX28.7 := FALSE;
+	    ;
+	  END_IF;
+	  
+	  IF (%DB100.DBX29.7 AND %DB100.DBX39.2) OR (%DB100.DBX29.7 = FALSE AND %DB100.DBX38.6) THEN
+	    // Wyczyść całą zmienną
+	    "dbHoldRegSlave_to_MT101".instConrol_ManAut_2 := 0;
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_2 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 0;
+	    // Kasowanie bitu 
+	    %DB100.DBX39.2 := False;
+	    %DB100.DBX38.6 := FALSE
+	    ;
+	  END_IF;
+	  
+	  // Otwórz/
+	  // przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  IF %DB100.DBX35.2 THEN
+	    %DB100.DBX28.4 := %DB100.DBX35.2; //ustawienie bitu otwieranie
+	    ;
+	  END_IF;
+	  IF %DB100.DBX35.2 AND %DB100.DBX29.1 THEN
+	    //jeśli ustawiony bit otwierania z modbus i potwierdzone otwarcie 
+	    %DB100.DBX35.2 := FALSE; // kasuj bit roskazu
+	    ;
+	  END_IF;
+	  //Zamknij
+	  //przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  IF %DB100.DBX34.6 THEN
+	    %DB100.DBX28.5 := %DB100.DBX34.6; //ustawienie bitu zamykanie
+	    ;
+	  END_IF;
+	  IF %DB100.DBX34.6 AND %DB100.DBX29.3 = FALSE THEN
+	    //jeśli ustawiony bit zamykaniez modbus i potwierdzone zamknięcie 
+	    %DB100.DBX34.6 := FALSE; // kasuj bit roskazu
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	
+	REGION //Drive Motor Z12 ustaw na  Automat/Manual/Otwieranie/Zamykanie
+	  IF %DB100.DBX39.3 OR %DB100.DBX38.7 THEN
+	    // przełączniki bistabilny każdy stan Hi powoduje zmianę przełącznika
+	    #set_aut_man_Z12 := TRUE;
+	  ELSE
+	    #set_aut_man_Z12 := FALSE
+	    ;
+	  END_IF;
+	  
+	  IF %DB100.DBX30.0 = FALSE THEN
+	    // przełącznik bistabilny
+	    "R_TRIG_DB_AUT_Z12"(CLK := #set_aut_man_Z12,
+	                        Q => #setTrig_Z12);
+	    ;
+	  END_IF;
+	  // przełącz na automat
+	  IF #setTrig_Z12 = TRUE AND %DB100.DBX39.3 = TRUE THEN
+	    %DB100.DBX30.7 := TRUE;
+	    ;
+	  END_IF;
+	  // przełącz na manual
+	  IF #setTrig_Z12 = TRUE AND %DB100.DBX38.7 = TRUE THEN
+	    %DB100.DBX30.7 := FALSE;
+	    ;
+	  END_IF;
+	  
+	  IF (%DB100.DBX31.7 AND %DB100.DBX39.3) OR (%DB100.DBX31.7 = FALSE AND %DB100.DBX38.7) THEN
+	    // Wyczyść całą zmienną
+	    "dbHoldRegSlave_to_MT101".instConrol_ManAut_2 := 0;
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_2 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 0;
+	    // Kasowanie bitu 
+	    %DB100.DBX39.3 := FALSE;
+	    %DB100.DBX38.7:= FALSE
+	    ;
+	  END_IF;
+	  
+	  // Otwórz/
+	  // przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  IF %DB100.DBX35.3 THEN
+	    %DB100.DBX30.4 := %DB100.DBX35.3; //ustawienie bitu otwieranie
+	    ;
+	  END_IF;
+	  IF %DB100.DBX35.3 AND %DB100.DBX31.1 THEN
+	    //jeśli ustawiony bit otwierania z modbus i potwierdzone otwarcie 
+	    %DB100.DBX35.3 := FALSE; // kasuj bit roskazu
+	    ;
+	  END_IF;
+	  //Zamknij
+	  //przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  IF %DB100.DBX34.7 THEN
+	    %DB100.DBX30.5 := %DB100.DBX34.7; //ustawienie bitu zamykanie
+	    ;
+	  END_IF;
+	  %DB100.DBX30.5 := %DB100.DBX34.7; //ustawienie bitu zamykanie
+	  IF %DB100.DBX34.7 AND %DB100.DBX31.3 = FALSE THEN
+	    //jeśli ustawiony bit zamykaniez modbus i potwierdzone zamknięcie 
+	    %DB100.DBX34.7 := FALSE; // kasuj bit roskazu
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	
+	(* 
+	 ------------------------------------------------------------------------
+	 
+	Część obsługi PLC-2 obsługa czyszczenia zmiennych po odebraniu potwierdzeń  
+	---------------------------------------------------------------------------
+	*)
+	
+	REGION //Drive Motor Z1 ustaw na  Automat/Manual
+	  //sprawdzenie czy wyłano polecenie przełaczenia w Aut i czy bit Aut napędu jest True
+	  IF ("dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_1 = 256 AND %DB100.DBX8.7)
+	    OR
+	    //sprawdzenie czy wyłano polecenie przełaczenia w Man i czy bit Aut napędu jest False
+	    ("dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_2 = 16 AND %DB100.DBX8.7 = FALSE)
+	  THEN
+	    // Jeśli któryś z warunków spełniony wyczyść 
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_1 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_1 := 0;
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_2 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 0;
+	    
+	  END_IF;
+	  
+	  //  przesyłanie rozkazów OTWIERANIE - ZAMYKANIE
+	  //------------OTWIERANIE - ZAMYKANIE
+	  //sprawdzenie czy wyłano polecenie otwieranie i czy bit otwieranie jest True
+	  IF ("dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_1 = 256 AND %DB100.DBX8.1)
+	    OR
+	    //sprawdzenie czy wyłano polecenie zamykanie i czy bit zamykanie jest true
+	    ("dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_2 = 16 AND %DB100.DBX8.3)
+	  THEN
+	    // Jeśli któryś z warunków spełniony wyczyść 
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_1 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_sterowania_napęami_1 := 0;
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_2 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_sterowania_napęami_2 := 0;
+	  END_IF;
+	  
+	  
+	END_REGION
+	
+	REGION //Drive Motor Z2 ustaw na  Automat/Manual
+	  IF ("dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_1 = 512 AND %DB100.DBX10.7)
+	    OR
+	    ("dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_2 = 32 AND %DB100.DBX10.7 = FALSE)
+	  THEN
+	    // Wyczyść całą zmienną
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_1 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_1 := 0;
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_2 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 0;
+	    ;
+	  END_IF;
+	  
+	    //  przesyłanie rozkazów OTWIERANIE - ZAMYKANIE
+	  //------------OTWIERANIE - ZAMYKANIE
+	  //sprawdzenie czy wyłano polecenie otwieranie i czy bit otwieranie jest True
+	  IF ("dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_1 = 512 AND %DB100.DBX10.1)
+	    OR
+	    //sprawdzenie czy wyłano polecenie zamykanie i czy bit zamykanie jest true
+	    ("dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_2 = 32 AND %DB100.DBX10.3)
+	  THEN
+	    // Jeśli któryś z warunków spełniony wyczyść 
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_1 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_sterowania_napęami_1 := 0;
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_2 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_sterowania_napęami_2 := 0;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION //Drive Motor Z3 ustaw na  Automat/Manual
+	  IF ("dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_1 = 1024 AND %DB100.DBX12.7)
+	    OR
+	    ("dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_2 = 64 AND %DB100.DBX12.7 = FALSE)
+	  THEN
+	    // Wyczyść całą zmienną
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_1 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_1 := 0;
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_2 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 0;
+	    ;
+	  END_IF;
+	  
+	  //  przesyłanie rozkazów OTWIERANIE - ZAMYKANIE
+	  //------------OTWIERANIE - ZAMYKANIE
+	  //sprawdzenie czy wyłano polecenie otwieranie i czy bit otwieranie jest True
+	  IF ("dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_1 = 1024 AND %DB100.DBX12.1)
+	    OR
+	    //sprawdzenie czy wyłano polecenie zamykanie i czy bit zamykanie jest true
+	    ("dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_2 = 64 AND %DB100.DBX12.3)
+	  THEN
+	    // Jeśli któryś z warunków spełniony wyczyść 
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_1 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_sterowania_napęami_1 := 0;
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_2 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_sterowania_napęami_2 := 0;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION //Drive Motor Z4 ustaw na  Automat/Manual
+	  IF ("dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_1 = 2048 AND %DB100.DBX14.7)
+	    OR
+	    ("dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_2 = 128 AND %DB100.DBX14.7 = FALSE)
+	  THEN
+	    // Wyczyść całą zmienną
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_1 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_1 := 0;
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_2 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 0;
+	    ;
+	  END_IF;
+	  
+	  //  przesyłanie rozkazów OTWIERANIE - ZAMYKANIE
+	  //------------OTWIERANIE - ZAMYKANIE
+	  //sprawdzenie czy wyłano polecenie otwieranie i czy bit otwieranie jest True
+	  IF ("dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_1 = 2048 AND %DB100.DBX14.1)
+	    OR
+	    //sprawdzenie czy wyłano polecenie zamykanie i czy bit zamykanie jest true
+	    ("dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_2 = 128 AND %DB100.DBX14.3)
+	  THEN
+	    // Jeśli któryś z warunków spełniony wyczyść 
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_1 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_sterowania_napęami_1 := 0;
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_2 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_sterowania_napęami_2 := 0;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION //Drive Motor Z5 ustaw na Automat/Manual
+	  IF ("dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_1 = 4096 AND %DB100.DBX16.7)
+	    OR
+	    ("dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_2 = 256 AND %DB100.DBX16.7 = FALSE)
+	  THEN
+	    // Wyczyść całą zmienną
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_1 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_1 := 0;
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_2 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 0;
+	    ;
+	  END_IF;
+	  
+	  //  przesyłanie rozkazów OTWIERANIE - ZAMYKANIE
+	  //------------OTWIERANIE - ZAMYKANIE
+	  //sprawdzenie czy wyłano polecenie otwieranie i czy bit otwieranie jest True
+	  IF ("dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_1 = 4096 AND %DB100.DBX16.1)
+	    OR
+	    //sprawdzenie czy wyłano polecenie zamykanie i czy bit zamykanie jest true
+	    ("dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_2 = 256 AND %DB100.DBX16.3)
+	  THEN
+	    // Jeśli któryś z warunków spełniony wyczyść 
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_1 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_sterowania_napęami_1 := 0;
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_2 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_sterowania_napęami_2 := 0;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION //Drive Motor Z6 ustaw na  Automat/Manual
+	  IF ("dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_1 = 8192 AND %DB100.DBX18.7)
+	    OR
+	    ("dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_2 = 512 AND %DB100.DBX18.7 = FALSE)
+	  THEN
+	    // Wyczyść całą zmienną
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_1 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_1 := 0;
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_2 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 0;
+	    ;
+	  END_IF;
+	  
+	  //  przesyłanie rozkazów OTWIERANIE - ZAMYKANIE
+	  //------------OTWIERANIE - ZAMYKANIE
+	  //sprawdzenie czy wyłano polecenie otwieranie i czy bit otwieranie jest True
+	  IF ("dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_1 = 8192 AND %DB100.DBX18.1)
+	    OR
+	    //sprawdzenie czy wyłano polecenie zamykanie i czy bit zamykanie jest true
+	    ("dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_2 = 512 AND %DB100.DBX18.3)
+	  THEN
+	    // Jeśli któryś z warunków spełniony wyczyść 
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_1 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_sterowania_napęami_1 := 0;
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_2 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_sterowania_napęami_2 := 0;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION //Drive Motor Z7 ustaw na  Automat/Manual
+	  IF ("dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_1 = 16384 AND %DB100.DBX20.7)
+	    OR
+	    ("dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_2 = 1024 AND %DB100.DBX20.7 = FALSE)
+	  THEN
+	    // Wyczyść całą zmienną
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_1 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_1 := 0;
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_2 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 0;
+	    ;
+	  END_IF;
+	  
+	  //  przesyłanie rozkazów OTWIERANIE - ZAMYKANIE
+	  //------------OTWIERANIE - ZAMYKANIE
+	  //sprawdzenie czy wyłano polecenie otwieranie i czy bit otwieranie jest True
+	  IF ("dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_1 = 16384 AND %DB100.DBX20.1)
+	    
+	    OR
+	    //sprawdzenie czy wyłano polecenie zamykanie i czy bit zamykanie jest true
+	    ("dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_2 = 1024 AND %DB100.DBX20.3)
+	  THEN
+	    // Jeśli któryś z warunków spełniony wyczyść 
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_1 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_sterowania_napęami_1 := 0;
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_2 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_sterowania_napęami_2 := 0;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION //Drive Motor Z8 ustaw na Automat/Manual
+	  IF ("dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_1 = 32768 AND %DB100.DBX22.7)
+	    OR
+	    ("dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_2 = 2048 AND %DB100.DBX22.7 = FALSE)
+	  THEN
+	    // Wyczyść całą zmienną
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_1 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_1 := 0;
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_2 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 0;
+	    ;
+	  END_IF;
+	  
+	  //  przesyłanie rozkazów OTWIERANIE - ZAMYKANIE
+	  //------------OTWIERANIE - ZAMYKANIE
+	  //sprawdzenie czy wyłano polecenie otwieranie i czy bit otwieranie jest True
+	  IF ("dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_1 = 32768 AND %DB100.DBX22.1)
+	    OR
+	    //sprawdzenie czy wyłano polecenie zamykanie i czy bit zamykanie jest true
+	    ("dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_2 = 2048 AND %DB100.DBX22.3)
+	  THEN
+	    // Jeśli któryś z warunków spełniony wyczyść 
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_1 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_sterowania_napęami_1 := 0;
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_2 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_sterowania_napęami_2 := 0;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION //Drive Motor Z9 ustaw na  Automat/Manual
+	  IF ("dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_2 = 1 AND %DB100.DBX24.7)
+	    OR
+	    ("dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_2 = 4096 AND %DB100.DBX24.7 = FALSE)
+	  THEN
+	    // Wyczyść całą zmienną
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_2 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 0;
+	    ;
+	  END_IF;
+	  
+	  //  przesyłanie rozkazów OTWIERANIE - ZAMYKANIE
+	  //------------OTWIERANIE - ZAMYKANIE
+	  //sprawdzenie czy wyłano polecenie otwieranie i czy bit otwieranie jest True
+	  IF ("dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_2 = 1 AND %DB100.DBX24.1)
+	    OR
+	    //sprawdzenie czy wyłano polecenie zamykanie i czy bit zamykanie jest true
+	    ("dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_2 = 4096 AND %DB100.DBX24.3)
+	  THEN
+	    // Jeśli któryś z warunków spełniony wyczyść 
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_2 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_sterowania_napęami_2 := 0;
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_1 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_sterowania_napęami_1 := 0;
+	  END_IF;
+	  
+	
+	  
+	END_REGION
+	
+	REGION //Drive Motor Z10 ustaw na  Automat/Manual
+	  IF ("dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_2 = 2 AND %DB100.DBX26.7)
+	    OR
+	    ("dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_2 = 8192 AND %DB100.DBX26.7 = FALSE)
+	  THEN
+	    // Wyczyść całą zmienną
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_tryb_napędów_2 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_tryb_napędów_2 := 0;
+	    ;
+	  END_IF;
+	  
+	  //  przesyłanie rozkazów OTWIERANIE - ZAMYKANIE
+	  //------------OTWIERANIE - ZAMYKANIE
+	  //sprawdzenie czy wyłano polecenie otwieranie i czy bit otwieranie jest True
+	  IF ("dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_2 = 2 AND %DB100.DBX26.1)
+	    OR
+	    //sprawdzenie czy wyłano polecenie zamykanie i czy bit zamykanie jest true
+	    ("dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_2 = 8192 AND %DB100.DBX26.3)
+	  THEN
+	    // Jeśli któryś z warunków spełniony wyczyść 
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_2 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_sterowania_napęami_2 := 0;
+	    "dbHold_Sending_TCP".Sending_Hold.set_bity_sterowania_napęami_1 := 0;
+	    "dbHold_RRG".Sending.set_res_bity_sterowania_napęami_1 := 0;
+	  END_IF;
+	  
+	END_REGION
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	  
+	
+	
+	
+	
+END_FUNCTION_BLOCK
+

@@ -1,0 +1,101 @@
+﻿FUNCTION_BLOCK "Alarm_min_magistrala_B5"
+TITLE = Start procedury awarujnego pompowania
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rt69
+VERSION : 0.1
+//Funkcja rozpoczyna procedurę awaryjnego sterowaia zasilaniem na magistralę 
+   VAR_OUTPUT 
+      bit_alarm_magistrala_min { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool := false;   // bit alarmmagistrala awaria niskie ciśnienie
+   END_VAR
+
+   VAR_IN_OUT 
+      bit_off_alarm_niskie_magistrala { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool;   // bit koniec alarmu niskie bar magistrala
+      "tempStrategia Pompownia" : Int := 16#0;   // przechwycone słowo strategii pompownia
+      "actStrategia Pompownia" : Int;   // Słowo reprezentujące strategie sterowania pompownią (wyłączona , przetłaczanie , dosilanie,automat)
+   END_VAR
+
+   VAR 
+      memTriger_Strategia { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool;   // pamięć zbocza
+      bit_normalne_magistrala { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool;   // bit detekcjinormalnego cisnienia magistrala
+      bit_niskie_magistrala { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool;   // bit detekcji niskiego cisnienia magistrala
+   END_VAR
+
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.4)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+	//Funkcjonalnośc: (kontrola cisnienia magistrali, sterowanie strategią gdy 
+	                    awaria ciśnienia B5 i powrót poprawnego)
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 17.11.2021 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	
+	
+	REGION Kontrola  cięnieia magistrali, alarm niskie magistrala czujnik B5
+	  
+	  // Kontrola ciśnienia zasilania z magistrali B5
+	  // Detekcja zaistnienia awarii zasilania na magistrali
+	  IF "dbdane".Act_Value_B5_magistrala_bar < "dbHold_RRG".Sending.set_magistrala_alarm_min_bar THEN
+	    // Ustaw bit za niskie ciśnienie
+	    #bit_niskie_magistrala := TRUE;
+	  ELSE
+	    
+	    ;
+	  END_IF;
+	  
+	  "R_TRIG_DB_przechwycenie_strategii"(CLK := #bit_niskie_magistrala,
+	                                      Q => #memTriger_Strategia);
+	  IF #memTriger_Strategia THEN
+	    // zatrzaśniecie przechwyconą strategię 
+	    #"tempStrategia Pompownia" := #"actStrategia Pompownia";
+	    IF #"tempStrategia Pompownia" = 0 THEN
+	      // to wpisz domyślną 2
+	      #"tempStrategia Pompownia" := 2;
+	      ;
+	    END_IF;
+	    
+	    ;
+	  END_IF;
+	  
+	  // Histereza na ustawienie alarmu "niskie ćiśnienie na magistrali"
+	  "IEC_Timer_AlarmMagistrala_Niskie_DB".TON(IN := #bit_niskie_magistrala,
+	                                            PT := T#14M,
+	                                            Q => #bit_alarm_magistrala_min);
+	  
+	  
+	  
+	  // Sprawdzanie powrotu zasilania z magistrali czujnik B5
+	  IF "dbdane".Act_Value_B5_magistrala_bar > 7.4 THEN
+	    // Ustaw bit za normalne ciśnienie
+	    #bit_normalne_magistrala := TRUE;
+	    
+	  ELSE
+	    #bit_normalne_magistrala := FALSE;
+	    ;
+	  END_IF;
+	  
+	  //Histerez na powrót normalnego zasilania z magistrali
+	  "IEC_Timer_resetAlarmMagistrala_Niskie_DB".TON(IN := #bit_normalne_magistrala,
+	                                                 Q => #bit_off_alarm_niskie_magistrala,
+	                                                 PT := T#4M);
+	  
+	  IF #bit_off_alarm_niskie_magistrala THEN
+	    // kasuj alarm niskie magistrala
+	    #bit_niskie_magistrala := FALSE;
+	    ;
+	  END_IF;
+	  
+	END_REGION
+END_FUNCTION_BLOCK
+

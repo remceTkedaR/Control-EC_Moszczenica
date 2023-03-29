@@ -1,0 +1,116 @@
+﻿FUNCTION "OUT" : Void
+TITLE = OUT 
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Mapowamie i wyzwalanie wyjść 
+
+BEGIN
+	(*
+	Sterowanie przekaźnikami sieć, falownik pompy 
+	Sprawdzanie wyjść sterowniak i przekazanie sygnałów 
+	*)
+	
+	
+	
+	REGION Sygnalizacja Awarii
+	  
+	  // Wijścia przekaźnikowe sygnalizacja awarii
+	  //Pomp Zasuw Falownika Soft-start
+	  "Q3.5" := "CMD_faultInverter";
+	  "Q0.3" := "CMD_faultP1";
+	  "Q0.7" := "CMD_faultP2";
+	  "Q2.1" := "CMD_faultP3";
+	  "Q2.5" := "CMD_faultP4";
+	  
+	END_REGION
+	
+	REGION "inverter"
+	  // Przekazanie wartości
+	  "Q2.6" := "CMD_start_stop_inverter";
+	  
+	END_REGION
+	
+	
+	REGION Styczniki P1
+	  // Przekazanie wartości
+	  "Q0.1" := "CMD_inverter_P1";
+	  "Q0.0" := "CMD_network_P1";
+	  "Q0.2" := "CMD_soft_P1";
+	  "Q4.0" := "resetFault_SoftStart_P1";
+	 
+	END_REGION
+	
+	REGION Styczniki P2
+	  // Przekazanie wartości
+	  "Q0.5" := "CMD_inverter_P2";
+	  "Q0.4" := "CMD_network_P2";
+	  "Q0.6" := "CMD_soft_P2";
+	  "Q4.1" := "resetFault_SoftStart_P2";
+	  
+	END_REGION
+	
+	REGION Styczniki P3
+	  // Przekazanie wartości
+	  "Q1.1" := "CMD_inverter_P3";
+	  "Q1.0" := "CMD_network_P3";
+	  "Q2.0" := "CMD_soft_P3";
+	  "Q4.2" := "resetFault_SoftStart_P3";
+	  
+	END_REGION
+	
+	REGION Styczniki P4
+	  // Przekazanie wartości
+	  "Q2.3" := "CMD_inverter_P4";
+	  "Q2.2" := "CMD_network_P4";
+	  "Q2.4" := "CMD_soft_P4";
+	  "Q4.3" := "resetFault_SoftStart_P4";
+	  
+	END_REGION
+	
+	REGION Zasuwa Z11
+	  // Przekazanie wartości
+	  //Otwieranie
+	  "Q2.7" := "CMD_Open_Z11";
+	  //Zamykanie
+	  "Q3.0" := "CMD_Close_Z11";
+	  // Awaria
+	  "Q3.1" := NOT("isReadyZ11");
+	  
+	END_REGION
+	
+	REGION Zasuwa Z12
+	  // Przekazanie wartości
+	  //Otwieranie
+	  "Q3.2" := "CMD_Open_Z12";
+	  //Zamykanie
+	  "Q3.3" := "CMD_Close_Z12";
+	  //Awaria
+	 
+	  "Q3.4" := NOT("isReadyZ12");
+	  
+	END_REGION
+	  
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	 
+	
+	
+	
+	
+	 
+	 
+	
+	 
+	 
+	 
+END_FUNCTION
+

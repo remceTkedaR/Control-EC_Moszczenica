@@ -1,0 +1,128 @@
+﻿FUNCTION_BLOCK "Kontrola Hz w trybie awayjnym od barMax"
+TITLE = Handing Oxygen Pressure Max
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Sterowanie wydajnością invertera KDN w czasie wystąpienia alarmu od ciśnienia, przeciążenia
+   VAR_INPUT 
+      Value_Max : Bool;   // Znacznik Alarmowej wartości
+      My_1Hz : Bool;
+      Act_Hz : Real;   // Aktualne Hz przechwycone
+      IsMotor2Set : Bool;   // Znacznik pierwszej pompy dodatkowej
+      IsMotor3Set : Bool;   // Znacznik drugiej pompy dodatkowej
+      IsMotor4Set : Bool;   // Znacznik drugiej pompy dodatkowej
+      IsReadyinverter1 : Bool;   // Gotowość falownika 1
+   END_VAR
+
+   VAR_OUTPUT 
+      Value_Manual_Hz : Real := 10.0;   // Wartość procentowa [%}  Hz zadawanych w trybie awaryjnym
+      Rst_Motor2 : Bool;   // Znacznik wyłaczenia awayjnego dodatkowej pompy pierwszej
+      Rst_Motor3 : Bool;   // Znacznik wyłaczenia awayjnego dodatkowej pompy drugiej
+      Rst_Motor4 : Bool;   // Znacznik wyłaczenia awayjnego dodatkowej pompy drugiej
+      Rst_Driver : Bool := false;   // Znacznik wyłaczenia awayjnego
+   END_VAR
+
+   VAR_TEMP 
+      set_NewValue : Bool;
+      index : Bool;
+      CV : Int;
+      load_cunt : Bool;
+      tmp_Hz : Real;   // Wartość Hz zatrzaśnięta do obliczeń
+      cnt_Hz : Real;   // Zmienna Hz do przeliczania w procesie sterowani podczas awarii
+      mem_Triger_Alarm : Bool;   // Pamięć zbocza narastającego wytąpienia alarmu
+   END_VAR
+
+   VAR CONSTANT 
+      PV : Int := 30;   // Wartość procentowa licznika ładowanego dla Generacji wartości [%] Hz
+   END_VAR
+
+
+BEGIN
+	(*
+	Kontrola wartości zadanej Hz w trybie pracy awaryjnej od max 
+	ciśnienia  w przewodzie
+	*)
+	
+	// Wyłączenie pompy pracującej w trybie sterowania awaryjnego bez falownika
+	IF #IsReadyinverter1 = FALSE AND #Value_Max = TRUE THEN
+	  // Ustaw znacznik wyłączenie awaryjnego
+	  #Rst_Driver := TRUE;
+	ELSE
+	  #Rst_Driver := FALSE;
+	END_IF;
+	
+	IF #IsReadyinverter1 THEN
+	  // Blokowanie znacznika wyłączenia awaryjnego
+	  #Rst_Driver := FALSE;
+	END_IF;
+	
+	
+	
+	IF #Value_Max AND #IsMotor2Set AND #IsMotor3Set THEN
+	  #Rst_Motor3 := TRUE;
+	ELSE
+	  #Rst_Motor3 := FALSE;
+	END_IF;
+	
+	IF #Value_Max AND #IsMotor2Set AND (#IsMotor3Set = FALSE) THEN
+	  #Rst_Motor2 := TRUE;
+	ELSE
+	  #Rst_Motor2 := FALSE;
+	END_IF;
+	
+	IF #Value_Max AND #IsMotor4Set  THEN
+	  #Rst_Motor4 := TRUE;
+	ELSE
+	  #Rst_Motor4 := FALSE;
+	END_IF;
+	
+	
+	IF "IEC_Counter_ControlAlarm_DB".CV > 55 THEN
+	  // jeśli licznik doliczył do 55 to wyłaczenie zliczania
+	  #load_cunt := FALSE;
+	ELSE
+	  #load_cunt := TRUE;
+	  ;
+	END_IF;
+	
+	
+	REGION Licznik opóźnienie wstawienia nowej wartości Hz
+	  
+	  // Nalicznie nowej wartości Hz
+	  IF #Value_Max THEN
+	    #index := "My_1Hz";
+	    "IEC_Counter_ControlAlarm_DB".CTD(CD:=#index,
+	                                      LD:= #load_cunt,
+	                                      PV:= #PV,
+	                                      Q=> #set_NewValue,
+	                                      CV=> #CV);
+	
+	    
+	    
+	    // Przekazanie nowej naliczonej wartości
+	    IF #set_NewValue = FALSE AND #Value_Max AND  (#IsMotor2Set= FALSE) AND (#IsMotor3Set= FALSE)  THEN
+	      // Przekazanie do bloku danych nowej wartości
+	      
+	        #Value_Manual_Hz := #CV;
+	        "dbdane".tmp_Hz_ModeAlarm :=  #Value_Manual_Hz;
+	        
+	      ELSE
+	        ;
+	      END_IF;
+	    END_IF;
+	    
+	  
+	  IF #Value_Max = False THEN
+	    #Value_Manual_Hz := 5.0;
+	    
+	  END_IF;
+	    
+	   
+	  
+	END_REGION
+	
+	
+	
+	
+END_FUNCTION_BLOCK
+

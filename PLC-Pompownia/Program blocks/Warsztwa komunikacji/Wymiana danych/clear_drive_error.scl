@@ -1,0 +1,239 @@
+﻿FUNCTION "clear_drive_error" : Void
+TITLE = Modbus RTU Master do Slave przetwarzanie 
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Funkcja przetwarz przekazane sygnały kasowania alarmów z mastera Modbus RTU (MT101) i wykonuje operację
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.2)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1214 FW 3.2 .)
+	//Funkcjonalnośc: (Pzetwarzanie sygnałów z MT101 protokołem Modbus RTU. 
+	                    Kasowanie alarów)
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 17.11.2021 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	//--- Kasowanie Alarmu Napędów
+	
+	//Ustawienie bitu Reset dla Drive Motor 1
+	%DB100.DBX0.6 := %DB100.DBX51.0;
+	IF %DB100.DBX1.0 = FALSE AND %DB100.DBX51.0 = TRUE  THEN
+	  // ustaw automat
+	  %DB100.DBX0.7 := TRUE;
+	  // Kasowanie bitu RESET Driver i Modbus bit Reset
+	  %DB100.DBX0.0 := FALSE;
+	  %DB100.DBX51.0 := False;
+	  ;
+	END_IF;
+	
+	//Ustawienie bitu Reset dla Drive Motor 2
+	%DB100.DBX2.6 := %DB100.DBX51.1;
+	IF %DB100.DBX1.0 = FALSE AND %DB100.DBX51.1 =TRUE  THEN
+	  // ustaw automat
+	  %DB100.DBX2.7 := TRUE;
+	  // Kasowanie bitu RESET Driver i Modbus bit Reset
+	  %DB100.DBX2.0 := FALSE;
+	  %DB100.DBX51.1 := False;
+	  ;
+	END_IF;
+	
+	//Ustawienie bitu Reset dla Drive Motor 3
+	%DB100.DBX4.6 := %DB100.DBX51.2;
+	IF %DB100.DBX4.0 = FALSE AND  %DB100.DBX51.2 = TRUE THEN
+	  // ustaw automat
+	  %DB100.DBX4.7 := TRUE;
+	  // Kasowanie bitu RESET Driver i Modbus bit Reset
+	  %DB100.DBX4.0 := FALSE;
+	  %DB100.DBX51.2 := False;
+	  ;
+	END_IF;
+	
+	//Ustawienie bitu Reset dla Drive Motor 4
+	%DB100.DBX6.6 := %DB100.DBX51.3;
+	IF %DB100.DBX6.0 = FALSE AND %DB100.DBX51.3 = TRUE THEN
+	  // ustaw automat
+	  %DB100.DBX6.7 := TRUE;
+	  // Kasowanie bitu RESET Driver i Modbus bit Reset
+	  %DB100.DBX6.0 := FALSE;
+	  %DB100.DBX51.3 := False;
+	  ;
+	END_IF;
+	
+	
+	//Ustawienie bitu Reset dla Drive Z11
+	%DB100.DBX28.6 := %DB100.DBX50.6;
+	IF %DB100.DBX28.0 = FALSE AND %DB100.DBX50.6 = TRUE THEN
+	  // ustaw automat
+	  %DB100.DBX28.7 := TRUE;
+	  // Kasowanie bitu RESET Driver i Modbus bit Reset
+	  %DB100.DBX28.0 := FALSE;
+	  %DB100.DBX50.6 := False;
+	  ;
+	END_IF;
+	
+	//Ustawienie bitu Reset dla Drive Z12
+	%DB100.DBX30.6 := %DB100.DBX50.7;
+	IF %DB100.DBX30.0 = FALSE AND %DB100.DBX50.7 =  TRUE THEN
+	  // ustaw automat
+	  %DB100.DBX30.7 := TRUE;
+	  // Kasowanie bitu RESET Driver i Modbus bit Reset
+	  %DB100.DBX30.0 := FALSE;
+	  %DB100.DBX50.7 := False;
+	  ;
+	END_IF;
+	
+	// Region Zasuwy Z1 - Z10 Zbiorniki 
+	//******* 
+	CASE "dbHoldRegSlave_to_MT101".instClearFault1 OF
+	  16:  // Ustawienie bitu Reset dla Drive Z1
+	    "dbHold_RRG".Sending.rez_alarm_napędów := 16;
+	    
+	    ;
+	  32:  // Ustawienie bitu Reset dla Drive Z2
+	    "dbHold_RRG".Sending.rez_alarm_napędów := 32;
+	    ;
+	  64:  //Ustawienie bitu Reset dla Drive Z3
+	    "dbHold_RRG".Sending.rez_alarm_napędów := 64;
+	    ;
+	  128:  //Ustawienie bitu Reset dla Drive Z4
+	    "dbHold_RRG".Sending.rez_alarm_napędów := 128;
+	    ;
+	  256:  //Ustawienie bitu Reset dla Drive Z5
+	    "dbHold_RRG".Sending.rez_alarm_napędów := 256;
+	    ;
+	  512:  //Ustawienie bitu Reset dla Drive Z6
+	    "dbHold_RRG".Sending.rez_alarm_napędów := 512;
+	    ;
+	  1024:  //Ustawienie bitu Reset dla Drive Z7
+	    "dbHold_RRG".Sending.rez_alarm_napędów := 1024;
+	    ;
+	  2048:  //Ustawienie bitu Reset dla Drive Z8
+	    "dbHold_RRG".Sending.rez_alarm_napędów := 2048;
+	    ;
+	  4096:  //Ustawienie bitu Reset dla Drive Z9
+	    "dbHold_RRG".Sending.rez_alarm_napędów := 4096;
+	    ;
+	  8192:  //Ustawienie bitu Reset dla Drive Z10
+	    "dbHold_RRG".Sending.rez_alarm_napędów := 8192;
+	    ;
+	
+	    ;
+	  ELSE  // Statement section ELSE
+	    ;
+	END_CASE;
+	
+	
+	// Potwierdzenie resetu alarmu Z1. Jeśli brak alarmu to wyczyść bity
+	IF %DB100.DBX8.0 = FALSE  AND %DB100.DBX51.4 THEN
+	  // Kasowanie bitu RESET Driver i Modbus bit Reset
+	  "dbHold_RRG".Sending.rez_alarm_napędów := 0;
+	  %DB100.DBX8.0 := FALSE; // bit alarm
+	  %DB100.DBX51.4 := False; // bit reset
+	  ;
+	END_IF;
+	
+	// Potwierdzenie resetu alarmu Z2. Jeśli brak alarmu to wyczyść bity
+	IF %DB100.DBX10.0 = FALSE AND %DB100.DBX51.5 THEN
+	  // Kasowanie bitu RESET Driver i Modbus bit Reset
+	  "dbHold_RRG".Sending.rez_alarm_napędów := 0;
+	  %DB100.DBX10.0 := FALSE; // bit alarm
+	  %DB100.DBX51.5 := False; // bit reset
+	  ;
+	END_IF;
+	
+	// Potwierdzenie resetu alarmu Z3. Jeśli brak alarmu to wyczyść bity
+	IF %DB100.DBX12.0 = FALSE AND %DB100.DBX51.6 THEN
+	  // Kasowanie bitu RESET Driver i Modbus bit Reset
+	  "dbHold_RRG".Sending.rez_alarm_napędów := 0;
+	  %DB100.DBX12.0 := FALSE; // bit alarm
+	  %DB100.DBX51.6 := False; // bit reset
+	  ;
+	END_IF;
+	
+	// Potwierdzenie resetu alarmu Z4. Jeśli brak alarmu to wyczyść bity
+	IF %DB100.DBX14.0 = FALSE AND %DB100.DBX51.7 THEN
+	  // Kasowanie bitu RESET Driver i Modbus bit Reset
+	  "dbHold_RRG".Sending.rez_alarm_napędów := 0;
+	  %DB100.DBX14.0 := FALSE; // bit alarm
+	  %DB100.DBX51.7 := False; // bit reset
+	  ;
+	END_IF;
+	
+	// Potwierdzenie resetu alarmu Z5. Jeśli brak alarmu to wyczyść bity
+	IF %DB100.DBX16.0 = FALSE AND %DB100.DBX50.0 THEN
+	  // Kasowanie bitu RESET Driver i Modbus bit Reset
+	  "dbHold_RRG".Sending.rez_alarm_napędów := 0;
+	  %DB100.DBX16.0 := FALSE; // bit alarm
+	  %DB100.DBX50.0 := False; // bit reset
+	  ;
+	END_IF;
+	
+	// Potwierdzenie resetu alarmu Z6. Jeśli brak alarmu to wyczyść bity
+	IF %DB100.DBX18.0 = FALSE AND %DB100.DBX50.1 THEN
+	  // Kasowanie bitu RESET Driver i Modbus bit Reset
+	  "dbHold_RRG".Sending.rez_alarm_napędów := 0;
+	  %DB100.DBX18.0 := FALSE; // bit alarm
+	  %DB100.DBX50.1 := False; // bit reset
+	  ;
+	END_IF;
+	
+	// Potwierdzenie resetu alarmu Z7. Jeśli brak alarmu to wyczyść bity
+	IF %DB100.DBX20.0 = FALSE AND %DB100.DBX50.2 THEN
+	  // Kasowanie bitu RESET Driver i Modbus bit Reset
+	  "dbHold_RRG".Sending.rez_alarm_napędów := 0;
+	  %DB100.DBX20.0 := FALSE; // bit alarm
+	  %DB100.DBX50.2 := False; // bit reset
+	  ;
+	END_IF;
+	
+	// Potwierdzenie resetu alarmu Z8. Jeśli brak alarmu to wyczyść bity
+	IF %DB100.DBX22.0 = FALSE AND %DB100.DBX50.3 THEN
+	  // Kasowanie bitu RESET Driver i Modbus bit Reset
+	  "dbHold_RRG".Sending.rez_alarm_napędów := 0;
+	  %DB100.DBX22.0 := FALSE; // bit alarm
+	  %DB100.DBX50.3 := False; // bit reset
+	  ;
+	END_IF;
+	
+	// Potwierdzenie resetu alarmu Z9. Jeśli brak alarmu to wyczyść bity
+	IF %DB100.DBX24.0 = FALSE AND %DB100.DBX50.4 THEN
+	  // Kasowanie bitu RESET Driver i Modbus bit Reset
+	  "dbHold_RRG".Sending.rez_alarm_napędów := 0;
+	  %DB100.DBX24.0 := FALSE; // bit alarm
+	  %DB100.DBX50.4 := False; // bit reset
+	  ;
+	END_IF;
+	
+	// Potwierdzenie resetu alarmu Z10. Jeśli brak alarmu to wyczyść bity
+	IF %DB100.DBX26.0 = FALSE AND %DB100.DBX50.5 THEN
+	  // Kasowanie bitu RESET Driver i Modbus bit Reset
+	  "dbHold_RRG".Sending.rez_alarm_napędów := 0;
+	  %DB100.DBX26.0 := FALSE; // bit alarm
+	  %DB100.DBX50.5 := False; // bit reset
+	  ;
+	END_IF;
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+END_FUNCTION
+

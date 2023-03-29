@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Document>
+  <Engineering version="V16" />
+  <DocumentInfo>
+    <Created>2023-03-29T11:05:02.6160613Z</Created>
+    <ExportSetting>WithDefaults</ExportSetting>
+    <InstalledProducts>
+      <Product>
+        <DisplayName>Totally Integrated Automation Portal</DisplayName>
+        <DisplayVersion>V16 Update 6</DisplayVersion>
+      </Product>
+      <OptionPackage>
+        <DisplayName>TIA Portal Version Control Interface</DisplayName>
+        <DisplayVersion>V16 Update 2</DisplayVersion>
+      </OptionPackage>
+      <OptionPackage>
+        <DisplayName>TIA Portal Openness</DisplayName>
+        <DisplayVersion>V16 Update 6</DisplayVersion>
+      </OptionPackage>
+      <Product>
+        <DisplayName>STEP 7 Professional</DisplayName>
+        <DisplayVersion>V16 Update 6</DisplayVersion>
+      </Product>
+      <OptionPackage>
+        <DisplayName>STEP 7 Safety</DisplayName>
+        <DisplayVersion>V16</DisplayVersion>
+      </OptionPackage>
+      <Product>
+        <DisplayName>WinCC Advanced</DisplayName>
+        <DisplayVersion>V16 Update 6</DisplayVersion>
+      </Product>
+    </InstalledProducts>
+  </DocumentInfo>
+  <SW.Blocks.GlobalDB ID="0">
+    <AttributeList>
+      <AutoNumber>true</AutoNumber>
+      <DBAccessibleFromOPCUA>true</DBAccessibleFromOPCUA>
+      <HeaderAuthor>rtecmer</HeaderAuthor>
+      <HeaderFamily />
+      <HeaderName />
+      <HeaderVersion>0.1</HeaderVersion>
+      <Interface><Sections xmlns="http://www.siemens.com/automation/Openness/SW/Interface/v4">
+  <Section Name="Static">
+    <Member Name="Static_1" Datatype="Array[0..20] of Real" Remanence="NonRetain" Accessibility="Public"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="SetPoint" SystemDefined="true">false</BooleanAttribute></AttributeList><Subelement Path="0"><StartValue>5.0</StartValue></Subelement><Subelement Path="1"><StartValue>5.3</StartValue></Subelement><Subelement Path="2"><StartValue>6.0</StartValue></Subelement><Subelement Path="3"><StartValue>6.7</StartValue></Subelement><Subelement Path="4"><StartValue>7.2</StartValue></Subelement><Subelement Path="5"><StartValue>8.0</StartValue></Subelement><Subelement Path="6"><StartValue>9.0</StartValue></Subelement><Subelement Path="7"><StartValue>60.0</StartValue></Subelement><Subelement Path="8"><StartValue>70.0</StartValue></Subelement><Subelement Path="9"><StartValue>80.0</StartValue></Subelement><Subelement Path="10"><StartValue>90.0</StartValue></Subelement><Subelement Path="11"><StartValue>100.0</StartValue></Subelement><Subelement Path="12"><StartValue>92.0</StartValue></Subelement><Subelement Path="13"><StartValue>93.0</StartValue></Subelement><Subelement Path="14"><StartValue>94.0</StartValue></Subelement><Subelement Path="15"><StartValue>95.0</StartValue></Subelement><Subelement Path="16"><StartValue>96.0</StartValue></Subelement><Subelement Path="17"><StartValue>97.0</StartValue></Subelement><Subelement Path="18"><StartValue>98.0</StartValue></Subelement><Subelement Path="19"><StartValue>99.0</StartValue></Subelement><Subelement Path="20"><StartValue>100.0</StartValue></Subelement></Member>
+    <Member Name="Static_2" Datatype="Array[0..10] of Int" Remanence="NonRetain" Accessibility="Public"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="SetPoint" SystemDefined="true">false</BooleanAttribute></AttributeList><Subelement Path="0"><StartValue>8500</StartValue></Subelement><Subelement Path="1"><StartValue>9500</StartValue></Subelement><Subelement Path="2"><StartValue>10000</StartValue></Subelement><Subelement Path="3"><StartValue>10500</StartValue></Subelement><Subelement Path="4"><StartValue>11000</StartValue></Subelement><Subelement Path="5"><StartValue>12000</StartValue></Subelement><Subelement Path="6"><StartValue>13000</StartValue></Subelement><Subelement Path="7"><StartValue>19000</StartValue></Subelement><Subelement Path="8"><StartValue>20500</StartValue></Subelement><Subelement Path="9"><StartValue>25600</StartValue></Subelement><Subelement Path="10"><StartValue>27648</StartValue></Subelement></Member>
+  </Section>
+</Sections></Interface>
+      <IsOnlyStoredInLoadMemory>false</IsOnlyStoredInLoadMemory>
+      <IsRetainMemResEnabled>false</IsRetainMemResEnabled>
+      <IsWriteProtectedInAS>false</IsWriteProtectedInAS>
+      <MemoryLayout>Optimized</MemoryLayout>
+      <MemoryReserve>500</MemoryReserve>
+      <Name>dbTable of value Hz</Name>
+      <Number>59</Number>
+      <ProgrammingLanguage>DB</ProgrammingLanguage>
+    </AttributeList>
+    <ObjectList>
+      <MultilingualText ID="1" CompositionName="Comment">
+        <ObjectList>
+          <MultilingualTextItem ID="2" CompositionName="Items">
+            <AttributeList>
+              <Culture>en-US</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+          <MultilingualTextItem ID="3" CompositionName="Items">
+            <AttributeList>
+              <Culture>pl-PL</Culture>
+              <Text>tabela z wartościami Hz przekazywanymi w instrukcji manualnego sterowania regulatorem PID podczas doączenia kompresora dodatkowego po ustawieniu Set 50Hz</Text>
+            </AttributeList>
+          </MultilingualTextItem>
+        </ObjectList>
+      </MultilingualText>
+      <MultilingualText ID="4" CompositionName="Title">
+        <ObjectList>
+          <MultilingualTextItem ID="5" CompositionName="Items">
+            <AttributeList>
+              <Culture>en-US</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+          <MultilingualTextItem ID="6" CompositionName="Items">
+            <AttributeList>
+              <Culture>pl-PL</Culture>
+              <Text>Table of value Hz manual instruction</Text>
+            </AttributeList>
+          </MultilingualTextItem>
+        </ObjectList>
+      </MultilingualText>
+    </ObjectList>
+  </SW.Blocks.GlobalDB>
+</Document>

@@ -1,0 +1,100 @@
+﻿FUNCTION "Błąd_Modbus_TCP" : Void
+TITLE = Obsługa błedu komunikacji
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Funkcja ubsługuje błędy komunikacji, czyści kody błędów po ponownym poprawnym nawiązaniu komunikacji modbus tcp 
+   VAR_TEMP 
+      reset : Bool;
+      reset_1 : Bool;
+   END_VAR
+
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2022) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.4)
+	//Pakiet inżynierski:   TIA Portal (V16 Update 5)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+	//Funkcjonalnośc: (Funkcja ubsługuje błędy komunikacji, czyści kody błędów 
+	                    po ponownym poprawnym nawiązaniu komunikacji modbus tcp )
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 09.03.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	(*
+	REGION brak komunikacji z PLC - PLC 
+	  // jeśli licznik kontroli komunikacji wskazuje brak komunikacji
+	  IF "Dane_ComunicationControlHMI".tempCoordinationHMIRS5 > 23 OR  "db10organizacyjna".reset_modbus_TCP THEN
+	    // restart modbus tcp
+	    #reset := TRUE;
+	    
+	      "IEC_Timer_resetModbusTCP_DB".TP(IN:=#reset,
+	                                       Q=> #reset_1,
+	                                       PT:=T#2S);
+	      IF #reset_1 THEN
+	        // reset server modbus tcp 
+	        "DISCONNECT_SERVER_1" := TRUE;
+	        "DISCONNECT_SERVER_2" := TRUE;
+	        "DISCONNECT_SERVER_3" := TRUE;
+	        "DISCONNECT_SERVER_4" := TRUE;
+	        "memRisingTriger_Data_1" := FALSE;
+	        "memRisingTriger_Data_2" := FALSE;
+	        "memRisingTriger_Data_3" := FALSE;
+	        "memRisingTriger_Data_4" := FALSE;
+	        "memRisingTriger_Data_5" := FALSE;
+	        "memRisingTriger_Data_6" := FALSE;
+	        "memRisingTriger_Data_7" := FALSE;
+	        "memRisingTriger_Data_8" := FALSE;
+	        "memRisingTriger_Data_9" := FALSE;
+	        "memRisingTriger_Data_10" := FALSE;
+	        "memRisingTriger_Data_11" := FALSE;
+	        "memRisingTriger_Data_12" := FALSE;
+	        "memRisingTriger_Data_13" := FALSE;
+	        "memRisingTriger_Data_14" := FALSE;
+	        "memRisingTriger_Data_15" := FALSE;
+	        "memRisingTriger_Data_16" := FALSE;
+	        "memTrig_Client_Receiving_1" := FALSE;
+	        "memTrig_Client_Receiving_2" := FALSE;
+	        "memTrig_Client_Receiving_3" := FALSE;
+	        "memTrig_Client_Receiving_4" := FALSE;
+	        "memTrig_Client_Receiving_5" := FALSE;
+	        "memTrig_Client_Receiving_7" := FALSE;
+	        "memTrig_Client_Receiving_8" := FALSE;
+	        "memTrig_Client_Receiving_9" := FALSE;
+	        "memTrig_Client_Receiving_10" := FALSE;
+	        "memTrig_Client_Receiving_11" := FALSE;
+	        "memTrig_Client_Receiving_12" := FALSE;
+	        "memTrig_Client_Receiving_13" := FALSE;
+	        "memTrig_Client_Receiving_14" := FALSE;
+	        "memTrig_Client_Receiving_15" := FALSE;
+	        "memTrig_Client_Receiving_16" := FALSE;
+	        
+	      ELSE
+	        "DISCONNECT_SERVER_1" := FALSE;
+	        "DISCONNECT_SERVER_2" := FALSE;
+	        "DISCONNECT_SERVER_3" := FALSE;
+	        "DISCONNECT_SERVER_4" := FALSE;
+	        ;
+	      END_IF;
+	      
+	    ELSE
+	
+	      
+	    ;
+	  END_IF;
+	  
+	  
+	END_REGION
+	
+	*)
+	
+END_FUNCTION
+

@@ -1,0 +1,127 @@
+﻿FUNCTION_BLOCK "Inicjacja wartości startowych"
+TITLE = Setup Write Parameters_KDN
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Pobranie parametrów technologicznych i przekazanie ich do instancji "tags" w celu zachowania i wprowadzeni po resecie PLC
+   VAR_TEMP 
+      TimeHz_DInt : DInt;
+   END_VAR
+
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.2)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1214 FW 3.2 .)
+	//Funkcjonalnośc: (Przekazanie warotości ostatnio wpisanych do instancji "tags 
+	                   w celu przechowania danych. W czasie restartu CPU będą wczytywane
+	                   do parametrów sterowania  )
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 17.11.2021 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	
+	REGION Sterowanie 
+	  // przekazanie danych
+	 
+	  "dbtags_Sterowanie".SetupControlPompownia.Time_ONK1 := "db10organizacyjna".Time_ONK1;
+	  "dbtags_Sterowanie".SetupControlPompownia.Time_ONK2 := "db10organizacyjna".Time_ONK2;
+	  "dbtags_Sterowanie".SetupControlPompownia.Time_OFFK1:= "db10organizacyjna".Time_OFFK1;
+	  "dbtags_Sterowanie".SetupControlPompownia.Time_OFFK2 := "db10organizacyjna".Time_OFFK2;
+	  "dbtags_Sterowanie".SetupControlPompownia.TimeHz := "db10organizacyjna".TimeHz;
+	  
+	  //Czas oczekiwania na 50Hz 
+	  "dbdane".TMR_Hz := DINT_TO_TIME(#TimeHz_DInt * "MS_TO_S");
+	  
+	  //Tryb pracy pompowni 
+	  "dbtags_Sterowanie".SetupControlPompownia.Switch_Aut_Rem_Pompy := "dbzarządzanie".sterowanie_1.tryb_automat;
+	  
+	  //strategi pracy pompowni
+	  "dbdane".Switch_model_control_P1P4 := "dbHoldRegSlave_to_MT101".instSygSter_1;
+	  //strategia sterowaia zbiornikami
+	  "dbdane".Switch_model_control_Tanks := "dbHoldRegSlave_to_MT101".instSygSter_2;
+	  
+	  //kasowanie alarmów napędów
+	  "dbtags_Sterowanie"."Paramaetry _Zbiorniki".rez_alarm_napędów := "dbHoldRegSlave_to_MT101".instClearFault1;
+	  
+	  // zadane ciśnieniea
+	  "dbtags_Sterowanie".SetupControlPompownia.set_barDN500_B5 := "dbHoldRegSlave_to_MT101".instSetbarDN500_B5;
+	  "dbtags_Sterowanie".SetupControlPompownia.set_barDN225_B6 := "dbHoldRegSlave_to_MT101".instSetbarDN225_B6;
+	  
+	END_REGION
+	
+	REGION Z11 Z12 Status
+	  // Przekazanie do instancji pamięci parametrów
+	  IF %DB10.DBX118.7 = 1 THEN
+	    // Gdy praca Auto ustaw
+	    "dbtags_Sterowanie".SetupControlPompownia.Z11_Status := 33924;
+	  ELSE
+	    "dbtags_Sterowanie".SetupControlPompownia.Z11_Status := 0;
+	  END_IF;
+	  
+	  IF %DB10.DBX120.7 = 1  THEN
+	    // gdy praca Auto ustaw
+	    "dbtags_Sterowanie".SetupControlPompownia.Z12_Status := 33924;
+	  ELSE
+	    "dbtags_Sterowanie".SetupControlPompownia.Z12_Status := 0;
+	  END_IF;
+	  
+	 
+	  
+	  
+	END_REGION
+	
+	REGION Parametry nastaw zbiorników 
+	  // 
+	  "dbtags_Sterowanie"."Paramaetry _Zbiorniki".set_poziom_napełniania:= "dbHold_RRG".set_poziom_napełniania ;
+	  "dbtags_Sterowanie"."Paramaetry _Zbiorniki".set_poziom_opróżniania:= "dbHold_RRG".set_poziom_opróżniania ;
+	  "dbtags_Sterowanie"."Paramaetry _Zbiorniki".set_strategia_sterowania := "dbHoldRegSlave_to_MT101".instSygSter_1;
+	  "dbtags_Sterowanie"."Paramaetry _Zbiorniki".set_sterowanie_cyklem:= "dbHoldRegSlave_to_MT101".instSygSter_2 ;
+	  "dbtags_Sterowanie"."Paramaetry _Zbiorniki".set_położenie_Z10:= "dbHold_RRG".set_położenie_Z10 ;
+	  "dbtags_Sterowanie"."Paramaetry _Zbiorniki".set_bity_sterowania_napęami_1 := "dbHoldRegSlave_to_MT101".instControllDrivers_1;
+	  "dbtags_Sterowanie"."Paramaetry _Zbiorniki".set_bity_sterowania_napęami_2 := "dbHoldRegSlave_to_MT101".instControllDrivers_2;
+	  "dbtags_Sterowanie"."Paramaetry _Zbiorniki".set_bity_tryb_napędów_1 := "dbHoldRegSlave_to_MT101".instConrol_ManAut_1;
+	  "dbtags_Sterowanie"."Paramaetry _Zbiorniki".set_bity_tryb_napędów_2 := "dbHoldRegSlave_to_MT101".instConrol_ManAut_2;
+	  //Czasy
+	  "dbtags_Sterowanie".Zbiorniki_Godziny.start_napełnianie.HOUR := "dbHoldRegSlave_to_MT101".instHourStart_Filling;
+	  "dbtags_Sterowanie".Zbiorniki_Godziny.start_napełnianie.MINUTE := "dbHoldRegSlave_to_MT101".instMinutStart_Filling;
+	  "dbtags_Sterowanie".Zbiorniki_Godziny.start_napełnianie.SECOND := 0;
+	  
+	  "dbtags_Sterowanie".Zbiorniki_Godziny.Stop_napełnianie.HOUR := "dbHoldRegSlave_to_MT101".instHourStop_Filling;
+	  "dbtags_Sterowanie".Zbiorniki_Godziny.Stop_napełnianie.MINUTE := "dbHoldRegSlave_to_MT101".instMinutStopt_Filling;
+	  "dbtags_Sterowanie".Zbiorniki_Godziny.Stop_napełnianie.SECOND := 0;
+	  
+	  "dbtags_Sterowanie".Zbiorniki_Godziny.Start_przetłaczanie_1.HOUR := "dbHoldRegSlave_to_MT101".instHourStart_City;
+	  "dbtags_Sterowanie".Zbiorniki_Godziny.Start_przetłaczanie_1.MINUTE := "dbHoldRegSlave_to_MT101".instMinutStart_City;
+	  "dbtags_Sterowanie".Zbiorniki_Godziny.Start_przetłaczanie_1.SECOND := 0;
+	  
+	  "dbtags_Sterowanie".Zbiorniki_Godziny.Stop_przetłaczanie_1.HOUR := "dbHoldRegSlave_to_MT101".instHourStop_City;
+	  "dbtags_Sterowanie".Zbiorniki_Godziny.Stop_przetłaczanie_1.MINUTE := "dbHoldRegSlave_to_MT101".instMinutStopt_City;
+	  "dbtags_Sterowanie".Zbiorniki_Godziny.Stop_przetłaczanie_1.SECOND := 0;
+	  
+	  "dbtags_Sterowanie".Zbiorniki_Godziny.Start_dosilanie_1.HOUR := "dbHoldRegSlave_to_MT101".instHourStart_Replen;
+	  "dbtags_Sterowanie".Zbiorniki_Godziny.Start_dosilanie_1.MINUTE := "dbHoldRegSlave_to_MT101".instMinutStart_Replen;
+	  "dbtags_Sterowanie".Zbiorniki_Godziny.Start_dosilanie_1.SECOND := 0;
+	  
+	  "dbtags_Sterowanie".Zbiorniki_Godziny.Stop_dosilanie_1.HOUR := "dbHoldRegSlave_to_MT101".instHourStop_Replen;
+	  "dbtags_Sterowanie".Zbiorniki_Godziny.Stop_dosilanie_1.MINUTE := "dbHoldRegSlave_to_MT101".instMinutStopt_Replen;
+	  "dbtags_Sterowanie".Zbiorniki_Godziny.Stop_dosilanie_1.SECOND := 0;
+	  
+	  
+	  
+	  
+	END_REGION
+	
+	
+	
+END_FUNCTION_BLOCK
+

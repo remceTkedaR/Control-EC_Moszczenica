@@ -1,0 +1,89 @@
+﻿FUNCTION "IN_analogi" : Void
+TITLE = Przekazanie wartości z wejść analogowych
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//(*
+////=============================================================================
+////(JZWiK S.A Radosław Tecmer)
+////(c)Copyright (2021) All Rights Reserved
+////-----------------------------------------------------------------------------
+////Testowane z:   (system docelowy z  FW 4.4)
+////Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+////Ograniczenia:  ( - )
+////Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+////Funkcjonalnośc: (Pobranie wartości z wejść analogowych )
+////-----------------------------------------------------------------------------
+////Zmainy wprowadzone:
+////Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+////01.00.00 11.01.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+////=============================================================================
+//*)
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.4)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+	//Funkcjonalnośc: (Pobranie wartości z wejść analogowych )
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 11.01.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	// ciśnienie przetłaczania miasto
+	IF "dbdane".PV_analaog_B6 > 0.2 THEN // czy nie uszkodzone rury
+	  IF "dbdane".PV_analaog_B6 < 27651 THEN // przerwana pętla prądowa
+	    // to przekazanie wartości
+	    "dbdane".PV_PER_B6 := "dbdane".PV_analaog_B6;
+	  ELSE
+	    "dbdane".PV_PER_B6 := 32767;
+	    ;
+	  END_IF;
+	  
+	  ;
+	END_IF;
+	
+	
+	
+	// ciśnienie pompownia
+	IF "dbdane".PV_analaog_B7 > 0.2 THEN // czy nie uszkodzone rury
+	  IF "dbdane".PV_analaog_B7 < 27651 THEN // przerwana pętla prądowa
+	    // to przekazanie wartości
+	    "dbdane".PV_PER_B7 := "dbdane".PV_analaog_B7;
+	    ;
+	  ELSE
+	    "dbdane".PV_PER_B7 := 32767;
+	    ;
+	  END_IF;
+	  
+	  ;
+	END_IF;
+	
+	
+	//ciśnienie ssania
+	IF  "dbdane".PV_analaog_B8 > 0.2 THEN // czy nie uszkodzone rury
+	  // to przekazanie wartości
+	  "dbdane".PV_PER_B8 := "dbdane".PV_analaog_B8;
+	ELSE
+	  "dbdane".PV_PER_B8 := 0;
+	  ;
+	END_IF;
+	
+	
+	
+	
+	// przepływ analog
+	"dbdane".actPrzepływQ1_IA := "IW70":P;
+	
+	"dbdane".actPrzepływQ1_IA_real := "SclScaleLinearIntToReal"(x := "dbdane".actPrzepływQ1_IA, yMin := 0.0, yMax := 600.0, y0 := 0.0, x0 := 0, x1 := 27648, y1 := 600.0);
+	
+END_FUNCTION
+

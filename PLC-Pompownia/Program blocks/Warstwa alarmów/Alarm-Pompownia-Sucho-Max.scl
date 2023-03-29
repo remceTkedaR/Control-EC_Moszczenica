@@ -1,0 +1,91 @@
+﻿FUNCTION_BLOCK "Alarm-Pompownia-Sucho-Max"
+TITLE = reakcja na niskie ciśnienie na ssaniu
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Funkcja realizuje zatrzymanie pomp z powodu niskiego ciśnienia ssania
+   VAR_OUTPUT 
+      bit_on_alarm_bar_max_pompownia { ExternalWritable := 'False'} : Bool;   // bit alarmu maksymalnego ciśnienia na pompowni
+   END_VAR
+
+   VAR 
+      bit_max_pompownia { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool := false;   // bit detekcji wysokiego ciśnienia pompownia B7
+      bit_normalne_pompownia { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool := false;   // bit detekcji normalnego cisnienia pompownia
+      "bit_max _bar_B7" { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool := false;   // bit zaistnienia max ciśnienia pompownia B7
+      bit_off_alarm_max_pompownia { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool;   // koniec alarmu max B7 pompownia
+   END_VAR
+
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.4)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+	//Funkcjonalnośc: (Kontrola ciśnienia max przepompownia 
+	                   Ustawienie i kasowanie bitu awarii od max ciśnienia
+	                   na pompowni.)
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 17.11.2021 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	
+	
+	
+	
+	
+	
+	
+	REGION Kontrola ciśnienia pompownia - ciśnienie max
+	  // Kontrola max pompownia ustawione alarmowe 9.0
+	  IF "dbdane".act_Value_B7 >= "db10organizacyjna".set_press_bar_Max THEN
+	    // Ustaw bit alarmowe ciśnienie na B7
+	    #"bit_max _bar_B7" := TRUE;
+	    #bit_normalne_pompownia := FALSE;
+	  ELSE
+	    #bit_normalne_pompownia := TRUE;
+	    ;
+	  END_IF;
+	  
+	  
+	  //warunek koniec alarmu max
+	  IF "dbdane".act_Value_B7 <= ("db10organizacyjna".set_press_bar_Max - 0.2) THEN
+	    // ustaw bit ciśnienie poprawne
+	    #bit_normalne_pompownia := TRUE;
+	    ;
+	  END_IF;
+	  
+	  // kasowania alarmu
+	  IF #bit_off_alarm_max_pompownia THEN
+	    // kasowanie alarmu ssania
+	    #bit_on_alarm_bar_max_pompownia := FALSE;
+	    #"bit_max _bar_B7" := FALSE;
+	    
+	  END_IF;
+	  
+	  // Histerez ana ustawienie alarmu max bar
+	  "IEC_Timer_B7max_bar_DB".TON(IN:=#"bit_max _bar_B7",
+	                               PT:=T#10S,
+	                               Q=>#bit_on_alarm_bar_max_pompownia);
+	  
+	 "IEC_Timer_B7max_off_alarm_DB".TON(IN:=#bit_normalne_pompownia,
+	                                   PT:=T#10S,
+	                                   Q=>#bit_off_alarm_max_pompownia);
+	
+	
+	  
+	  
+	  
+	  
+	END_REGION
+	
+	
+END_FUNCTION_BLOCK
+

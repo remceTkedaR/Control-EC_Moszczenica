@@ -1,0 +1,137 @@
+﻿FUNCTION "ParsowanieDataTime_Zadanych_" : Void
+TITLE = Persowanie danych data i time
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Funkcja składa z wartości podanego czasu formie Real zmienne DTL przekazywane dale do układu sterowania zbiornikami i pompami
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2022) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.4)
+	//Pakiet inżynierski:   TIA Portal (V16 Update 5)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+	//Funkcjonalnośc: (Persowanie danych wchodzących w formie Real do danych DTL
+	                    Dane: czasy, sterowania zbiornikami i pracą pomp)
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 09.03.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	
+	REGION start_napełnianie
+	  // przekazanie z bloku SCADA do bloku danych programu PLC
+	  "db10organizacyjna".instHourStart_Filling.HOUR := INT_TO_USINT("dbHoldRegSlave_to_MT101".instHourStart_Filling);
+	  "db10organizacyjna".instHourStart_Filling.MINUTE := INT_TO_USINT("dbHoldRegSlave_to_MT101".instMinutStart_Filling);
+	  "dbHold_RRG".SendingTimes.start_napełnianie.SECOND := 0;
+	  // przekazanie do bloku danych wysyłanych 
+	  "dbHold_RRG".SendingTimes.start_napełnianie.YEAR := "Data_Czas_synch".Time_Local_read.YEAR;
+	  "dbHold_RRG".SendingTimes.start_napełnianie.MONTH := "Data_Czas_synch".Time_Local_read.MONTH;
+	  "dbHold_RRG".SendingTimes.start_napełnianie.DAY := "Data_Czas_synch".Time_Local_read.DAY;
+	  "dbHold_RRG".SendingTimes.start_napełnianie.WEEKDAY := "Data_Czas_synch".Time_Local_read.WEEKDAY;
+	  //"dbHold_RRG".SendingTimes.start_napełnianie.HOUR := INT_TO_USINT("dbHoldRegSlave_to_MT101".Godziny.instHourStart_Filling);
+	  //"dbHold_RRG".SendingTimes.start_napełnianie.MINUTE := INT_TO_USINT("dbHoldRegSlave_to_MT101".Godziny.instMinutStart_Filling);
+	  "dbHold_RRG".SendingTimes.start_napełnianie.SECOND := 0;
+	  
+	END_REGION
+	
+	REGION Stop_napełnianie
+	  // przekazanie z bloku SCADA do bloku danych programu PLC
+	  "db10organizacyjna".instHourStop_Filling.HOUR := INT_TO_USINT("dbHoldRegSlave_to_MT101".instHourStop_Filling);
+	  "db10organizacyjna".instHourStop_Filling.MINUTE := INT_TO_USINT("dbHoldRegSlave_to_MT101".instMinutStopt_Filling);
+	  "dbHold_RRG".SendingTimes.Stop_napełnianie.SECOND := 0;
+	  // przekazanie do bloku danych wysyłanych 
+	  "dbHold_RRG".SendingTimes.Stop_napełnianie.YEAR := "Data_Czas_synch".Time_Local_read.YEAR;
+	  "dbHold_RRG".SendingTimes.Stop_napełnianie.MONTH := "Data_Czas_synch".Time_Local_read.MONTH;
+	  "dbHold_RRG".SendingTimes.Stop_napełnianie.DAY := "Data_Czas_synch".Time_Local_read.DAY;
+	  "dbHold_RRG".SendingTimes.Stop_napełnianie.WEEKDAY := "Data_Czas_synch".Time_Local_read.WEEKDAY;
+	  //"dbHold_RRG".SendingTimes.Stop_napełnianie.HOUR := INT_TO_USINT("dbHoldRegSlave_to_MT101".Godziny.instHourStop_Filling);
+	  //"dbHold_RRG".SendingTimes.Stop_napełnianie.MINUTE := INT_TO_USINT("dbHoldRegSlave_to_MT101".Godziny.instMinutStopt_Filling);
+	  "dbHold_RRG".SendingTimes.Stop_napełnianie.SECOND := 0;
+	  
+	END_REGION
+	
+	REGION Start_przetłaczanie_1
+	  //
+	  "db10organizacyjna".instHourStart_City.HOUR := INT_TO_USINT("dbHoldRegSlave_to_MT101".instHourStart_City);
+	  "db10organizacyjna".instHourStart_City.MINUTE := INT_TO_USINT("dbHoldRegSlave_to_MT101".instMinutStart_City);
+	  "dbHold_RRG".SendingTimes.Start_przetłaczanie_1.SECOND := 0;
+	  //  przekazanie do bloku danych wysyłanych 
+	  "dbHold_RRG".SendingTimes.Start_przetłaczanie_1.YEAR := "Data_Czas_synch".Time_Local_read.YEAR;
+	  "dbHold_RRG".SendingTimes.Start_przetłaczanie_1.MONTH := "Data_Czas_synch".Time_Local_read.MONTH;
+	  "dbHold_RRG".SendingTimes.Start_przetłaczanie_1.DAY := "Data_Czas_synch".Time_Local_read.DAY;
+	  "dbHold_RRG".SendingTimes.Start_przetłaczanie_1.WEEKDAY := "Data_Czas_synch".Time_Local_read.WEEKDAY;
+	  //"dbHold_RRG".SendingTimes.Start_przetłaczanie_1.HOUR := INT_TO_USINT("dbHoldRegSlave_to_MT101".Godziny.instHourStart_City);
+	 // "dbHold_RRG".SendingTimes.Start_przetłaczanie_1.MINUTE := INT_TO_USINT("dbHoldRegSlave_to_MT101".Godziny.instMinutStart_City);
+	  "dbHold_RRG".SendingTimes.Start_przetłaczanie_1.SECOND := 0;
+	  
+	END_REGION
+	
+	REGION Stop_przetłaczanie_1
+	  // przekazanie z bloku SCADA do bloku danych programu PLC
+	  "db10organizacyjna".instHourStop_City.HOUR := INT_TO_USINT("dbHoldRegSlave_to_MT101".instHourStop_City);
+	  "db10organizacyjna".instHourStop_City.MINUTE := INT_TO_USINT("dbHoldRegSlave_to_MT101".instMinutStopt_City);
+	  "dbHold_RRG".SendingTimes.Stop_przetłaczanie_1.SECOND := 0;
+	  // przekazanie do bloku danych wysyłanych 
+	  "dbHold_RRG".SendingTimes.Stop_przetłaczanie_1.YEAR := "Data_Czas_synch".Time_Local_read.YEAR;
+	  "dbHold_RRG".SendingTimes.Stop_przetłaczanie_1.MONTH := "Data_Czas_synch".Time_Local_read.MONTH;
+	  "dbHold_RRG".SendingTimes.Stop_przetłaczanie_1.DAY := "Data_Czas_synch".Time_Local_read.DAY;
+	  "dbHold_RRG".SendingTimes.Stop_przetłaczanie_1.WEEKDAY := "Data_Czas_synch".Time_Local_read.WEEKDAY;
+	 // "dbHold_RRG".SendingTimes.Stop_przetłaczanie_1.HOUR := INT_TO_USINT("dbHoldRegSlave_to_MT101".Godziny.instHourStop_City);
+	 // "dbHold_RRG".SendingTimes.Stop_przetłaczanie_1.MINUTE := INT_TO_USINT("dbHoldRegSlave_to_MT101".Godziny.instMinutStopt_City);
+	  "dbHold_RRG".SendingTimes.Stop_przetłaczanie_1.SECOND := 0;
+	  
+	END_REGION
+	
+	REGION Start_dosilanie_1
+	  // przekazanie z bloku SCADA do bloku danych programu PLC
+	  "db10organizacyjna".instHourStart_Replen.HOUR := INT_TO_USINT("dbHoldRegSlave_to_MT101".instHourStart_Replen);
+	  "db10organizacyjna".instHourStart_Replen.MINUTE := INT_TO_USINT("dbHoldRegSlave_to_MT101".instMinutStart_Replen);
+	  "dbHold_RRG".SendingTimes.Start_dosilanie_1.SECOND := 0;
+	  // przekazanie do bloku danych wysyłanych 
+	  "dbHold_RRG".SendingTimes.Start_dosilanie_1.YEAR := "Data_Czas_synch".Time_Local_read.YEAR;
+	  "dbHold_RRG".SendingTimes.Start_dosilanie_1.MONTH := "Data_Czas_synch".Time_Local_read.MONTH;
+	  "dbHold_RRG".SendingTimes.Start_dosilanie_1.DAY := "Data_Czas_synch".Time_Local_read.DAY;
+	  "dbHold_RRG".SendingTimes.Start_dosilanie_1.WEEKDAY := "Data_Czas_synch".Time_Local_read.WEEKDAY;
+	  //"dbHold_RRG".SendingTimes.Start_dosilanie_1.HOUR := INT_TO_USINT("dbHoldRegSlave_to_MT101".Godziny.instHourStart_Replen);
+	  //"dbHold_RRG".SendingTimes.Start_dosilanie_1.MINUTE := INT_TO_USINT("dbHoldRegSlave_to_MT101".Godziny.instMinutStart_Replen);
+	  "dbHold_RRG".SendingTimes.Start_dosilanie_1.SECOND := 0;
+	  
+	END_REGION
+	
+	REGION Stop_dosilanie_1
+	  // przekazanie z bloku SCADA do bloku danych programu PLC
+	  "db10organizacyjna".instHourStop_Replen.HOUR := INT_TO_USINT("dbHoldRegSlave_to_MT101".instHourStop_Replen);
+	  "db10organizacyjna".instHourStop_Replen.MINUTE := INT_TO_USINT("dbHoldRegSlave_to_MT101".instMinutStopt_Replen);
+	  "dbHold_RRG".SendingTimes.Stop_dosilanie_1.SECOND := 0;
+	  // przekazanie do bloku danych wysyłanych 
+	  "dbHold_RRG".SendingTimes.Stop_dosilanie_1.YEAR := "Data_Czas_synch".Time_Local_read.YEAR;
+	  "dbHold_RRG".SendingTimes.Stop_dosilanie_1.MONTH := "Data_Czas_synch".Time_Local_read.MONTH;
+	  "dbHold_RRG".SendingTimes.Stop_dosilanie_1.DAY := "Data_Czas_synch".Time_Local_read.DAY;
+	  "dbHold_RRG".SendingTimes.Stop_dosilanie_1.WEEKDAY := "Data_Czas_synch".Time_Local_read.WEEKDAY;
+	  //"dbHold_RRG".SendingTimes.Stop_dosilanie_1.HOUR := INT_TO_USINT("dbHoldRegSlave_to_MT101".Godziny.instHourStop_Replen);
+	  //"dbHold_RRG".SendingTimes.Stop_dosilanie_1.MINUTE := INT_TO_USINT("dbHoldRegSlave_to_MT101".Godziny.instMinutStopt_Replen);
+	  "dbHold_RRG".SendingTimes.Stop_dosilanie_1.SECOND := 0;
+	END_REGION
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+END_FUNCTION
+

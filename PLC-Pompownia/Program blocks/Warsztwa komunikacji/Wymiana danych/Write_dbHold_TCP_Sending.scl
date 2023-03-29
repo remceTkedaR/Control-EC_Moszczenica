@@ -1,0 +1,30 @@
+﻿FUNCTION_BLOCK "Write_dbHold_TCP_Sending"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+
+BEGIN
+	(*
+	
+	*)
+	
+	
+	
+	
+	REGION Strategia Sterowania Pompownią 
+	  // przekazanie wartości do PLC2 Zbiorniki
+	  "dbHold_RRG".Sending.set_strategia_sterowania:= "dbHoldRegSlave_to_MT101".instSygSter_1;
+	  
+	END_REGION
+	
+	REGION _name_
+	  // 
+	
+	
+	  
+	  
+	END_REGION
+	
+	
+	
+END_FUNCTION_BLOCK
+

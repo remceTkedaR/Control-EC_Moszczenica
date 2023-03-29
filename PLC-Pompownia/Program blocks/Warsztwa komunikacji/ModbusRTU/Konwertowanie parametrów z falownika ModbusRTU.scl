@@ -1,0 +1,113 @@
+﻿FUNCTION_BLOCK "Konwertowanie parametrów z falownika ModbusRTU"
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+   VAR_INPUT 
+      received_Inver_setpoint_ref_416020 { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Int;
+      received_Inver_Frequency_416130 { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Int;
+      received_Inver_MotorCurrent_416140 { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Int;
+      received_Inver_NomCurrent_416360 { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Int;
+      received_Inver_MaxCurrent_416370 { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Int;
+      received_Inver_InDigit_416600 { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Int;
+      received_Inver_OverTemp_415040 { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Int;
+      received_Inver_OverVolts_415050 { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Int;
+   END_VAR
+
+   VAR_OUTPUT 
+      Setpoint_Inverter { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Real;   // Wartość zadana Hz odczytane z Modbus
+      Frequency_inverter { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Real;   // Aktualne Hz silniku odczytane z Modbus
+      MotorCurrent_Inverter { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Real;   // Prąd na silniku zasilanym z falownika odczytane z Modbus
+      NormalCurrent_Inverter { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Real;   // Prąd nominalny falownika odczytane z Modbus
+      MaxCurrent_Inverter { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Real;   // Prad Max krótkotrwały odczytane z Modbus
+      OverTemp_Inverter { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Word;
+      OverVolta_Inverter { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Word;
+   END_VAR
+
+   VAR_TEMP 
+      tmp_1 : Real;
+      tmp_2 : Real;
+      tmp_3 : Real;
+      tmp_4 : Real;
+      tmp_5 : Real;
+      tmp_6 : Real;
+      tmp_7 : Real;
+      tmp_8 : Real;
+      tmp_9 : Real;
+      tmp_10 : Real;
+   END_VAR
+
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.4)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+	//Funkcjonalnośc: (Konwersja i przeliczenie wartości pobranych  z Modbus RTU 
+	//                  na wartości rzeczywiste)
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 11.01.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	
+	//Wartości indexów zgodnie z dokumentacją Danfoss FC51 Programing Guide:
+	//index 2 | mnożnik 10; index 1 | mnożnik 100; index 0 | mnożnik 0
+	//index -1 | mnożnik 0.1; index -2 | mnożnik 0.01; index -3 | mnożnik 0.001
+	//index -4 | mnożnik 0.0001; index -5 | mnożnik 0.00001
+	
+	REGION Setpoint Inverter P1-P4
+	  // Wyliczanie wartości 
+	  #tmp_1 := INT_TO_REAL (#received_Inver_setpoint_ref_416020 );
+	  #tmp_2 := (#tmp_1 * 0.1) * 0.01;
+	  #Setpoint_Inverter := SCALE_X_REAL(MIN := 0.0,
+	                                           VALUE := #tmp_2,
+	                                           MAX := 50.0);
+	  
+	END_REGION
+	
+	REGION Frequecy Act. Inverter P1-P4
+	  // Wyliczanie wartości
+	  #tmp_3 := INT_TO_REAL(#received_Inver_Frequency_416130) ;
+	  #tmp_4 := (#tmp_3 * 0.1);
+	  #Frequency_inverter := #tmp_4;
+	  
+	END_REGION
+	
+	REGION Motor Current from Inverter P1-P4
+	  // Wyliczanie wartości
+	  #tmp_5 := INT_TO_REAL(#received_Inver_MotorCurrent_416140);
+	  #tmp_6 := (#tmp_5 * 0.01);
+	  #MotorCurrent_Inverter := #tmp_6;
+	  
+	END_REGION
+	
+	REGION Nominal Current Inverter P1-P4
+	  // Wyliczanie wartości
+	  #tmp_7 := INT_TO_REAL(#received_Inver_NomCurrent_416360 );
+	  #tmp_8 := (#tmp_7 * 0.01);
+	  #NormalCurrent_Inverter := #tmp_8;
+	  
+	END_REGION
+	
+	REGION Max Current Inverter P1-P4
+	  // Wyliczanie wartości
+	  #tmp_9 := INT_TO_REAL(#received_Inver_MaxCurrent_416370 );
+	  #tmp_10 := (#tmp_9 * 0.01);
+	  #MaxCurrent_Inverter := #tmp_10;
+	  
+	END_REGION
+	
+	
+	#OverTemp_Inverter:= #received_Inver_OverTemp_415040;
+	#OverVolta_Inverter:= #received_Inver_OverVolts_415050;
+	
+	
+END_FUNCTION_BLOCK
+

@@ -1,0 +1,79 @@
+﻿FUNCTION "Conroll_from_ModbusRTU" : Void
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.2)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1214 FW 3.2 .)
+	//Funkcjonalnośc: (Przesuniecie bajtów (podobnie do funkcji SWAP) 
+	//                  i przekazanie do bloku danych pomiary z przepływomierza )
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 17.11.2021 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	
+	
+	REGION Q1 przepływomierz
+	  // Adres 0 - bierzący przepływ
+	  "dbModbusRTU_Reg"."Przepływomierz nr1 pompownia".received_5_przeływu_VF_Adres_0 := DWORD_TO_REAL(%DB37.DBD0);
+	 
+	  "dbdane".Wielkość_przeływu_Q1 := "dbModbusRTU_Reg"."Przepływomierz nr1 pompownia".received_5_przeływu_VF_Adres_0;
+	  
+	  // Adres 2 - Licznik_objętość_VF
+	  "dbModbusRTU_Reg"."Przepływomierz nr1 pompownia".received_5_objętość_VF_Adres_2 := DWORD_TO_REAL(%DB37.DBD4);
+	  
+	  "dbdane".Licznik_objętość_VF_Q1 := "dbModbusRTU_Reg"."Przepływomierz nr1 pompownia".received_5_objętość_VF_Adres_2;
+	  
+	  // Adres 4- stan bierzący licznika objetości w stecz VR
+	  "dbModbusRTU_Reg"."Przepływomierz nr1 pompownia"."received_5_objętośc RF_Adres_4" := DWORD_TO_REAL(%DB37.DBD8);
+	  
+	  "dbdane".Licznik_objętość_VR_Q1 := "dbModbusRTU_Reg"."Przepływomierz nr1 pompownia"."received_5_objętośc RF_Adres_4";
+	  
+	  // Adres 6- stan bierzący licznika różnicowego  objętości VD
+	  // 
+	  "tmp_differential counter VD_H_Q1" := "dbModbusRTU_Reg".received_5_Licznik_różnicowy_VD_Adres_6.data[0];
+	  "tmp_differential counter VD_L_Q1" := "dbModbusRTU_Reg".received_5_Licznik_różnicowy_VD_Adres_6.data[1];
+	  "dbdane".Licznik_różnicowy_VD_Q1 := "act_differential counter VD_Q1";
+	  
+	  // Adres 8- główny liczni objetości w przód GF
+	  "dbModbusRTU_Reg"."Przepływomierz nr1 pompownia".received_5_licznik_objętości_GF_Adres_8 := DWORD_TO_REAL(%DB37.DBD16);
+	  
+	  "dbdane".Stan_licz_bjętości_GF_Q1 := "dbModbusRTU_Reg"."Przepływomierz nr1 pompownia".received_5_licznik_objętości_GF_Adres_8;
+	  
+	  // Adres 10- główny liczni objetości w stecz GR
+	  "dbModbusRTU_Reg"."Przepływomierz nr1 pompownia".received_5_Licznik_objętości_GR_Adres_10 := DWORD_TO_REAL(%DB37.DBD20);
+	  
+	  "dbdane".Stan_licz_rózicowego_obj_GD_Q1 := "dbModbusRTU_Reg"."Przepływomierz nr1 pompownia".received_5_Licznik_objętości_GR_Adres_10;
+	  
+	  //Adres 12- główny różnica liczni objetościGD
+	  "tmp_differential counter status_GD_H_Q1" := "dbModbusRTU_Reg".received_5_Stan_licz_rózicowego_obj_GD_Adres_12.data[0];
+	  "tmp_differential counter status_GD_L_Q1" := "dbModbusRTU_Reg".received_5_Stan_licz_rózicowego_obj_GD_Adres_12.data[1];
+	  
+	  // Status MP04 Q1 - pompownia
+	  "dbModbusRTU_Reg"."Przepływomierz nr1 pompownia".received_5_status_przepływomierza_Adres_1000 := "dbModbusRTU_Reg".received_5_Stan_urządzenia_1000.typeDataInverter_int[0];
+	  "dbdane"._Stan_urządzenia_Q1 := "dbModbusRTU_Reg".received_5_Stan_urządzenia_1000.typeDataInverter_int[0];
+	END_REGION
+	
+	
+	
+	  
+	  
+	  
+	  
+	  
+	  
+	
+	
+END_FUNCTION
+

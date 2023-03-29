@@ -1,0 +1,56 @@
+﻿FUNCTION_BLOCK "filtr _kalmana_2"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+
+BEGIN
+	IF "FirstScan" THEN //w pierwszym cyklu sterownika
+	  FOR "i(1)":= 0 TO 4 DO
+	    "KALMAN_DB".kalman_K["i(1)"] := 0.0;
+	    "KALMAN_DB".kalman_R["i(1)"] := 0.001;  //niepewność pomiaru
+	    "KALMAN_DB".kalman_Q["i(1)"] := 0.00001;  //niepewność procesu
+	    "KALMAN_DB".kalman_P["i(1)"] := 1.0;
+	  END_FOR;        //parametry R i Q można dobrać osobno dla każdego kanału
+	END_IF;           //zostaje wykonana inicjalizacja wszystkich 5 torów analogowych
+	
+	"R_TRIG_DB_CLK"(CLK:="Clock_10Hz", //oczekiwanie na zbocze narastające
+	                Q => "zbocze_dod_zegar");
+	                 
+	                 
+	IF "zbocze_dod_zegar" THEN  //ten fragment będzie wykonywany regularnie co 0.1s
+	  
+	  FOR "i(1)":= 0 TO 4 DO
+	  
+	    "KALMAN_DB".wejscie_anal["i(1)"] := PEEK_WORD(area:= 16#81, dbNumber:= 0, byteOffset:= (64 + (2 * "i(1)")));
+	    //sterownik odczytuje kolejno pięć wejść analogowych,
+	    //kazde z nich zajmuje w pamięci jedno słowo począwszy od adresu %IW64
+	    
+	    //"KALMAN_DB".wejscie_anal["I"] := "KALMAN_DB".wejscie_anal["I"] AND 16#03FF;
+	    //maskowanie wejść
+	  
+	    "KALMAN_DB".pomiar_napiecie["i(1)"] := NORM_X(MIN:= 0, VALUE:= "KALMAN_DB".wejscie_anal["i(1)"], MAX:= 27648);
+	    //wartość zwracana przez n-bitowy przetwornik A\C zawiera się w przedziale od 0 do (2^n)-1
+	  
+	    "KALMAN_DB".pomiar_napiecie["i(1)"] := "KALMAN_DB".pomiar_napiecie["i(1)"] * 10.0;
+	    //znormalizowana wartość zostaje pomnożona przez 10.0, aby tagi w tablicy "pomiar_napiecie"
+	    //reprezentowały faktyczne napięcie na wejściu analogowym
+	    //w przypadku zakresów wejściowych różnych od standardu można
+	    //skorzystać z intruksji CASE i mnożyć wyjście przez różne skalary
+	  
+	    //FILTR KALMANA
+	    "KALMAN_DB".kalman_P["i(1)"] := "KALMAN_DB".kalman_P["i(1)"] + "KALMAN_DB".kalman_Q["i(1)"]; //predykcja
+	  
+	    "KALMAN_DB".kalman_K["i(1)"] := "KALMAN_DB".kalman_P["i(1)"] / ("KALMAN_DB".kalman_P["i(1)"] + "KALMAN_DB".kalman_R["i(1)"]); //korekcja
+	    
+	    "KALMAN_DB".kalman_napiecie["i(1)"] := "KALMAN_DB".kalman_napiecie["i(1)"] +
+	    "KALMAN_DB".kalman_K["i(1)"] * ("KALMAN_DB".pomiar_napiecie["i(1)"] - "KALMAN_DB".kalman_napiecie["i(1)"]);
+	    
+	    "KALMAN_DB".kalman_P["i(1)"] := (1.0 - "KALMAN_DB".kalman_K["i(1)"]) * "KALMAN_DB".kalman_P["i(1)"];
+	  
+	    //wynik filtracji gotowy do użycia znajduje się w tablicy "KALMAN_DB".kalman_napiecie
+	  
+	  END_FOR;
+	  
+	END_IF;
+	
+END_FUNCTION_BLOCK
+

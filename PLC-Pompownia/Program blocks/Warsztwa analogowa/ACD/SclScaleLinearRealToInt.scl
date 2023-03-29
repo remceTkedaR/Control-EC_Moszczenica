@@ -1,0 +1,44 @@
+﻿FUNCTION "SclScaleLinearRealToInt" : Int
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      x : Real;
+      yMin : Int;
+      yMax : Int;
+      x0 : Real;
+      y0 : Int;
+      x1 : Real;
+      y1 : Int;
+   END_VAR
+
+   VAR_TEMP 
+      tempY0real : Real;
+      tempY1real : Real;
+      tempYreal : Real;
+      tempYminReal : Real;
+      tempYmaxReal : Real;
+   END_VAR
+
+
+BEGIN
+	#tempY0real := INT_TO_REAL(#y0);
+	#tempY1real := INT_TO_REAL(#y1);
+	#tempYminReal := INT_TO_REAL(#yMin);
+	#tempYmaxReal := INT_TO_REAL(#yMax);
+	
+	IF (#y1 - #y0) = 0 OR (#x1 - #x0) = 0 OR (#x - #x0) = 0 OR #yMin > #yMax
+	THEN
+	    #SclScaleLinearRealToInt := 0;
+	ELSE
+	    #tempYreal := (#tempY1real - #tempY0real) / (#x1 - #x0) * (#x - #x0) + #tempY0real;
+	END_IF;
+	
+	IF #tempYreal < #tempYminReal THEN
+	    #SclScaleLinearRealToInt := 0;
+	ELSIF #tempYreal > #tempYmaxReal THEN
+	    #SclScaleLinearRealToInt := #yMax;
+	ELSE
+	    #SclScaleLinearRealToInt := REAL_TO_INT(#tempYreal);
+	END_IF;
+END_FUNCTION
+

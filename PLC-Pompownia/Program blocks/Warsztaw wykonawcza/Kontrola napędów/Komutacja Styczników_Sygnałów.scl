@@ -1,0 +1,206 @@
+﻿FUNCTION "Komutacja Styczników_Sygnałów" : Void
+TITLE = Blok sterowania stycznikami F/S i sygnał ON/OFF Soft-Start/ Falo
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Funkcja służy do sterowania stycznikami sieć, falownik napędów P1-P4. 
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.4)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+	//Funkcjonalnośc: (Komutacja styczników F/S. Sterowanie sygnałami On/Off soft-start
+	//                i falownik)
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 09.1.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	
+	
+	REGION Pompa P1 
+	  // sterowanie stycznikami falownik
+	  IF ("CB_CMD_P1" = 1) AND ("IsReady_P1" = 1) AND
+	    ("setCMD_FP1" = 1) AND
+	    ("CMD_network_P1" = 0) AND
+	    ("CMD_inverter_P2" = 0) AND ("CMD_inverter_P3" = 0) AND ("CMD_inverter_P4" = 0)
+	  THEN
+	    // Sterowanie stycznikiem falownika 
+	    "CMD_inverter_P1" := TRUE;
+	  ELSE
+	    "CMD_inverter_P1" := FALSE;
+	    ;
+	  END_IF;
+	  
+	
+	  
+	  // Sterowanie stycznikiem sieć 
+	  IF (("CB_CMD_P1" = 1) AND ("IsReady_P1" = 1) AND
+	    ("setCMD_SP1" = 1) AND
+	    ("CMD_inverter_P1" = 0))
+	    OR
+	    ("CB_CMD_P1" = 1 AND "bitH_Aut_Man_P1" = 0 AND "CMD_inverter_P1" = 0)
+	  THEN
+	    // Sterowanie stycznikiem sieć 
+	    "CMD_network_P1" := TRUE;
+	  ELSE
+	    "CMD_network_P1" := FALSE;
+	    ;
+	  END_IF;
+	  
+	 
+	  
+	  // Sterowanie sygnałem podawanym na Soft-Start
+	  IF "inputRunS_P1" AND "bitH_Alarm_P1"= FALSE AND  "IsRem" THEN
+	    // Podaj sybnał start na soft-start
+	    "CMD_soft_P1" := "CMD_network_P1";
+	  ELSE
+	    "CMD_soft_P1" := FALSE;
+	    ;
+	  END_IF;
+	  
+	  
+	  
+	END_REGION
+	
+	REGION Pompa P2
+	  // sterowanie stycznikami falownik
+	  IF ("CB_CMD_P2" = 1) AND ("IsReady_P2" = 1) AND
+	    ("setCMD_FP2" = 1) AND
+	    ("CMD_network_P2" = 0) AND
+	    ("CMD_inverter_P1" = 0) AND ("CMD_inverter_P3" = 0) AND ("CMD_inverter_P4" = 0)
+	  THEN
+	    // Sterowanie stycznikiem falownika
+	    "CMD_inverter_P2" := TRUE;
+	  ELSE
+	    "CMD_inverter_P2" := FALSE;
+	    ;
+	  END_IF;
+	  
+	
+	  
+	  // Sterowanie stycznikiem sieć 
+	  IF (("CB_CMD_P2" = 1) AND ("IsReady_P2" = 1) AND
+	    ("setCMD_SP2" = 1) AND
+	    ("CMD_inverter_P2" = 0))
+	    OR
+	    ("CB_CMD_P2" = 1 AND "bitH_Aut_Man_P2" = 0 AND "CMD_inverter_P2" = 0 )
+	  THEN
+	    // Sterowanie stycznikiem sieć 
+	    "CMD_network_P2" := TRUE;
+	  ELSE
+	    "CMD_network_P2" := FALSE;
+	    ;
+	  END_IF;
+	  
+	 
+	  
+	  // Sterowanie sygnałem podawanym na Soft-Start
+	  IF "inputRunS_P2" AND "bitH_Alarm_P2"= FALSE AND  "IsRem" THEN
+	    // Podaj sybnał start na soft-start
+	    "CMD_soft_P2" := "CMD_network_P2";
+	  ELSE
+	    "CMD_soft_P2" := FALSE;
+	    ;
+	  END_IF;
+	  
+	  
+	END_REGION
+	
+	REGION Pompa P3
+	  // sterowanie stycznikami falownik
+	  IF ("CB_CMD_P3" = 1) AND ("IsReady_P3" = 1) AND
+	    ("setCMD_FP3" = 1) AND
+	    ("CMD_network_P3" = 0) AND
+	    ("CMD_inverter_P2" = 0) AND ("CMD_inverter_P1" = 0) AND ("CMD_inverter_P4" = 0)
+	  THEN
+	    // Sterowanie stycznikiem falownika 
+	    "CMD_inverter_P3" := TRUE;
+	  ELSE
+	    "CMD_inverter_P3" := FALSE;
+	    ;
+	  END_IF;
+	  
+	 
+	  
+	  // Sterowanie stycznikiem sieć 
+	  IF (("CB_CMD_P3" = 1) AND ("IsReady_P3" = 1) AND
+	    ("setCMD_SP3" = 1) AND
+	    ("CMD_inverter_P3" = 0))
+	    OR
+	    ("CB_CMD_P3" = 1 AND "bitH_Aut_Man_P3" = 0 AND "CMD_inverter_P3" = 0)
+	  THEN
+	     //Sterowanie stycznikiem sieć 
+	    "CMD_network_P3" := TRUE;
+	  ELSE
+	    "CMD_network_P3" := FALSE;
+	    ;
+	  END_IF;
+	  
+	 
+	  
+	  // Sterowanie sygnałem podawanym na Soft-Start
+	  IF "inputRunS_P3" AND "bitH_Alarm_P3"= FALSE AND  "IsRem" THEN
+	     //Podaj sybnał start na soft-start
+	    "CMD_soft_P3" := "CMD_network_P3";
+	  ELSE
+	    "CMD_soft_P3":= FALSE;
+	    ;
+	  END_IF;
+	  
+	  
+	END_REGION
+	
+	
+	
+	REGION Pompa P4
+	  // sterowanie stycznikami falownik
+	  IF ("CB_CMD_P4" = 1) AND ("IsReady_P4" = 1) AND
+	    ("setCMD_FP4" = 1) AND
+	    ("CMD_network_P4" = 0) AND
+	    ("CMD_inverter_P2" = 0) AND ("CMD_inverter_P1" = 0) AND ("CMD_inverter_P3" = 0)
+	  THEN
+	    // Sterowanie stycznikiem falownika 
+	    "CMD_inverter_P4" := TRUE;
+	  ELSE
+	    "CMD_inverter_P4" := FALSE;
+	    ;
+	  END_IF;
+	  
+	  
+	  IF (("CB_CMD_P4" = 1) AND ("IsReady_P4" = 1) AND
+	    ("setCMD_SP4" = 1) AND
+	    ("CMD_inverter_P4" = 0))
+	    OR
+	    ("CB_CMD_P4" = 1 AND "bitH_Aut_Man_P4" = 0 AND "CMD_inverter_P4" = 0)
+	  THEN
+	    // Sterowanie stycznikiem sieć 
+	    "CMD_network_P4" := TRUE;
+	  ELSE
+	    "CMD_network_P4" := FALSE;
+	    ;
+	  END_IF;
+	  
+	
+	  
+	  
+	  // Sterowanie sygnałem podawanym na Soft-Start
+	  IF "inputRunS_P4" AND "bitH_Alarm_P4"= FALSE AND  "IsRem" THEN
+	    // Podaj sybnał start na soft-start
+	    "CMD_soft_P4" := "CMD_network_P4";
+	  ELSE
+	    "CMD_soft_P4" := FALSE;
+	    ;
+	  END_IF;
+	  
+	END_REGION
+END_FUNCTION
+

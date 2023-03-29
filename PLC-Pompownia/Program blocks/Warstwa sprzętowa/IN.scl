@@ -1,0 +1,244 @@
+﻿FUNCTION "IN" : Void
+TITLE = Mapping control room inputs
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Sprawdzanie wejść sterowniak i przekazanie sygnałów 
+
+BEGIN
+	(*
+	Mapowanie wejść sterownika
+	Sprawdzanie wejść sterowniak i przekazanie sygnałów 
+	*)
+	
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.4)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+	//Funkcjonalnośc: (Mapowanie wejść sterownika
+	//                 Sprawdzanie wejść sterowniak i przekazanie sygnałów )
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 19.01.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	// Pompy
+	REGION Tryb sterowania Pompami
+	  // ustawienie znacznika tryb pracy z systemu 1= Aut 0=REM
+	  "inputRem_P1-P4" := "I2.4":P;
+	  "IsRem" := "inputRem_P1-P4";
+	  
+	END_REGION
+	
+	// POMPA P1
+	"IEC_Timer_P1_ready_DB".TOF(IN := "I0.1":P, // histereza na awarię
+	                            PT := T#5S,
+	                            Q => "inputReadyP1");
+	                            
+	
+	
+	"inputRunF_P1" :="I0.3":P;
+	"inputRunS_P1" := "I0.2":P;
+	
+	// POMPA P2
+	"IEC_Timer_P2_ready_DB".TOF(IN:="I0.5":P, // histereza na awarię
+	                            PT:=T#5S,
+	                            Q => "inputReadyP2" );
+	
+	
+	"inputRunF_P2" := "I0.7":P;
+	"inputRunS_P2" := "I0.6":P;
+	
+	// POMPA P3
+	"IEC_Timer_P3_ready_DB".TOF(IN:="I1.1":P, // histereza na awarię
+	                            PT:=T#5S,
+	                            Q=>"inputReadyP3");
+	
+	
+	"inputRunF_P3" := "I1.3":P;
+	"inputRunS_P3" := "I1.2":P;
+	
+	// POMPA P4
+	"IEC_Timer_P4_ready_DB".TOF(IN := "I1.5":P, // histereza na awarię
+	                            PT := T#5S,
+	                            Q => "inputReadyP4");
+	
+	
+	"inputRunF_P4" := "I2.1":P;
+	"inputRunS_P4" := "I2.0":P;
+	
+	
+	// STOP AWARIA PRZYCISK
+	"INPUTstopAccident_Pompy" := "I3.5":P;
+	
+	
+	// ZASUWY Z11 Z12
+	"inputREM_ZASUWY" := "I3.6":P;
+	
+	//Z12
+	"imputRuchZ12":= "I3.1":P;
+	"inputAwariaMomentZ12" := "I3.2":P;
+	"inputOtwartaZ12" := "I3.3":P;
+	"inputZamkniętaZ12" := "I3.4":P;
+	"inputAumalokalneZ12" := "I4.4":P;
+	"inputAumaautomatZ12" := "I4.5":P;
+	"inputAumaawariaZ12" := "I4.6":P;
+	"inputAumagotowośćZ12" := "I4.7":P;
+	//Z11
+	"inputRuchZ11" := "I2.5":P;
+	"inputAwariaMomentZ11" := "I2.6":P;
+	"inputOtwartaZ11" := "I2.7":P;
+	"inputZamkniętaZ11" := "I3.0":P;
+	"inputAumalokalneZ11" := "I4.0":P;
+	"inputAumaautomatZ11" := "I4.1":P;
+	"inputAumaawariaZ11" := "I4.2":P;
+	"inputAumagotowośćZ11" := "I4.3":P;
+	
+	
+	// ######################
+	// Szafa RS Zasilanie OK
+	"inputpowerOK_RS" := "I3.7":P;
+	"Is_PowerRS5_OK" := "inputpowerOK_RS";
+	// #########################
+	
+	// Gotowość P1
+	REGION Gotowość P1
+	  // Gdy brak sygnału na wejściu GOTO lub w statusie ustawiony bit awarii
+	  // to brak gotowości
+	  IF "inputReadyP1" = FALSE OR "bitH_Alarm_P1"= TRUE THEN
+	    "IsReady_P1" := FALSE;
+	  ELSE
+	    "IsReady_P1" := TRUE;
+	  END_IF;
+	  
+	END_REGION
+	
+	// Gotowość P2
+	REGION Gotowość P2
+	  // Gdy brak sygnału na wejściu GOTO lub w statusie ustawiony bit awarii
+	  // to brak gotowości
+	  IF "inputReadyP2" = FALSE OR "bitH_Alarm_P2" = TRUE THEN
+	    "IsReady_P2" := FALSE;
+	  ELSE
+	    "IsReady_P2" := TRUE;
+	  END_IF;
+	  
+	END_REGION
+	
+	// Gotowość P3
+	REGION Gotowość P3
+	  // Gdy brak sygnału na wejściu GOTO lub w statusie ustawiony bit awarii
+	  // to brak gotowości
+	  IF "inputReadyP3" = FALSE OR "bitH_Alarm_P3" = TRUE  THEN
+	    "IsReady_P3" := FALSE;
+	  ELSE
+	    "IsReady_P3" := TRUE;
+	  END_IF;
+	  
+	END_REGION
+	
+	// Gotowość P4
+	REGION Gotowość P4
+	  // Gdy brak sygnału na wejściu GOTO lub w statusie ustawiony bit awarii
+	  // to brak gotowości
+	  IF "inputReadyP4" = FALSE OR "bitH_Alarm_P4" = TRUE  THEN
+	    "IsReady_P4" := FALSE;
+	  ELSE
+	    "IsReady_P4" := TRUE;
+	  END_IF;
+	  
+	END_REGION
+	
+	
+	
+	
+	// Gotowość falownika 
+	"inputready_Inverter_P1-P4" := "I2.2":P;
+	IF "inputready_Inverter_P1-P4" AND ("dbzarządzanie".awaria_falownika_F1 = False) THEN
+	  // Ustaw gotowość
+	  "IsReady_Inverter" :=TRUE;
+	ELSE
+	  "IsReady_Inverter" := FALSE;
+	  ;
+	END_IF;
+	
+	
+	// Praca falownika 
+	"inputrunInverter_" := "I2.3":P;
+	"IsRunInverter1" := "inputrunInverter_";
+	
+	// potwierdzenie pracy Falownik Sieć
+	// ***************
+	//
+	// ***************
+	"IsRunInverter_P1" := "inputRunF_P1";
+	"IsRunNetwork_P1" := "inputRunS_P1";
+	"IsRunInverter_P2" := "inputRunF_P2";
+	"IsRunNetwork_P2" := "inputRunS_P2";
+	"IsRunInverter_P3" := "inputRunF_P3";
+	"IsRunNetwork_P3" := "inputRunS_P3";
+	"IsRunInverter_P4" := "inputRunF_P4";
+	"IsRunNetwork_P4" := "inputRunS_P4";
+	
+	
+	//************************
+	//
+	
+	
+	REGION Pompa P1
+	  // Sygnał Run P1
+	  IF "IsRunInverter_P1" OR "IsRunNetwork_P1" THEN
+	    "IsRun_P1" := TRUE;
+	  ELSE
+	    "IsRun_P1" := FALSE;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION Pompa P2
+	  // Sygnał Run P2
+	  IF "IsRunInverter_P2" OR "IsRunNetwork_P2" THEN
+	    "IsRun_P2" := TRUE;
+	  ELSE
+	    "IsRun_P2" := FALSE;
+	  END_IF;
+	  
+	END_REGION
+	
+	
+	REGION Pompa P3
+	  // Sygnał Run P3
+	  IF "IsRunInverter_P3" OR "IsRunNetwork_P3" THEN
+	    "IsRun_P3" := TRUE;
+	  ELSE
+	    "IsRun_P3" := FALSE;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION Pompa P4
+	  // Sygnał Run P4
+	  IF "IsRunInverter_P4" OR "IsRunNetwork_P4" THEN
+	    "IsRun_P4" := TRUE;
+	  ELSE
+	    "IsRun_P4" := FALSE;
+	  END_IF;
+	  
+	END_REGION
+	
+	
+	
+	
+	
+	
+	
+	
+END_FUNCTION
+
