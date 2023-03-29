@@ -1,0 +1,25 @@
+﻿FUNCTION "ERR_ClassReset" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+
+BEGIN
+	//Reset OB error
+	IF ("V_ErrorOB".ResetErrorOB = TRUE) THEN
+	    "ERR_ResetOB80"();
+	    "V_ErrorOB".OB80 := FALSE;
+	    "V_ErrorOB".StartUp.LostRetentive := FALSE;
+	    "V_ErrorOB".StartUp.LostRTC := FALSE;
+	    "V_ErrorOB".ResetErrorOB := FALSE;
+	END_IF;
+	//Reset Software error
+	IF ("V_SoftwareError".ResetErrorSoftware = TRUE) THEN
+	    "ERR_ResetGetError"();
+	    "ERR_ResetSoftwareError"();
+	    "ERR_ErrorBufferFull".CounterDiagStatusUpdate := 0;
+	    "V_SoftwareError".DiagnosticBuffer := FALSE;
+	    "V_SoftwareError".GetErrorFunction := FALSE;
+	    "V_SoftwareError".SoftwareFunctions := FALSE;
+	    "V_SoftwareError".ResetErrorSoftware := FALSE;
+	END_IF;
+END_FUNCTION
+

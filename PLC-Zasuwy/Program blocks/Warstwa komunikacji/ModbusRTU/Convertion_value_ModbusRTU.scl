@@ -1,0 +1,85 @@
+﻿FUNCTION "Convertion_value_ModbusRTU" : Void
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.2)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1214 FW 3.2 .)
+	//Funkcjonalnośc: (Przesuniecie bajtów (podobnie do funkcji SWAP) 
+	//                  i przekazanie do bloku danych )
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 31.01.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	
+	
+	
+	
+	
+	
+	REGION Q2 przepływomierz
+	  // Adres 0 - bierzący przepływ
+	  "dbModbusRTU_Reg"."Przepływomierz nr2".received_6_przeływu_VF_Adres_0 := DWORD_TO_REAL(%DB37.DBD0);
+	  
+	  // warunek gdy komunikacja z przepływomierzem ok / błąd
+	  IF "DB10_instance_SCADA".rtu_mpp04_2error_status = 0  THEN
+	    // przepisz wartość z modbus rtu act przepływ 
+	    "dbdane".Wielkość_przeływu_Q2 := "dbModbusRTU_Reg"."Przepływomierz nr2".received_6_przeływu_VF_Adres_0;
+	  ELSE
+	    "dbdane".Wielkość_przeływu_Q2 := 0.0;
+	    ;
+	  END_IF;
+	  
+	  
+	  // Adres 2 - Licznik_objętość_VF
+	  "dbModbusRTU_Reg"."Przepływomierz nr2".received_6_objętość_VF_Adres_2 := DWORD_TO_REAL(%DB37.DBD4);
+	  
+	  "dbdane".Licznik_objętość_VF_Q2 := "dbModbusRTU_Reg"."Przepływomierz nr2".received_6_objętość_VF_Adres_2;
+	  
+	  // Adres 4- stan bierzący licznika objetości w stecz VR
+	  "dbModbusRTU_Reg"."Przepływomierz nr2"."received_6_objętośc RF_Adres_4" := DWORD_TO_REAL(%DB37.DBD8);
+	  
+	  "dbdane".Licznik_objętość_VR_Q2 := "dbModbusRTU_Reg"."Przepływomierz nr2"."received_6_objętośc RF_Adres_4";
+	  
+	  // Adres 6- stan bierzący licznika różnicowego  objętości VD
+	  
+	  
+	  
+	  // Adres 8- główny liczni objetości w przód GF
+	  "dbModbusRTU_Reg"."Przepływomierz nr2".received_6_licznik_objętości_GF_Adres_8 := DWORD_TO_REAL(%DB37.DBD16);
+	  
+	  "dbdane".Stan_licz_bjętości_GF_Q2 := "dbModbusRTU_Reg"."Przepływomierz nr2".received_6_licznik_objętości_GF_Adres_8;
+	  
+	  // Adres 10- główny liczni objetości w stecz GR
+	  "dbModbusRTU_Reg"."Przepływomierz nr2".received_6_Licznik_objętości_GR_Adres_10 := DWORD_TO_REAL(%DB37.DBD20);
+	  
+	  "dbdane".Stan_licz_rózicowego_obj_GD_Q2 := "dbModbusRTU_Reg"."Przepływomierz nr2".received_6_Licznik_objętości_GR_Adres_10;
+	  
+	  //Adres 12- główny lróznicowy liczni objetościGD
+	  
+	  
+	  
+	  // Status MP04 Q2 - magistrala
+	  "dbModbusRTU_Reg"."Przepływomierz nr2".received_6_status_przepływomierza_Adres_1000 := "dbModbusRTU_Reg".received_6_Stan_urządzenia_1000.typeDataInverter_int[0];
+	  "dbdane"._Stan_urządzenia_Q2 := "dbModbusRTU_Reg".received_6_Stan_urządzenia_1000.typeDataInverter_int[0];
+	  
+	  
+	  
+	  
+	  
+	  
+	END_REGION
+	
+END_FUNCTION
+

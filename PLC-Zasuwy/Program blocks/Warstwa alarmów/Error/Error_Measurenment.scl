@@ -1,0 +1,30 @@
+﻿FUNCTION "Error_Measurenment" : Void
+TITLE = Handling error measurenment
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : RTecmer
+VERSION : 0.1
+//The response to the loss of echo by the sonar and the result of the measurement of the difference will be taken.
+   VAR_INPUT 
+      Error_Echo1 : Bool;   // Signal loss echo sonar inflow
+      Error_Echo2 : Bool;   // Signal loss echo sonar outlet
+      Error_Level : Bool;   // Difference Level Error
+   END_VAR
+
+   VAR_OUTPUT 
+      ErrorMeasurement : Bool;   // error relay
+   END_VAR
+
+
+BEGIN
+	//If the echo error if the negative difference is set
+	IF (#Error_Echo1 = TRUE OR #Error_Echo2 = TRUE ) THEN
+	    #ErrorMeasurement := TRUE;
+	ELSE
+	    #ErrorMeasurement := FALSE;
+	END_IF;
+	    
+	    
+	
+	
+END_FUNCTION
+

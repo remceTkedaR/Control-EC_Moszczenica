@@ -1,0 +1,2390 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Document>
+  <Engineering version="V16" />
+  <DocumentInfo>
+    <Created>2023-03-29T11:03:29.1138509Z</Created>
+    <ExportSetting>WithDefaults</ExportSetting>
+    <InstalledProducts>
+      <Product>
+        <DisplayName>Totally Integrated Automation Portal</DisplayName>
+        <DisplayVersion>V16 Update 6</DisplayVersion>
+      </Product>
+      <OptionPackage>
+        <DisplayName>TIA Portal Version Control Interface</DisplayName>
+        <DisplayVersion>V16 Update 2</DisplayVersion>
+      </OptionPackage>
+      <OptionPackage>
+        <DisplayName>TIA Portal Openness</DisplayName>
+        <DisplayVersion>V16 Update 6</DisplayVersion>
+      </OptionPackage>
+      <Product>
+        <DisplayName>STEP 7 Professional</DisplayName>
+        <DisplayVersion>V16 Update 6</DisplayVersion>
+      </Product>
+      <OptionPackage>
+        <DisplayName>STEP 7 Safety</DisplayName>
+        <DisplayVersion>V16</DisplayVersion>
+      </OptionPackage>
+      <Product>
+        <DisplayName>WinCC Advanced</DisplayName>
+        <DisplayVersion>V16 Update 6</DisplayVersion>
+      </Product>
+    </InstalledProducts>
+  </DocumentInfo>
+  <SW.Blocks.FC ID="0">
+    <AttributeList>
+      <AutoNumber>true</AutoNumber>
+      <HeaderAuthor>rtecmer</HeaderAuthor>
+      <HeaderFamily />
+      <HeaderName />
+      <HeaderVersion>0.1</HeaderVersion>
+      <Interface><Sections xmlns="http://www.siemens.com/automation/Openness/SW/Interface/v4">
+  <Section Name="Input" />
+  <Section Name="Output" />
+  <Section Name="InOut" />
+  <Section Name="Temp" />
+  <Section Name="Constant" />
+  <Section Name="Return">
+    <Member Name="Ret_Val" Datatype="Void" Accessibility="Public" />
+  </Section>
+</Sections></Interface>
+      <IsIECCheckEnabled>false</IsIECCheckEnabled>
+      <MemoryLayout>Optimized</MemoryLayout>
+      <Name>Sterowniki napędów</Name>
+      <Number>7</Number>
+      <ProgrammingLanguage>LAD</ProgrammingLanguage>
+      <SetENOAutomatically>false</SetENOAutomatically>
+      <UDABlockProperties />
+      <UDAEnableTagReadback>false</UDAEnableTagReadback>
+    </AttributeList>
+    <ObjectList>
+      <MultilingualText ID="1" CompositionName="Comment">
+        <ObjectList>
+          <MultilingualTextItem ID="2" CompositionName="Items">
+            <AttributeList>
+              <Culture>en-US</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+          <MultilingualTextItem ID="3" CompositionName="Items">
+            <AttributeList>
+              <Culture>pl-PL</Culture>
+              <Text>Sterownik napędów zasuw Z1-Z9</Text>
+            </AttributeList>
+          </MultilingualTextItem>
+        </ObjectList>
+      </MultilingualText>
+      <SW.Blocks.CompileUnit ID="4" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource />
+          <ProgrammingLanguage>LAD</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="5" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="6" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="7" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="8" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="9" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="A" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <SW.Blocks.CompileUnit ID="B" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource><FlgNet xmlns="http://www.siemens.com/automation/Openness/SW/NetworkSource/FlgNet/v4">
+  <Parts>
+    <Access Scope="GlobalVariable" UId="21">
+      <Symbol>
+        <Component Name="FirstScan" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="22">
+      <Symbol>
+        <Component Name="DB10_instance_SCADA" />
+        <Component Name="setPołożenieZ10" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="23">
+      <Symbol>
+        <Component Name="DB10_instance_SCADA" />
+        <Component Name="actPołożenieZ10" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="24">
+      <Symbol>
+        <Component Name="isClose_od_położenia" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="25">
+      <Symbol>
+        <Component Name="inputOtwartaZ_10" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="26">
+      <Symbol>
+        <Component Name="inputREM_Zasuwy" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="27">
+      <Symbol>
+        <Component Name="CMD_Close_Z_10" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="28">
+      <Symbol>
+        <Component Name="CMD_Open_Z_10" />
+      </Symbol>
+    </Access>
+    <Access Scope="Address" UId="29">
+      <Address Area="DB" Type="Byte" BlockNumber="10" BitOffset="192" />
+    </Access>
+    <Access Scope="Address" UId="30">
+      <Address Area="DB" Type="Byte" BlockNumber="10" BitOffset="200" />
+    </Access>
+    <Access Scope="GlobalVariable" UId="31">
+      <Symbol>
+        <Component Name="dbTimersForDrivers" />
+        <Component Name="TimerZ10" />
+      </Symbol>
+    </Access>
+    <Part Name="Contact" UId="32">
+      <Negated Name="operand" />
+    </Part>
+    <Call UId="33">
+      <CallInfo Name="VLV02_POSITION" BlockType="FB">
+        <Instance Scope="GlobalVariable" UId="34">
+          <Component Name="VLV02_POSITION_DB_Z10" />
+        </Instance>
+        <Parameter Name="SetOpen_Percent" Section="Input" Type="Word" />
+        <Parameter Name="VectorOut" Section="Input" Type="Word" />
+        <Parameter Name="CLSD" Section="Input" Type="Bool" />
+        <Parameter Name="OPND" Section="Input" Type="Bool" />
+        <Parameter Name="REMT" Section="Input" Type="Bool" />
+        <Parameter Name="CLSE" Section="InOut" Type="Bool" />
+        <Parameter Name="OPEN" Section="InOut" Type="Bool" />
+        <Parameter Name="WIZ" Section="InOut" Type="Byte" />
+        <Parameter Name="STAT" Section="InOut" Type="Byte" />
+        <Parameter Name="TMR1" Section="InOut" Type="IEC_TIMER" />
+      </CallInfo>
+    </Call>
+  </Parts>
+  <Wires>
+    <Wire UId="35">
+      <Powerrail />
+      <NameCon UId="32" Name="in" />
+    </Wire>
+    <Wire UId="36">
+      <IdentCon UId="21" />
+      <NameCon UId="32" Name="operand" />
+    </Wire>
+    <Wire UId="37">
+      <NameCon UId="32" Name="out" />
+      <NameCon UId="33" Name="en" />
+    </Wire>
+    <Wire UId="38">
+      <IdentCon UId="22" />
+      <NameCon UId="33" Name="SetOpen_Percent" />
+    </Wire>
+    <Wire UId="39">
+      <IdentCon UId="23" />
+      <NameCon UId="33" Name="VectorOut" />
+    </Wire>
+    <Wire UId="40">
+      <IdentCon UId="24" />
+      <NameCon UId="33" Name="CLSD" />
+    </Wire>
+    <Wire UId="41">
+      <IdentCon UId="25" />
+      <NameCon UId="33" Name="OPND" />
+    </Wire>
+    <Wire UId="42">
+      <IdentCon UId="26" />
+      <NameCon UId="33" Name="REMT" />
+    </Wire>
+    <Wire UId="43">
+      <IdentCon UId="27" />
+      <NameCon UId="33" Name="CLSE" />
+    </Wire>
+    <Wire UId="44">
+      <IdentCon UId="28" />
+      <NameCon UId="33" Name="OPEN" />
+    </Wire>
+    <Wire UId="45">
+      <IdentCon UId="29" />
+      <NameCon UId="33" Name="WIZ" />
+    </Wire>
+    <Wire UId="46">
+      <IdentCon UId="30" />
+      <NameCon UId="33" Name="STAT" />
+    </Wire>
+    <Wire UId="47">
+      <IdentCon UId="31" />
+      <NameCon UId="33" Name="TMR1" />
+    </Wire>
+  </Wires>
+</FlgNet></NetworkSource>
+          <ProgrammingLanguage>LAD</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="C" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="D" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="E" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text>Funkcja zawiera kontrolę czasu jazdy na pozycję ustawiony czas 120sek
+po upływie czasu nastapi alarm i przełączenie w trym manual </Text>
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="F" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="10" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="11" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text>Sterowanie Zasuwą Z10 - Położenie</Text>
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <SW.Blocks.CompileUnit ID="12" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource />
+          <ProgrammingLanguage>LAD</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="13" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="14" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="15" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="16" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="17" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="18" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <SW.Blocks.CompileUnit ID="19" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource><FlgNet xmlns="http://www.siemens.com/automation/Openness/SW/NetworkSource/FlgNet/v4">
+  <Parts>
+    <Access Scope="GlobalVariable" UId="21">
+      <Symbol>
+        <Component Name="setSVMC_Z_1" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="22">
+      <Symbol>
+        <Component Name="setAlarm_Moment_Z_1" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="23">
+      <Symbol>
+        <Component Name="setSVMO_Z_1" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="24">
+      <Symbol>
+        <Component Name="setAlarm_Moment_Z_1" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="25">
+      <Symbol>
+        <Component Name="inputZamkniętaZ_1" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="26">
+      <Symbol>
+        <Component Name="inputOtwartaZ_1" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="27">
+      <Symbol>
+        <Component Name="inputREM_Zasuwy" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="28">
+      <Symbol>
+        <Component Name="dbTimersForDrivers" />
+        <Component Name="TimerZ1" />
+        <Component Name="PT" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="29">
+      <Symbol>
+        <Component Name="CMD_Close_Z_1" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="30">
+      <Symbol>
+        <Component Name="CMD_Open_Z_1" />
+      </Symbol>
+    </Access>
+    <Access Scope="Address" UId="31">
+      <Address Area="DB" Type="Byte" BlockNumber="10" BitOffset="48" />
+    </Access>
+    <Access Scope="Address" UId="32">
+      <Address Area="DB" Type="Byte" BlockNumber="10" BitOffset="56" />
+    </Access>
+    <Access Scope="GlobalVariable" UId="33">
+      <Symbol>
+        <Component Name="dbTimersForDrivers" />
+        <Component Name="TimerZ1" />
+      </Symbol>
+    </Access>
+    <Part Name="Contact" UId="34" />
+    <Part Name="Contact" UId="35">
+      <Negated Name="operand" />
+    </Part>
+    <Part Name="Contact" UId="36" />
+    <Part Name="Contact" UId="37">
+      <Negated Name="operand" />
+    </Part>
+    <Part Name="Contact" UId="38" />
+    <Part Name="Contact" UId="39" />
+    <Part Name="Contact" UId="40" />
+    <Call UId="41">
+      <CallInfo Name="VLV02" BlockType="FB">
+        <Instance Scope="GlobalVariable" UId="42">
+          <Component Name="VLV02_DB_Z1" />
+        </Instance>
+        <Parameter Name="SVMC" Section="Input" Type="Bool" />
+        <Parameter Name="SVMO" Section="Input" Type="Bool" />
+        <Parameter Name="CLSD" Section="Input" Type="Bool" />
+        <Parameter Name="OPND" Section="Input" Type="Bool" />
+        <Parameter Name="REMT" Section="Input" Type="Bool" />
+        <Parameter Name="KT1" Section="Input" Type="Time" />
+        <Parameter Name="CLSE" Section="InOut" Type="Bool" />
+        <Parameter Name="OPEN" Section="InOut" Type="Bool" />
+        <Parameter Name="WIZ" Section="InOut" Type="Byte" />
+        <Parameter Name="STAT" Section="InOut" Type="Byte" />
+        <Parameter Name="TMR1" Section="InOut" Type="TON_TIME" />
+      </CallInfo>
+    </Call>
+  </Parts>
+  <Wires>
+    <Wire UId="43">
+      <Powerrail />
+      <NameCon UId="41" Name="en" />
+      <NameCon UId="34" Name="in" />
+      <NameCon UId="36" Name="in" />
+      <NameCon UId="38" Name="in" />
+      <NameCon UId="39" Name="in" />
+      <NameCon UId="40" Name="in" />
+    </Wire>
+    <Wire UId="44">
+      <IdentCon UId="21" />
+      <NameCon UId="34" Name="operand" />
+    </Wire>
+    <Wire UId="45">
+      <NameCon UId="34" Name="out" />
+      <NameCon UId="35" Name="in" />
+    </Wire>
+    <Wire UId="46">
+      <IdentCon UId="22" />
+      <NameCon UId="35" Name="operand" />
+    </Wire>
+    <Wire UId="47">
+      <NameCon UId="35" Name="out" />
+      <NameCon UId="41" Name="SVMC" />
+    </Wire>
+    <Wire UId="48">
+      <IdentCon UId="23" />
+      <NameCon UId="36" Name="operand" />
+    </Wire>
+    <Wire UId="49">
+      <NameCon UId="36" Name="out" />
+      <NameCon UId="37" Name="in" />
+    </Wire>
+    <Wire UId="50">
+      <IdentCon UId="24" />
+      <NameCon UId="37" Name="operand" />
+    </Wire>
+    <Wire UId="51">
+      <NameCon UId="37" Name="out" />
+      <NameCon UId="41" Name="SVMO" />
+    </Wire>
+    <Wire UId="52">
+      <IdentCon UId="25" />
+      <NameCon UId="38" Name="operand" />
+    </Wire>
+    <Wire UId="53">
+      <NameCon UId="38" Name="out" />
+      <NameCon UId="41" Name="CLSD" />
+    </Wire>
+    <Wire UId="54">
+      <IdentCon UId="26" />
+      <NameCon UId="39" Name="operand" />
+    </Wire>
+    <Wire UId="55">
+      <NameCon UId="39" Name="out" />
+      <NameCon UId="41" Name="OPND" />
+    </Wire>
+    <Wire UId="56">
+      <IdentCon UId="27" />
+      <NameCon UId="40" Name="operand" />
+    </Wire>
+    <Wire UId="57">
+      <NameCon UId="40" Name="out" />
+      <NameCon UId="41" Name="REMT" />
+    </Wire>
+    <Wire UId="58">
+      <IdentCon UId="28" />
+      <NameCon UId="41" Name="KT1" />
+    </Wire>
+    <Wire UId="59">
+      <IdentCon UId="29" />
+      <NameCon UId="41" Name="CLSE" />
+    </Wire>
+    <Wire UId="60">
+      <IdentCon UId="30" />
+      <NameCon UId="41" Name="OPEN" />
+    </Wire>
+    <Wire UId="61">
+      <IdentCon UId="31" />
+      <NameCon UId="41" Name="WIZ" />
+    </Wire>
+    <Wire UId="62">
+      <IdentCon UId="32" />
+      <NameCon UId="41" Name="STAT" />
+    </Wire>
+    <Wire UId="63">
+      <IdentCon UId="33" />
+      <NameCon UId="41" Name="TMR1" />
+    </Wire>
+  </Wires>
+</FlgNet></NetworkSource>
+          <ProgrammingLanguage>LAD</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="1A" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="1B" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="1C" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="1D" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="1E" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="1F" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text>Zasuwa Z1</Text>
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <SW.Blocks.CompileUnit ID="20" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource><FlgNet xmlns="http://www.siemens.com/automation/Openness/SW/NetworkSource/FlgNet/v4">
+  <Parts>
+    <Access Scope="GlobalVariable" UId="21">
+      <Symbol>
+        <Component Name="setSVMC_Z_2" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="22">
+      <Symbol>
+        <Component Name="setAlarm_Moment_Z_2" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="23">
+      <Symbol>
+        <Component Name="setSVMO_Z_2" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="24">
+      <Symbol>
+        <Component Name="setAlarm_Moment_Z_2" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="25">
+      <Symbol>
+        <Component Name="inputZamkniętaZ_2" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="26">
+      <Symbol>
+        <Component Name="inputOtwartaZ_2" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="27">
+      <Symbol>
+        <Component Name="inputREM_Zasuwy" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="28">
+      <Symbol>
+        <Component Name="dbTimersForDrivers" />
+        <Component Name="TimerZ2" />
+        <Component Name="PT" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="29">
+      <Symbol>
+        <Component Name="CMD_Close_Z_2" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="30">
+      <Symbol>
+        <Component Name="CMD_Open_Z_2" />
+      </Symbol>
+    </Access>
+    <Access Scope="Address" UId="31">
+      <Address Area="DB" Type="Byte" BlockNumber="10" BitOffset="64" />
+    </Access>
+    <Access Scope="Address" UId="32">
+      <Address Area="DB" Type="Byte" BlockNumber="10" BitOffset="72" />
+    </Access>
+    <Access Scope="GlobalVariable" UId="33">
+      <Symbol>
+        <Component Name="dbTimersForDrivers" />
+        <Component Name="TimerZ2" />
+      </Symbol>
+    </Access>
+    <Part Name="Contact" UId="34" />
+    <Part Name="Contact" UId="35">
+      <Negated Name="operand" />
+    </Part>
+    <Part Name="Contact" UId="36" />
+    <Part Name="Contact" UId="37">
+      <Negated Name="operand" />
+    </Part>
+    <Part Name="Contact" UId="38" />
+    <Part Name="Contact" UId="39" />
+    <Part Name="Contact" UId="40" />
+    <Call UId="41">
+      <CallInfo Name="VLV02" BlockType="FB">
+        <Instance Scope="GlobalVariable" UId="42">
+          <Component Name="VLV02_DB_Z2" />
+        </Instance>
+        <Parameter Name="SVMC" Section="Input" Type="Bool" />
+        <Parameter Name="SVMO" Section="Input" Type="Bool" />
+        <Parameter Name="CLSD" Section="Input" Type="Bool" />
+        <Parameter Name="OPND" Section="Input" Type="Bool" />
+        <Parameter Name="REMT" Section="Input" Type="Bool" />
+        <Parameter Name="KT1" Section="Input" Type="Time" />
+        <Parameter Name="CLSE" Section="InOut" Type="Bool" />
+        <Parameter Name="OPEN" Section="InOut" Type="Bool" />
+        <Parameter Name="WIZ" Section="InOut" Type="Byte" />
+        <Parameter Name="STAT" Section="InOut" Type="Byte" />
+        <Parameter Name="TMR1" Section="InOut" Type="TON_TIME" />
+      </CallInfo>
+    </Call>
+  </Parts>
+  <Wires>
+    <Wire UId="43">
+      <Powerrail />
+      <NameCon UId="41" Name="en" />
+      <NameCon UId="34" Name="in" />
+      <NameCon UId="36" Name="in" />
+      <NameCon UId="38" Name="in" />
+      <NameCon UId="39" Name="in" />
+      <NameCon UId="40" Name="in" />
+    </Wire>
+    <Wire UId="44">
+      <IdentCon UId="21" />
+      <NameCon UId="34" Name="operand" />
+    </Wire>
+    <Wire UId="45">
+      <NameCon UId="34" Name="out" />
+      <NameCon UId="35" Name="in" />
+    </Wire>
+    <Wire UId="46">
+      <IdentCon UId="22" />
+      <NameCon UId="35" Name="operand" />
+    </Wire>
+    <Wire UId="47">
+      <NameCon UId="35" Name="out" />
+      <NameCon UId="41" Name="SVMC" />
+    </Wire>
+    <Wire UId="48">
+      <IdentCon UId="23" />
+      <NameCon UId="36" Name="operand" />
+    </Wire>
+    <Wire UId="49">
+      <NameCon UId="36" Name="out" />
+      <NameCon UId="37" Name="in" />
+    </Wire>
+    <Wire UId="50">
+      <IdentCon UId="24" />
+      <NameCon UId="37" Name="operand" />
+    </Wire>
+    <Wire UId="51">
+      <NameCon UId="37" Name="out" />
+      <NameCon UId="41" Name="SVMO" />
+    </Wire>
+    <Wire UId="52">
+      <IdentCon UId="25" />
+      <NameCon UId="38" Name="operand" />
+    </Wire>
+    <Wire UId="53">
+      <NameCon UId="38" Name="out" />
+      <NameCon UId="41" Name="CLSD" />
+    </Wire>
+    <Wire UId="54">
+      <IdentCon UId="26" />
+      <NameCon UId="39" Name="operand" />
+    </Wire>
+    <Wire UId="55">
+      <NameCon UId="39" Name="out" />
+      <NameCon UId="41" Name="OPND" />
+    </Wire>
+    <Wire UId="56">
+      <IdentCon UId="27" />
+      <NameCon UId="40" Name="operand" />
+    </Wire>
+    <Wire UId="57">
+      <NameCon UId="40" Name="out" />
+      <NameCon UId="41" Name="REMT" />
+    </Wire>
+    <Wire UId="58">
+      <IdentCon UId="28" />
+      <NameCon UId="41" Name="KT1" />
+    </Wire>
+    <Wire UId="59">
+      <IdentCon UId="29" />
+      <NameCon UId="41" Name="CLSE" />
+    </Wire>
+    <Wire UId="60">
+      <IdentCon UId="30" />
+      <NameCon UId="41" Name="OPEN" />
+    </Wire>
+    <Wire UId="61">
+      <IdentCon UId="31" />
+      <NameCon UId="41" Name="WIZ" />
+    </Wire>
+    <Wire UId="62">
+      <IdentCon UId="32" />
+      <NameCon UId="41" Name="STAT" />
+    </Wire>
+    <Wire UId="63">
+      <IdentCon UId="33" />
+      <NameCon UId="41" Name="TMR1" />
+    </Wire>
+  </Wires>
+</FlgNet></NetworkSource>
+          <ProgrammingLanguage>LAD</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="21" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="22" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="23" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="24" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="25" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="26" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text>Zasuwa Z2</Text>
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <SW.Blocks.CompileUnit ID="27" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource><FlgNet xmlns="http://www.siemens.com/automation/Openness/SW/NetworkSource/FlgNet/v4">
+  <Parts>
+    <Access Scope="GlobalVariable" UId="21">
+      <Symbol>
+        <Component Name="setSVMC_Z_3" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="22">
+      <Symbol>
+        <Component Name="setAlarm_Moment_Z_3" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="23">
+      <Symbol>
+        <Component Name="setSVMO_Z_3" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="24">
+      <Symbol>
+        <Component Name="setAlarm_Moment_Z_3" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="25">
+      <Symbol>
+        <Component Name="inputZamkniętaZ_3" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="26">
+      <Symbol>
+        <Component Name="inputOtwartaZ_3" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="27">
+      <Symbol>
+        <Component Name="inputREM_Zasuwy" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="28">
+      <Symbol>
+        <Component Name="dbTimersForDrivers" />
+        <Component Name="TimerZ3" />
+        <Component Name="PT" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="29">
+      <Symbol>
+        <Component Name="CMD_Close_Z_3" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="30">
+      <Symbol>
+        <Component Name="CMD_Open_Z_3" />
+      </Symbol>
+    </Access>
+    <Access Scope="Address" UId="31">
+      <Address Area="DB" Type="Byte" BlockNumber="10" BitOffset="80" />
+    </Access>
+    <Access Scope="Address" UId="32">
+      <Address Area="DB" Type="Byte" BlockNumber="10" BitOffset="88" />
+    </Access>
+    <Access Scope="GlobalVariable" UId="33">
+      <Symbol>
+        <Component Name="dbTimersForDrivers" />
+        <Component Name="TimerZ3" />
+      </Symbol>
+    </Access>
+    <Part Name="Contact" UId="34" />
+    <Part Name="Contact" UId="35">
+      <Negated Name="operand" />
+    </Part>
+    <Part Name="Contact" UId="36" />
+    <Part Name="Contact" UId="37">
+      <Negated Name="operand" />
+    </Part>
+    <Part Name="Contact" UId="38" />
+    <Part Name="Contact" UId="39" />
+    <Part Name="Contact" UId="40" />
+    <Call UId="41">
+      <CallInfo Name="VLV02" BlockType="FB">
+        <Instance Scope="GlobalVariable" UId="42">
+          <Component Name="VLV02_DB_z3" />
+        </Instance>
+        <Parameter Name="SVMC" Section="Input" Type="Bool" />
+        <Parameter Name="SVMO" Section="Input" Type="Bool" />
+        <Parameter Name="CLSD" Section="Input" Type="Bool" />
+        <Parameter Name="OPND" Section="Input" Type="Bool" />
+        <Parameter Name="REMT" Section="Input" Type="Bool" />
+        <Parameter Name="KT1" Section="Input" Type="Time" />
+        <Parameter Name="CLSE" Section="InOut" Type="Bool" />
+        <Parameter Name="OPEN" Section="InOut" Type="Bool" />
+        <Parameter Name="WIZ" Section="InOut" Type="Byte" />
+        <Parameter Name="STAT" Section="InOut" Type="Byte" />
+        <Parameter Name="TMR1" Section="InOut" Type="TON_TIME" />
+      </CallInfo>
+    </Call>
+  </Parts>
+  <Wires>
+    <Wire UId="43">
+      <Powerrail />
+      <NameCon UId="41" Name="en" />
+      <NameCon UId="34" Name="in" />
+      <NameCon UId="36" Name="in" />
+      <NameCon UId="38" Name="in" />
+      <NameCon UId="39" Name="in" />
+      <NameCon UId="40" Name="in" />
+    </Wire>
+    <Wire UId="44">
+      <IdentCon UId="21" />
+      <NameCon UId="34" Name="operand" />
+    </Wire>
+    <Wire UId="45">
+      <NameCon UId="34" Name="out" />
+      <NameCon UId="35" Name="in" />
+    </Wire>
+    <Wire UId="46">
+      <IdentCon UId="22" />
+      <NameCon UId="35" Name="operand" />
+    </Wire>
+    <Wire UId="47">
+      <NameCon UId="35" Name="out" />
+      <NameCon UId="41" Name="SVMC" />
+    </Wire>
+    <Wire UId="48">
+      <IdentCon UId="23" />
+      <NameCon UId="36" Name="operand" />
+    </Wire>
+    <Wire UId="49">
+      <NameCon UId="36" Name="out" />
+      <NameCon UId="37" Name="in" />
+    </Wire>
+    <Wire UId="50">
+      <IdentCon UId="24" />
+      <NameCon UId="37" Name="operand" />
+    </Wire>
+    <Wire UId="51">
+      <NameCon UId="37" Name="out" />
+      <NameCon UId="41" Name="SVMO" />
+    </Wire>
+    <Wire UId="52">
+      <IdentCon UId="25" />
+      <NameCon UId="38" Name="operand" />
+    </Wire>
+    <Wire UId="53">
+      <NameCon UId="38" Name="out" />
+      <NameCon UId="41" Name="CLSD" />
+    </Wire>
+    <Wire UId="54">
+      <IdentCon UId="26" />
+      <NameCon UId="39" Name="operand" />
+    </Wire>
+    <Wire UId="55">
+      <NameCon UId="39" Name="out" />
+      <NameCon UId="41" Name="OPND" />
+    </Wire>
+    <Wire UId="56">
+      <IdentCon UId="27" />
+      <NameCon UId="40" Name="operand" />
+    </Wire>
+    <Wire UId="57">
+      <NameCon UId="40" Name="out" />
+      <NameCon UId="41" Name="REMT" />
+    </Wire>
+    <Wire UId="58">
+      <IdentCon UId="28" />
+      <NameCon UId="41" Name="KT1" />
+    </Wire>
+    <Wire UId="59">
+      <IdentCon UId="29" />
+      <NameCon UId="41" Name="CLSE" />
+    </Wire>
+    <Wire UId="60">
+      <IdentCon UId="30" />
+      <NameCon UId="41" Name="OPEN" />
+    </Wire>
+    <Wire UId="61">
+      <IdentCon UId="31" />
+      <NameCon UId="41" Name="WIZ" />
+    </Wire>
+    <Wire UId="62">
+      <IdentCon UId="32" />
+      <NameCon UId="41" Name="STAT" />
+    </Wire>
+    <Wire UId="63">
+      <IdentCon UId="33" />
+      <NameCon UId="41" Name="TMR1" />
+    </Wire>
+  </Wires>
+</FlgNet></NetworkSource>
+          <ProgrammingLanguage>LAD</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="28" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="29" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="2A" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="2B" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="2C" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="2D" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text>Zasuwa Z3</Text>
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <SW.Blocks.CompileUnit ID="2E" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource><FlgNet xmlns="http://www.siemens.com/automation/Openness/SW/NetworkSource/FlgNet/v4">
+  <Parts>
+    <Access Scope="GlobalVariable" UId="21">
+      <Symbol>
+        <Component Name="setSVMC_Z_4" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="22">
+      <Symbol>
+        <Component Name="setAlarm_Moment_Z_4" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="23">
+      <Symbol>
+        <Component Name="setSVMO_Z_4" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="24">
+      <Symbol>
+        <Component Name="setAlarm_Moment_Z_4" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="25">
+      <Symbol>
+        <Component Name="inputZamkniętaZ_4" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="26">
+      <Symbol>
+        <Component Name="inputOtwartaZ_4" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="27">
+      <Symbol>
+        <Component Name="inputREM_Zasuwy" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="28">
+      <Symbol>
+        <Component Name="dbTimersForDrivers" />
+        <Component Name="TimerZ4" />
+        <Component Name="PT" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="29">
+      <Symbol>
+        <Component Name="CMD_Close_Z_4" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="30">
+      <Symbol>
+        <Component Name="CMD_Open_Z_4" />
+      </Symbol>
+    </Access>
+    <Access Scope="Address" UId="31">
+      <Address Area="DB" Type="Byte" BlockNumber="10" BitOffset="96" />
+    </Access>
+    <Access Scope="Address" UId="32">
+      <Address Area="DB" Type="Byte" BlockNumber="10" BitOffset="104" />
+    </Access>
+    <Access Scope="GlobalVariable" UId="33">
+      <Symbol>
+        <Component Name="dbTimersForDrivers" />
+        <Component Name="TimerZ4" />
+      </Symbol>
+    </Access>
+    <Part Name="Contact" UId="34" />
+    <Part Name="Contact" UId="35">
+      <Negated Name="operand" />
+    </Part>
+    <Part Name="Contact" UId="36" />
+    <Part Name="Contact" UId="37">
+      <Negated Name="operand" />
+    </Part>
+    <Part Name="Contact" UId="38" />
+    <Part Name="Contact" UId="39" />
+    <Part Name="Contact" UId="40" />
+    <Call UId="41">
+      <CallInfo Name="VLV02" BlockType="FB">
+        <Instance Scope="GlobalVariable" UId="42">
+          <Component Name="VLV02_DB_Z4" />
+        </Instance>
+        <Parameter Name="SVMC" Section="Input" Type="Bool" />
+        <Parameter Name="SVMO" Section="Input" Type="Bool" />
+        <Parameter Name="CLSD" Section="Input" Type="Bool" />
+        <Parameter Name="OPND" Section="Input" Type="Bool" />
+        <Parameter Name="REMT" Section="Input" Type="Bool" />
+        <Parameter Name="KT1" Section="Input" Type="Time" />
+        <Parameter Name="CLSE" Section="InOut" Type="Bool" />
+        <Parameter Name="OPEN" Section="InOut" Type="Bool" />
+        <Parameter Name="WIZ" Section="InOut" Type="Byte" />
+        <Parameter Name="STAT" Section="InOut" Type="Byte" />
+        <Parameter Name="TMR1" Section="InOut" Type="TON_TIME" />
+      </CallInfo>
+    </Call>
+  </Parts>
+  <Wires>
+    <Wire UId="43">
+      <Powerrail />
+      <NameCon UId="41" Name="en" />
+      <NameCon UId="34" Name="in" />
+      <NameCon UId="36" Name="in" />
+      <NameCon UId="38" Name="in" />
+      <NameCon UId="39" Name="in" />
+      <NameCon UId="40" Name="in" />
+    </Wire>
+    <Wire UId="44">
+      <IdentCon UId="21" />
+      <NameCon UId="34" Name="operand" />
+    </Wire>
+    <Wire UId="45">
+      <NameCon UId="34" Name="out" />
+      <NameCon UId="35" Name="in" />
+    </Wire>
+    <Wire UId="46">
+      <IdentCon UId="22" />
+      <NameCon UId="35" Name="operand" />
+    </Wire>
+    <Wire UId="47">
+      <NameCon UId="35" Name="out" />
+      <NameCon UId="41" Name="SVMC" />
+    </Wire>
+    <Wire UId="48">
+      <IdentCon UId="23" />
+      <NameCon UId="36" Name="operand" />
+    </Wire>
+    <Wire UId="49">
+      <NameCon UId="36" Name="out" />
+      <NameCon UId="37" Name="in" />
+    </Wire>
+    <Wire UId="50">
+      <IdentCon UId="24" />
+      <NameCon UId="37" Name="operand" />
+    </Wire>
+    <Wire UId="51">
+      <NameCon UId="37" Name="out" />
+      <NameCon UId="41" Name="SVMO" />
+    </Wire>
+    <Wire UId="52">
+      <IdentCon UId="25" />
+      <NameCon UId="38" Name="operand" />
+    </Wire>
+    <Wire UId="53">
+      <NameCon UId="38" Name="out" />
+      <NameCon UId="41" Name="CLSD" />
+    </Wire>
+    <Wire UId="54">
+      <IdentCon UId="26" />
+      <NameCon UId="39" Name="operand" />
+    </Wire>
+    <Wire UId="55">
+      <NameCon UId="39" Name="out" />
+      <NameCon UId="41" Name="OPND" />
+    </Wire>
+    <Wire UId="56">
+      <IdentCon UId="27" />
+      <NameCon UId="40" Name="operand" />
+    </Wire>
+    <Wire UId="57">
+      <NameCon UId="40" Name="out" />
+      <NameCon UId="41" Name="REMT" />
+    </Wire>
+    <Wire UId="58">
+      <IdentCon UId="28" />
+      <NameCon UId="41" Name="KT1" />
+    </Wire>
+    <Wire UId="59">
+      <IdentCon UId="29" />
+      <NameCon UId="41" Name="CLSE" />
+    </Wire>
+    <Wire UId="60">
+      <IdentCon UId="30" />
+      <NameCon UId="41" Name="OPEN" />
+    </Wire>
+    <Wire UId="61">
+      <IdentCon UId="31" />
+      <NameCon UId="41" Name="WIZ" />
+    </Wire>
+    <Wire UId="62">
+      <IdentCon UId="32" />
+      <NameCon UId="41" Name="STAT" />
+    </Wire>
+    <Wire UId="63">
+      <IdentCon UId="33" />
+      <NameCon UId="41" Name="TMR1" />
+    </Wire>
+  </Wires>
+</FlgNet></NetworkSource>
+          <ProgrammingLanguage>LAD</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="2F" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="30" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="31" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="32" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="33" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="34" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text>Zasuwa Z4</Text>
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <SW.Blocks.CompileUnit ID="35" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource><FlgNet xmlns="http://www.siemens.com/automation/Openness/SW/NetworkSource/FlgNet/v4">
+  <Parts>
+    <Access Scope="GlobalVariable" UId="21">
+      <Symbol>
+        <Component Name="setSVMC_Z_5" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="22">
+      <Symbol>
+        <Component Name="setAlarm_Moment_Z_5" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="23">
+      <Symbol>
+        <Component Name="setSVMO_Z_5" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="24">
+      <Symbol>
+        <Component Name="setAlarm_Moment_Z_5" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="25">
+      <Symbol>
+        <Component Name="inputZamkniętaZ_5" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="26">
+      <Symbol>
+        <Component Name="inputOtwartaZ_5" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="27">
+      <Symbol>
+        <Component Name="inputREM_Zasuwy" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="28">
+      <Symbol>
+        <Component Name="dbTimersForDrivers" />
+        <Component Name="TimerZ5" />
+        <Component Name="PT" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="29">
+      <Symbol>
+        <Component Name="CMD_Close_Z_5" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="30">
+      <Symbol>
+        <Component Name="CMD_Open_Z_5" />
+      </Symbol>
+    </Access>
+    <Access Scope="Address" UId="31">
+      <Address Area="DB" Type="Byte" BlockNumber="10" BitOffset="112" />
+    </Access>
+    <Access Scope="Address" UId="32">
+      <Address Area="DB" Type="Byte" BlockNumber="10" BitOffset="120" />
+    </Access>
+    <Access Scope="GlobalVariable" UId="33">
+      <Symbol>
+        <Component Name="dbTimersForDrivers" />
+        <Component Name="TimerZ5" />
+      </Symbol>
+    </Access>
+    <Part Name="Contact" UId="34" />
+    <Part Name="Contact" UId="35">
+      <Negated Name="operand" />
+    </Part>
+    <Part Name="Contact" UId="36" />
+    <Part Name="Contact" UId="37">
+      <Negated Name="operand" />
+    </Part>
+    <Part Name="Contact" UId="38" />
+    <Part Name="Contact" UId="39" />
+    <Part Name="Contact" UId="40" />
+    <Call UId="41">
+      <CallInfo Name="VLV02" BlockType="FB">
+        <Instance Scope="GlobalVariable" UId="42">
+          <Component Name="VLV02_DB_Z5" />
+        </Instance>
+        <Parameter Name="SVMC" Section="Input" Type="Bool" />
+        <Parameter Name="SVMO" Section="Input" Type="Bool" />
+        <Parameter Name="CLSD" Section="Input" Type="Bool" />
+        <Parameter Name="OPND" Section="Input" Type="Bool" />
+        <Parameter Name="REMT" Section="Input" Type="Bool" />
+        <Parameter Name="KT1" Section="Input" Type="Time" />
+        <Parameter Name="CLSE" Section="InOut" Type="Bool" />
+        <Parameter Name="OPEN" Section="InOut" Type="Bool" />
+        <Parameter Name="WIZ" Section="InOut" Type="Byte" />
+        <Parameter Name="STAT" Section="InOut" Type="Byte" />
+        <Parameter Name="TMR1" Section="InOut" Type="TON_TIME" />
+      </CallInfo>
+    </Call>
+  </Parts>
+  <Wires>
+    <Wire UId="43">
+      <Powerrail />
+      <NameCon UId="41" Name="en" />
+      <NameCon UId="34" Name="in" />
+      <NameCon UId="36" Name="in" />
+      <NameCon UId="38" Name="in" />
+      <NameCon UId="39" Name="in" />
+      <NameCon UId="40" Name="in" />
+    </Wire>
+    <Wire UId="44">
+      <IdentCon UId="21" />
+      <NameCon UId="34" Name="operand" />
+    </Wire>
+    <Wire UId="45">
+      <NameCon UId="34" Name="out" />
+      <NameCon UId="35" Name="in" />
+    </Wire>
+    <Wire UId="46">
+      <IdentCon UId="22" />
+      <NameCon UId="35" Name="operand" />
+    </Wire>
+    <Wire UId="47">
+      <NameCon UId="35" Name="out" />
+      <NameCon UId="41" Name="SVMC" />
+    </Wire>
+    <Wire UId="48">
+      <IdentCon UId="23" />
+      <NameCon UId="36" Name="operand" />
+    </Wire>
+    <Wire UId="49">
+      <NameCon UId="36" Name="out" />
+      <NameCon UId="37" Name="in" />
+    </Wire>
+    <Wire UId="50">
+      <IdentCon UId="24" />
+      <NameCon UId="37" Name="operand" />
+    </Wire>
+    <Wire UId="51">
+      <NameCon UId="37" Name="out" />
+      <NameCon UId="41" Name="SVMO" />
+    </Wire>
+    <Wire UId="52">
+      <IdentCon UId="25" />
+      <NameCon UId="38" Name="operand" />
+    </Wire>
+    <Wire UId="53">
+      <NameCon UId="38" Name="out" />
+      <NameCon UId="41" Name="CLSD" />
+    </Wire>
+    <Wire UId="54">
+      <IdentCon UId="26" />
+      <NameCon UId="39" Name="operand" />
+    </Wire>
+    <Wire UId="55">
+      <NameCon UId="39" Name="out" />
+      <NameCon UId="41" Name="OPND" />
+    </Wire>
+    <Wire UId="56">
+      <IdentCon UId="27" />
+      <NameCon UId="40" Name="operand" />
+    </Wire>
+    <Wire UId="57">
+      <NameCon UId="40" Name="out" />
+      <NameCon UId="41" Name="REMT" />
+    </Wire>
+    <Wire UId="58">
+      <IdentCon UId="28" />
+      <NameCon UId="41" Name="KT1" />
+    </Wire>
+    <Wire UId="59">
+      <IdentCon UId="29" />
+      <NameCon UId="41" Name="CLSE" />
+    </Wire>
+    <Wire UId="60">
+      <IdentCon UId="30" />
+      <NameCon UId="41" Name="OPEN" />
+    </Wire>
+    <Wire UId="61">
+      <IdentCon UId="31" />
+      <NameCon UId="41" Name="WIZ" />
+    </Wire>
+    <Wire UId="62">
+      <IdentCon UId="32" />
+      <NameCon UId="41" Name="STAT" />
+    </Wire>
+    <Wire UId="63">
+      <IdentCon UId="33" />
+      <NameCon UId="41" Name="TMR1" />
+    </Wire>
+  </Wires>
+</FlgNet></NetworkSource>
+          <ProgrammingLanguage>LAD</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="36" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="37" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="38" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="39" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="3A" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="3B" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text>Zasuwa Z5</Text>
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <SW.Blocks.CompileUnit ID="3C" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource><FlgNet xmlns="http://www.siemens.com/automation/Openness/SW/NetworkSource/FlgNet/v4">
+  <Parts>
+    <Access Scope="GlobalVariable" UId="21">
+      <Symbol>
+        <Component Name="setSVMC_Z_6" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="22">
+      <Symbol>
+        <Component Name="setAlarm_Moment_Z_6" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="23">
+      <Symbol>
+        <Component Name="setSVMO_Z_6" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="24">
+      <Symbol>
+        <Component Name="setAlarm_Moment_Z_6" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="25">
+      <Symbol>
+        <Component Name="inputZamkniętaZ_6" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="26">
+      <Symbol>
+        <Component Name="inputOtwartaZ_6" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="27">
+      <Symbol>
+        <Component Name="inputREM_Zasuwy" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="28">
+      <Symbol>
+        <Component Name="dbTimersForDrivers" />
+        <Component Name="TimerZ6" />
+        <Component Name="PT" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="29">
+      <Symbol>
+        <Component Name="CMD_Close_Z_6" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="30">
+      <Symbol>
+        <Component Name="CMD_Open_Z_6" />
+      </Symbol>
+    </Access>
+    <Access Scope="Address" UId="31">
+      <Address Area="DB" Type="Byte" BlockNumber="10" BitOffset="128" />
+    </Access>
+    <Access Scope="Address" UId="32">
+      <Address Area="DB" Type="Byte" BlockNumber="10" BitOffset="136" />
+    </Access>
+    <Access Scope="GlobalVariable" UId="33">
+      <Symbol>
+        <Component Name="dbTimersForDrivers" />
+        <Component Name="TimerZ6" />
+      </Symbol>
+    </Access>
+    <Part Name="Contact" UId="34" />
+    <Part Name="Contact" UId="35">
+      <Negated Name="operand" />
+    </Part>
+    <Part Name="Contact" UId="36" />
+    <Part Name="Contact" UId="37">
+      <Negated Name="operand" />
+    </Part>
+    <Part Name="Contact" UId="38" />
+    <Part Name="Contact" UId="39" />
+    <Part Name="Contact" UId="40" />
+    <Call UId="41">
+      <CallInfo Name="VLV02" BlockType="FB">
+        <Instance Scope="GlobalVariable" UId="42">
+          <Component Name="VLV02_DB_Z6" />
+        </Instance>
+        <Parameter Name="SVMC" Section="Input" Type="Bool" />
+        <Parameter Name="SVMO" Section="Input" Type="Bool" />
+        <Parameter Name="CLSD" Section="Input" Type="Bool" />
+        <Parameter Name="OPND" Section="Input" Type="Bool" />
+        <Parameter Name="REMT" Section="Input" Type="Bool" />
+        <Parameter Name="KT1" Section="Input" Type="Time" />
+        <Parameter Name="CLSE" Section="InOut" Type="Bool" />
+        <Parameter Name="OPEN" Section="InOut" Type="Bool" />
+        <Parameter Name="WIZ" Section="InOut" Type="Byte" />
+        <Parameter Name="STAT" Section="InOut" Type="Byte" />
+        <Parameter Name="TMR1" Section="InOut" Type="TON_TIME" />
+      </CallInfo>
+    </Call>
+  </Parts>
+  <Wires>
+    <Wire UId="43">
+      <Powerrail />
+      <NameCon UId="41" Name="en" />
+      <NameCon UId="34" Name="in" />
+      <NameCon UId="36" Name="in" />
+      <NameCon UId="38" Name="in" />
+      <NameCon UId="39" Name="in" />
+      <NameCon UId="40" Name="in" />
+    </Wire>
+    <Wire UId="44">
+      <IdentCon UId="21" />
+      <NameCon UId="34" Name="operand" />
+    </Wire>
+    <Wire UId="45">
+      <NameCon UId="34" Name="out" />
+      <NameCon UId="35" Name="in" />
+    </Wire>
+    <Wire UId="46">
+      <IdentCon UId="22" />
+      <NameCon UId="35" Name="operand" />
+    </Wire>
+    <Wire UId="47">
+      <NameCon UId="35" Name="out" />
+      <NameCon UId="41" Name="SVMC" />
+    </Wire>
+    <Wire UId="48">
+      <IdentCon UId="23" />
+      <NameCon UId="36" Name="operand" />
+    </Wire>
+    <Wire UId="49">
+      <NameCon UId="36" Name="out" />
+      <NameCon UId="37" Name="in" />
+    </Wire>
+    <Wire UId="50">
+      <IdentCon UId="24" />
+      <NameCon UId="37" Name="operand" />
+    </Wire>
+    <Wire UId="51">
+      <NameCon UId="37" Name="out" />
+      <NameCon UId="41" Name="SVMO" />
+    </Wire>
+    <Wire UId="52">
+      <IdentCon UId="25" />
+      <NameCon UId="38" Name="operand" />
+    </Wire>
+    <Wire UId="53">
+      <NameCon UId="38" Name="out" />
+      <NameCon UId="41" Name="CLSD" />
+    </Wire>
+    <Wire UId="54">
+      <IdentCon UId="26" />
+      <NameCon UId="39" Name="operand" />
+    </Wire>
+    <Wire UId="55">
+      <NameCon UId="39" Name="out" />
+      <NameCon UId="41" Name="OPND" />
+    </Wire>
+    <Wire UId="56">
+      <IdentCon UId="27" />
+      <NameCon UId="40" Name="operand" />
+    </Wire>
+    <Wire UId="57">
+      <NameCon UId="40" Name="out" />
+      <NameCon UId="41" Name="REMT" />
+    </Wire>
+    <Wire UId="58">
+      <IdentCon UId="28" />
+      <NameCon UId="41" Name="KT1" />
+    </Wire>
+    <Wire UId="59">
+      <IdentCon UId="29" />
+      <NameCon UId="41" Name="CLSE" />
+    </Wire>
+    <Wire UId="60">
+      <IdentCon UId="30" />
+      <NameCon UId="41" Name="OPEN" />
+    </Wire>
+    <Wire UId="61">
+      <IdentCon UId="31" />
+      <NameCon UId="41" Name="WIZ" />
+    </Wire>
+    <Wire UId="62">
+      <IdentCon UId="32" />
+      <NameCon UId="41" Name="STAT" />
+    </Wire>
+    <Wire UId="63">
+      <IdentCon UId="33" />
+      <NameCon UId="41" Name="TMR1" />
+    </Wire>
+  </Wires>
+</FlgNet></NetworkSource>
+          <ProgrammingLanguage>LAD</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="3D" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="3E" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="3F" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="40" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="41" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="42" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text>Zasuwa Z6</Text>
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <SW.Blocks.CompileUnit ID="43" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource><FlgNet xmlns="http://www.siemens.com/automation/Openness/SW/NetworkSource/FlgNet/v4">
+  <Parts>
+    <Access Scope="GlobalVariable" UId="21">
+      <Symbol>
+        <Component Name="setSVMC_Z_7" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="22">
+      <Symbol>
+        <Component Name="setAlarm_Moment_Z_7" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="23">
+      <Symbol>
+        <Component Name="setSVMO_Z_7" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="24">
+      <Symbol>
+        <Component Name="setAlarm_Moment_Z_7" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="25">
+      <Symbol>
+        <Component Name="inputZamkniętaZ_7" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="26">
+      <Symbol>
+        <Component Name="inputOtwartaZ_7" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="27">
+      <Symbol>
+        <Component Name="inputREM_Zasuwy" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="28">
+      <Symbol>
+        <Component Name="dbTimersForDrivers" />
+        <Component Name="TimerZ7" />
+        <Component Name="PT" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="29">
+      <Symbol>
+        <Component Name="CMD_Close_Z_7" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="30">
+      <Symbol>
+        <Component Name="CMD_Open_Z_7" />
+      </Symbol>
+    </Access>
+    <Access Scope="Address" UId="31">
+      <Address Area="DB" Type="Byte" BlockNumber="10" BitOffset="144" />
+    </Access>
+    <Access Scope="Address" UId="32">
+      <Address Area="DB" Type="Byte" BlockNumber="10" BitOffset="152" />
+    </Access>
+    <Access Scope="GlobalVariable" UId="33">
+      <Symbol>
+        <Component Name="dbTimersForDrivers" />
+        <Component Name="TimerZ7" />
+      </Symbol>
+    </Access>
+    <Part Name="Contact" UId="34" />
+    <Part Name="Contact" UId="35">
+      <Negated Name="operand" />
+    </Part>
+    <Part Name="Contact" UId="36" />
+    <Part Name="Contact" UId="37">
+      <Negated Name="operand" />
+    </Part>
+    <Part Name="Contact" UId="38" />
+    <Part Name="Contact" UId="39" />
+    <Part Name="Contact" UId="40" />
+    <Call UId="41">
+      <CallInfo Name="VLV02" BlockType="FB">
+        <Instance Scope="GlobalVariable" UId="42">
+          <Component Name="VLV02_DB_Z7" />
+        </Instance>
+        <Parameter Name="SVMC" Section="Input" Type="Bool" />
+        <Parameter Name="SVMO" Section="Input" Type="Bool" />
+        <Parameter Name="CLSD" Section="Input" Type="Bool" />
+        <Parameter Name="OPND" Section="Input" Type="Bool" />
+        <Parameter Name="REMT" Section="Input" Type="Bool" />
+        <Parameter Name="KT1" Section="Input" Type="Time" />
+        <Parameter Name="CLSE" Section="InOut" Type="Bool" />
+        <Parameter Name="OPEN" Section="InOut" Type="Bool" />
+        <Parameter Name="WIZ" Section="InOut" Type="Byte" />
+        <Parameter Name="STAT" Section="InOut" Type="Byte" />
+        <Parameter Name="TMR1" Section="InOut" Type="TON_TIME" />
+      </CallInfo>
+    </Call>
+  </Parts>
+  <Wires>
+    <Wire UId="43">
+      <Powerrail />
+      <NameCon UId="41" Name="en" />
+      <NameCon UId="34" Name="in" />
+      <NameCon UId="36" Name="in" />
+      <NameCon UId="38" Name="in" />
+      <NameCon UId="39" Name="in" />
+      <NameCon UId="40" Name="in" />
+    </Wire>
+    <Wire UId="44">
+      <IdentCon UId="21" />
+      <NameCon UId="34" Name="operand" />
+    </Wire>
+    <Wire UId="45">
+      <NameCon UId="34" Name="out" />
+      <NameCon UId="35" Name="in" />
+    </Wire>
+    <Wire UId="46">
+      <IdentCon UId="22" />
+      <NameCon UId="35" Name="operand" />
+    </Wire>
+    <Wire UId="47">
+      <NameCon UId="35" Name="out" />
+      <NameCon UId="41" Name="SVMC" />
+    </Wire>
+    <Wire UId="48">
+      <IdentCon UId="23" />
+      <NameCon UId="36" Name="operand" />
+    </Wire>
+    <Wire UId="49">
+      <NameCon UId="36" Name="out" />
+      <NameCon UId="37" Name="in" />
+    </Wire>
+    <Wire UId="50">
+      <IdentCon UId="24" />
+      <NameCon UId="37" Name="operand" />
+    </Wire>
+    <Wire UId="51">
+      <NameCon UId="37" Name="out" />
+      <NameCon UId="41" Name="SVMO" />
+    </Wire>
+    <Wire UId="52">
+      <IdentCon UId="25" />
+      <NameCon UId="38" Name="operand" />
+    </Wire>
+    <Wire UId="53">
+      <NameCon UId="38" Name="out" />
+      <NameCon UId="41" Name="CLSD" />
+    </Wire>
+    <Wire UId="54">
+      <IdentCon UId="26" />
+      <NameCon UId="39" Name="operand" />
+    </Wire>
+    <Wire UId="55">
+      <NameCon UId="39" Name="out" />
+      <NameCon UId="41" Name="OPND" />
+    </Wire>
+    <Wire UId="56">
+      <IdentCon UId="27" />
+      <NameCon UId="40" Name="operand" />
+    </Wire>
+    <Wire UId="57">
+      <NameCon UId="40" Name="out" />
+      <NameCon UId="41" Name="REMT" />
+    </Wire>
+    <Wire UId="58">
+      <IdentCon UId="28" />
+      <NameCon UId="41" Name="KT1" />
+    </Wire>
+    <Wire UId="59">
+      <IdentCon UId="29" />
+      <NameCon UId="41" Name="CLSE" />
+    </Wire>
+    <Wire UId="60">
+      <IdentCon UId="30" />
+      <NameCon UId="41" Name="OPEN" />
+    </Wire>
+    <Wire UId="61">
+      <IdentCon UId="31" />
+      <NameCon UId="41" Name="WIZ" />
+    </Wire>
+    <Wire UId="62">
+      <IdentCon UId="32" />
+      <NameCon UId="41" Name="STAT" />
+    </Wire>
+    <Wire UId="63">
+      <IdentCon UId="33" />
+      <NameCon UId="41" Name="TMR1" />
+    </Wire>
+  </Wires>
+</FlgNet></NetworkSource>
+          <ProgrammingLanguage>LAD</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="44" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="45" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="46" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="47" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="48" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="49" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text>Zasuwa Z7</Text>
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <SW.Blocks.CompileUnit ID="4A" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource><FlgNet xmlns="http://www.siemens.com/automation/Openness/SW/NetworkSource/FlgNet/v4">
+  <Parts>
+    <Access Scope="GlobalVariable" UId="21">
+      <Symbol>
+        <Component Name="setSVMC_Z_8" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="22">
+      <Symbol>
+        <Component Name="setAlarm_Moment_Z_8" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="23">
+      <Symbol>
+        <Component Name="setSVMO_Z_8" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="24">
+      <Symbol>
+        <Component Name="setAlarm_Moment_Z_8" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="25">
+      <Symbol>
+        <Component Name="inputZamkniętaZ_8" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="26">
+      <Symbol>
+        <Component Name="inputOtwartaZ_8" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="27">
+      <Symbol>
+        <Component Name="inputREM_Zasuwy" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="28">
+      <Symbol>
+        <Component Name="dbTimersForDrivers" />
+        <Component Name="TimerZ8" />
+        <Component Name="PT" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="29">
+      <Symbol>
+        <Component Name="CMD_Close_Z_8" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="30">
+      <Symbol>
+        <Component Name="CMD_Open_Z_8" />
+      </Symbol>
+    </Access>
+    <Access Scope="Address" UId="31">
+      <Address Area="DB" Type="Byte" BlockNumber="10" BitOffset="160" />
+    </Access>
+    <Access Scope="Address" UId="32">
+      <Address Area="DB" Type="Byte" BlockNumber="10" BitOffset="168" />
+    </Access>
+    <Access Scope="GlobalVariable" UId="33">
+      <Symbol>
+        <Component Name="dbTimersForDrivers" />
+        <Component Name="TimerZ8" />
+      </Symbol>
+    </Access>
+    <Part Name="Contact" UId="34" />
+    <Part Name="Contact" UId="35">
+      <Negated Name="operand" />
+    </Part>
+    <Part Name="Contact" UId="36" />
+    <Part Name="Contact" UId="37">
+      <Negated Name="operand" />
+    </Part>
+    <Part Name="Contact" UId="38" />
+    <Part Name="Contact" UId="39" />
+    <Part Name="Contact" UId="40" />
+    <Call UId="41">
+      <CallInfo Name="VLV02" BlockType="FB">
+        <Instance Scope="GlobalVariable" UId="42">
+          <Component Name="VLV02_DB_Z8" />
+        </Instance>
+        <Parameter Name="SVMC" Section="Input" Type="Bool" />
+        <Parameter Name="SVMO" Section="Input" Type="Bool" />
+        <Parameter Name="CLSD" Section="Input" Type="Bool" />
+        <Parameter Name="OPND" Section="Input" Type="Bool" />
+        <Parameter Name="REMT" Section="Input" Type="Bool" />
+        <Parameter Name="KT1" Section="Input" Type="Time" />
+        <Parameter Name="CLSE" Section="InOut" Type="Bool" />
+        <Parameter Name="OPEN" Section="InOut" Type="Bool" />
+        <Parameter Name="WIZ" Section="InOut" Type="Byte" />
+        <Parameter Name="STAT" Section="InOut" Type="Byte" />
+        <Parameter Name="TMR1" Section="InOut" Type="TON_TIME" />
+      </CallInfo>
+    </Call>
+  </Parts>
+  <Wires>
+    <Wire UId="43">
+      <Powerrail />
+      <NameCon UId="41" Name="en" />
+      <NameCon UId="34" Name="in" />
+      <NameCon UId="36" Name="in" />
+      <NameCon UId="38" Name="in" />
+      <NameCon UId="39" Name="in" />
+      <NameCon UId="40" Name="in" />
+    </Wire>
+    <Wire UId="44">
+      <IdentCon UId="21" />
+      <NameCon UId="34" Name="operand" />
+    </Wire>
+    <Wire UId="45">
+      <NameCon UId="34" Name="out" />
+      <NameCon UId="35" Name="in" />
+    </Wire>
+    <Wire UId="46">
+      <IdentCon UId="22" />
+      <NameCon UId="35" Name="operand" />
+    </Wire>
+    <Wire UId="47">
+      <NameCon UId="35" Name="out" />
+      <NameCon UId="41" Name="SVMC" />
+    </Wire>
+    <Wire UId="48">
+      <IdentCon UId="23" />
+      <NameCon UId="36" Name="operand" />
+    </Wire>
+    <Wire UId="49">
+      <NameCon UId="36" Name="out" />
+      <NameCon UId="37" Name="in" />
+    </Wire>
+    <Wire UId="50">
+      <IdentCon UId="24" />
+      <NameCon UId="37" Name="operand" />
+    </Wire>
+    <Wire UId="51">
+      <NameCon UId="37" Name="out" />
+      <NameCon UId="41" Name="SVMO" />
+    </Wire>
+    <Wire UId="52">
+      <IdentCon UId="25" />
+      <NameCon UId="38" Name="operand" />
+    </Wire>
+    <Wire UId="53">
+      <NameCon UId="38" Name="out" />
+      <NameCon UId="41" Name="CLSD" />
+    </Wire>
+    <Wire UId="54">
+      <IdentCon UId="26" />
+      <NameCon UId="39" Name="operand" />
+    </Wire>
+    <Wire UId="55">
+      <NameCon UId="39" Name="out" />
+      <NameCon UId="41" Name="OPND" />
+    </Wire>
+    <Wire UId="56">
+      <IdentCon UId="27" />
+      <NameCon UId="40" Name="operand" />
+    </Wire>
+    <Wire UId="57">
+      <NameCon UId="40" Name="out" />
+      <NameCon UId="41" Name="REMT" />
+    </Wire>
+    <Wire UId="58">
+      <IdentCon UId="28" />
+      <NameCon UId="41" Name="KT1" />
+    </Wire>
+    <Wire UId="59">
+      <IdentCon UId="29" />
+      <NameCon UId="41" Name="CLSE" />
+    </Wire>
+    <Wire UId="60">
+      <IdentCon UId="30" />
+      <NameCon UId="41" Name="OPEN" />
+    </Wire>
+    <Wire UId="61">
+      <IdentCon UId="31" />
+      <NameCon UId="41" Name="WIZ" />
+    </Wire>
+    <Wire UId="62">
+      <IdentCon UId="32" />
+      <NameCon UId="41" Name="STAT" />
+    </Wire>
+    <Wire UId="63">
+      <IdentCon UId="33" />
+      <NameCon UId="41" Name="TMR1" />
+    </Wire>
+  </Wires>
+</FlgNet></NetworkSource>
+          <ProgrammingLanguage>LAD</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="4B" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="4C" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="4D" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="4E" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="4F" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="50" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text>Zasuwa Z8</Text>
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <SW.Blocks.CompileUnit ID="51" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource><FlgNet xmlns="http://www.siemens.com/automation/Openness/SW/NetworkSource/FlgNet/v4">
+  <Parts>
+    <Access Scope="GlobalVariable" UId="21">
+      <Symbol>
+        <Component Name="setSVMC_Z_9" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="22">
+      <Symbol>
+        <Component Name="setAlarm_Moment_Z_9" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="23">
+      <Symbol>
+        <Component Name="setSVMO_Z_9" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="24">
+      <Symbol>
+        <Component Name="setAlarm_Moment_Z_9" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="25">
+      <Symbol>
+        <Component Name="inputZamkniętaZ_9" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="26">
+      <Symbol>
+        <Component Name="inputOtwartaZ_9" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="27">
+      <Symbol>
+        <Component Name="inputREM_Zasuwy" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="28">
+      <Symbol>
+        <Component Name="dbTimersForDrivers" />
+        <Component Name="TimerZ8" />
+        <Component Name="PT" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="29">
+      <Symbol>
+        <Component Name="CMD_Close_Z_9" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="30">
+      <Symbol>
+        <Component Name="CMD_Open_Z_9" />
+      </Symbol>
+    </Access>
+    <Access Scope="Address" UId="31">
+      <Address Area="DB" Type="Byte" BlockNumber="10" BitOffset="176" />
+    </Access>
+    <Access Scope="Address" UId="32">
+      <Address Area="DB" Type="Byte" BlockNumber="10" BitOffset="184" />
+    </Access>
+    <Access Scope="GlobalVariable" UId="33">
+      <Symbol>
+        <Component Name="dbTimersForDrivers" />
+        <Component Name="TimerZ9" />
+      </Symbol>
+    </Access>
+    <Part Name="Contact" UId="34" />
+    <Part Name="Contact" UId="35">
+      <Negated Name="operand" />
+    </Part>
+    <Part Name="Contact" UId="36" />
+    <Part Name="Contact" UId="37">
+      <Negated Name="operand" />
+    </Part>
+    <Part Name="Contact" UId="38" />
+    <Part Name="Contact" UId="39" />
+    <Part Name="Contact" UId="40" />
+    <Call UId="41">
+      <CallInfo Name="VLV02" BlockType="FB">
+        <Instance Scope="GlobalVariable" UId="42">
+          <Component Name="VLV02_DB_Z9" />
+        </Instance>
+        <Parameter Name="SVMC" Section="Input" Type="Bool" />
+        <Parameter Name="SVMO" Section="Input" Type="Bool" />
+        <Parameter Name="CLSD" Section="Input" Type="Bool" />
+        <Parameter Name="OPND" Section="Input" Type="Bool" />
+        <Parameter Name="REMT" Section="Input" Type="Bool" />
+        <Parameter Name="KT1" Section="Input" Type="Time" />
+        <Parameter Name="CLSE" Section="InOut" Type="Bool" />
+        <Parameter Name="OPEN" Section="InOut" Type="Bool" />
+        <Parameter Name="WIZ" Section="InOut" Type="Byte" />
+        <Parameter Name="STAT" Section="InOut" Type="Byte" />
+        <Parameter Name="TMR1" Section="InOut" Type="TON_TIME" />
+      </CallInfo>
+    </Call>
+  </Parts>
+  <Wires>
+    <Wire UId="43">
+      <Powerrail />
+      <NameCon UId="41" Name="en" />
+      <NameCon UId="34" Name="in" />
+      <NameCon UId="36" Name="in" />
+      <NameCon UId="38" Name="in" />
+      <NameCon UId="39" Name="in" />
+      <NameCon UId="40" Name="in" />
+    </Wire>
+    <Wire UId="44">
+      <IdentCon UId="21" />
+      <NameCon UId="34" Name="operand" />
+    </Wire>
+    <Wire UId="45">
+      <NameCon UId="34" Name="out" />
+      <NameCon UId="35" Name="in" />
+    </Wire>
+    <Wire UId="46">
+      <IdentCon UId="22" />
+      <NameCon UId="35" Name="operand" />
+    </Wire>
+    <Wire UId="47">
+      <NameCon UId="35" Name="out" />
+      <NameCon UId="41" Name="SVMC" />
+    </Wire>
+    <Wire UId="48">
+      <IdentCon UId="23" />
+      <NameCon UId="36" Name="operand" />
+    </Wire>
+    <Wire UId="49">
+      <NameCon UId="36" Name="out" />
+      <NameCon UId="37" Name="in" />
+    </Wire>
+    <Wire UId="50">
+      <IdentCon UId="24" />
+      <NameCon UId="37" Name="operand" />
+    </Wire>
+    <Wire UId="51">
+      <NameCon UId="37" Name="out" />
+      <NameCon UId="41" Name="SVMO" />
+    </Wire>
+    <Wire UId="52">
+      <IdentCon UId="25" />
+      <NameCon UId="38" Name="operand" />
+    </Wire>
+    <Wire UId="53">
+      <NameCon UId="38" Name="out" />
+      <NameCon UId="41" Name="CLSD" />
+    </Wire>
+    <Wire UId="54">
+      <IdentCon UId="26" />
+      <NameCon UId="39" Name="operand" />
+    </Wire>
+    <Wire UId="55">
+      <NameCon UId="39" Name="out" />
+      <NameCon UId="41" Name="OPND" />
+    </Wire>
+    <Wire UId="56">
+      <IdentCon UId="27" />
+      <NameCon UId="40" Name="operand" />
+    </Wire>
+    <Wire UId="57">
+      <NameCon UId="40" Name="out" />
+      <NameCon UId="41" Name="REMT" />
+    </Wire>
+    <Wire UId="58">
+      <IdentCon UId="28" />
+      <NameCon UId="41" Name="KT1" />
+    </Wire>
+    <Wire UId="59">
+      <IdentCon UId="29" />
+      <NameCon UId="41" Name="CLSE" />
+    </Wire>
+    <Wire UId="60">
+      <IdentCon UId="30" />
+      <NameCon UId="41" Name="OPEN" />
+    </Wire>
+    <Wire UId="61">
+      <IdentCon UId="31" />
+      <NameCon UId="41" Name="WIZ" />
+    </Wire>
+    <Wire UId="62">
+      <IdentCon UId="32" />
+      <NameCon UId="41" Name="STAT" />
+    </Wire>
+    <Wire UId="63">
+      <IdentCon UId="33" />
+      <NameCon UId="41" Name="TMR1" />
+    </Wire>
+  </Wires>
+</FlgNet></NetworkSource>
+          <ProgrammingLanguage>LAD</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="52" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="53" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="54" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="55" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="56" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="57" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text>Zasuwa Z9</Text>
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <MultilingualText ID="58" CompositionName="Title">
+        <ObjectList>
+          <MultilingualTextItem ID="59" CompositionName="Items">
+            <AttributeList>
+              <Culture>en-US</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+          <MultilingualTextItem ID="5A" CompositionName="Items">
+            <AttributeList>
+              <Culture>pl-PL</Culture>
+              <Text>Sterowniki</Text>
+            </AttributeList>
+          </MultilingualTextItem>
+        </ObjectList>
+      </MultilingualText>
+    </ObjectList>
+  </SW.Blocks.FC>
+</Document>

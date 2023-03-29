@@ -1,0 +1,199 @@
+﻿FUNCTION "clear-drive_error" : Void
+TITLE = kasowanie alarmów
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Funkcja kasowania alarmów napedów. Kasowanie zdalne z MT101 poprzez SCADA. MT101 komunikuje się poprzez modbus rtu przeniesienie wartości do semdin modbus tcp i przetworzenie sygnału sterowania
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.2)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1214 FW 3.2 .)
+	//Funkcjonalnośc: (Pzetwarzanie sygnałów z MT101 protokołem Modbus RTU - TCP. 
+	                    Kasowanie alarów)
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 17.11.2021 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	REGION Z1
+	  // 
+	  //Ustawienie bitu Reset dla Drive Motor Z1
+	  %DB10.DBX6.6 := %DB58.DBX19.4;
+	  IF %DB10.DBX6.0 = FALSE AND %DB58.DBX19.4 = TRUE THEN
+	    //Ustawienie w automat 
+	    %DB10.DBX6.7 := TRUE;
+	    // Kasowanie bitu RESET Driver i Modbus bit Reset
+	    %DB10.DBX6.0 := FALSE;
+	    %DB58.DBX19.4 := False;
+	    ;
+	  END_IF;
+	  
+	  
+	END_REGION
+	
+	REGION Z2
+	  // 
+	  //Ustawienie bitu Reset dla Drive Motor Z2
+	  %DB10.DBX8.6 := %DB58.DBX19.5;
+	  IF %DB10.DBX8.0 = FALSE AND %DB58.DBX19.5 = TRUE THEN
+	    //Ustawienie w automat 
+	    %DB10.DBX8.7 := TRUE;
+	    // Kasowanie bitu RESET Driver i Modbus bit Reset
+	    %DB10.DBX8.0 := FALSE;
+	    %DB58.DBX19.5 := False;
+	    ;
+	  END_IF;
+	  
+	  
+	END_REGION
+	
+	REGION Z3
+	  // 
+	  //Ustawienie bitu Reset dla Drive Motor Z3
+	  %DB10.DBX10.6 := %DB58.DBX19.6;
+	  IF %DB10.DBX10.0 = FALSE AND %DB58.DBX19.6 = TRUE THEN
+	    //Ustawienie w automat 
+	    %DB10.DBX10.7 := TRUE;
+	    // Kasowanie bitu RESET Driver i Modbus bit Reset
+	    %DB10.DBX10.0 := FALSE;
+	    %DB58.DBX19.6 := False;
+	    ;
+	  END_IF;
+	  
+	  
+	END_REGION
+	
+	REGION Z4
+	  // 
+	  //Ustawienie bitu Reset dla Drive Motor Z4
+	  %DB10.DBX12.6 := %DB58.DBX19.7;
+	  IF %DB10.DBX12.0 = FALSE AND %DB58.DBX19.7 = TRUE THEN
+	    //Ustawienie w automat 
+	    %DB10.DBX12.7 := TRUE;
+	    // Kasowanie bitu RESET Driver i Modbus bit Reset
+	    %DB10.DBX12.0 := FALSE;
+	    %DB58.DBX19.7 := False;
+	    ;
+	  END_IF;
+	  
+	  
+	END_REGION
+	
+	REGION Z5
+	  // 
+	  //Ustawienie bitu Reset dla Drive Motor Z5
+	  %DB10.DBX14.6 := %DB58.DBX18.0;
+	  IF %DB10.DBX14.0 = FALSE AND %DB58.DBX18.0 = TRUE THEN
+	    //Ustawienie w automat 
+	    %DB10.DBX14.7 := TRUE;
+	    // Kasowanie bitu RESET Driver i Modbus bit Reset
+	    %DB10.DBX14.0 := FALSE;
+	    %DB58.DBX18.0 := False;
+	    ;
+	  END_IF;
+	  
+	  
+	END_REGION
+	
+	REGION Z6
+	  // 
+	  //Ustawienie bitu Reset dla Drive Motor Z6
+	  %DB10.DBX16.6 := %DB58.DBX18.1;
+	  IF %DB10.DBX16.0 = FALSE AND %DB58.DBX18.1 = TRUE THEN
+	    //Ustawienie w automat 
+	    %DB10.DBX16.7 := TRUE;
+	    // Kasowanie bitu RESET Driver i Modbus bit Reset
+	    %DB10.DBX16.0 := FALSE;
+	    %DB58.DBX18.1 := False;
+	    ;
+	  END_IF;
+	  
+	  
+	END_REGION
+	
+	REGION Z7
+	  // 
+	  //Ustawienie bitu Reset dla Drive Motor Z7
+	  %DB10.DBX18.6 := %DB58.DBX18.2;
+	  IF %DB10.DBX18.0 = FALSE AND %DB58.DBX18.2 = TRUE THEN
+	    //Ustawienie w automat 
+	    %DB10.DBX18.7 := TRUE;
+	    // Kasowanie bitu RESET Driver i Modbus bit Reset
+	    %DB10.DBX18.0 := FALSE;
+	    %DB58.DBX18.2 := False;
+	    ;
+	  END_IF;
+	  
+	  
+	END_REGION
+	
+	REGION Z8
+	  // 
+	  //Ustawienie bitu Reset dla Drive Motor Z8
+	  %DB10.DBX20.6 := %DB58.DBX18.3;
+	  IF %DB10.DBX20.0 = FALSE AND %DB58.DBX18.3 = TRUE THEN
+	    //Ustawienie w automat 
+	    %DB10.DBX20.7 := TRUE;
+	    // Kasowanie bitu RESET Driver i Modbus bit Reset
+	    %DB10.DBX20.0 := FALSE;
+	    %DB58.DBX18.3 := False;
+	    ;
+	  END_IF;
+	  
+	  
+	END_REGION
+	
+	REGION Z9
+	  // 
+	  //Ustawienie bitu Reset dla Drive Motor Z9
+	  %DB10.DBX22.6 := %DB58.DBX18.4;
+	  IF %DB10.DBX22.0 = FALSE AND %DB58.DBX18.4 = TRUE THEN
+	    //Ustawienie w automat 
+	    %DB10.DBX22.7 := TRUE;
+	    // Kasowanie bitu RESET Driver i Modbus bit Reset
+	    %DB10.DBX22.0 := FALSE;
+	    %DB58.DBX18.4 := False;
+	    ;
+	  END_IF;
+	  
+	  
+	END_REGION
+	
+	REGION Z10
+	  // 
+	  //Ustawienie bitu Reset dla Drive Motor Z10
+	  %DB10.DBX24.6 := %DB58.DBX18.5;
+	  IF %DB10.DBX24.0 = FALSE AND %DB58.DBX18.5 = TRUE THEN
+	    //Ustawienie w automat 
+	    %DB10.DBX24.7 := TRUE;
+	    // Kasowanie bitu RESET Driver i Modbus bit Reset
+	    %DB10.DBX24.0 := FALSE;
+	    %DB58.DBX18.5 := False;
+	    ;
+	  END_IF;
+	  
+	  
+	END_REGION
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+END_FUNCTION
+

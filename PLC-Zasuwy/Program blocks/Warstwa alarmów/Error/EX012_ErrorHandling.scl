@@ -1,0 +1,47 @@
+﻿FUNCTION_BLOCK "EX012_ErrorHandling"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT RETAIN
+      LED : Int;
+      CounterError : USInt;
+   END_VAR
+
+   VAR_OUTPUT 
+      RedLED : Bool;
+   END_VAR
+
+   VAR 
+      tempCounterDiagStatus : USInt;
+      tempCounterError : USInt;
+   END_VAR
+
+   VAR_TEMP 
+      tempLed : Bool;
+   END_VAR
+
+
+BEGIN
+	//Function to set the light detection mark led error
+	#tempLed := FALSE;
+	#tempCounterError := #CounterError;
+	//set temporary narker Led
+	IF #LED <> 1 THEN
+	    #tempLed := TRUE;
+	ELSE
+	    #tempLed := FALSE;
+	END_IF;
+	
+	
+	//Set marker error
+	IF (#tempLed = TRUE) THEN
+	    #RedLED := TRUE;
+	ELSE
+	    #RedLED := FALSE;
+	END_IF;
+	   
+	    
+	
+	
+	
+END_FUNCTION_BLOCK
+

@@ -1,0 +1,104 @@
+﻿FUNCTION "Wybór_Trybu_Sterowania" : Void
+TITLE = Tryb sterowania
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Dostepne tryby sterowania zbiornikami: Wyłączony, Dobowy, Tygodniowy, Ręczny
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2022) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.4)
+	//Pakiet inżynierski:   TIA Portal (V16 Update 5)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+	//Funkcjonalnośc: (Pobranie informacji wybranego trybu sterowania zbiornikami 
+	                   i ustawienie znaczników isPumping, isRecharging)
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 02.04.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	REGION Detekcja wybranego modelu sterowania pompownią  
+	  // 
+	  CASE "DB10_instance_SCADA".ModelSterowania OF
+	    0:  // Wyłączone
+	      "isRecharging" := FALSE;
+	      "isPumping" := False;
+	      "isAutPumping" := FALSE;
+	      
+	      ;
+	    1:  // Dosilanie
+	      "isRecharging" := TRUE;
+	      "isPumping" := False;
+	      "isAutPumping" := FALSE;
+	      ;
+	    2: //  Przetłaczanie 
+	      "isRecharging" := FALSE;
+	      "isPumping" := TRUE;
+	      "isAutPumping" := FALSE;
+	      ;
+	    3: // Automat
+	      "isAutPumping" := TRUE;
+	      "isRecharging" := FALSE;
+	      "isPumping" := False;
+	      ;
+	    4: // Ręczne
+	      "isPumping" := TRUE;
+	      "isRecharging" := FALSE;
+	      "isAutPumping" := FALSE;
+	      
+	      ;
+	    ELSE  // Statement section ELSE
+	      "isRecharging" := FALSE;
+	      "isPumping" := False;
+	      "isAutPumping" := FALSE;
+	      ;
+	  END_CASE;
+	  
+	  
+	END_REGION
+	
+	
+	REGION Detekcja wybranego trybu sterowania zbiornikami 
+	  // 
+	  CASE "DB10_instance_SCADA".TrybSterowania OF
+	    0:  // Wyłączone
+	      "isDaily" := FALSE;
+	      "isWeekiy" := FALSE;
+	      "isManual" := FALSE;
+	      ;
+	    1:  // Dobowy
+	      "isDaily" := TRUE;
+	      "isWeekiy" := FALSE;
+	      "isManual" := FALSE;
+	      ;
+	    2:  // Selektywny
+	      "isDaily" := FALSE;
+	      "isWeekiy" := TRUE;
+	      "isManual" := FALSE;
+	      ;
+	    3:  // Ręczny
+	      "isDaily" := FALSE;
+	      "isWeekiy" := FALSE;
+	      "isManual" := TRUE;
+	      ;
+	      
+	    ELSE  // Statement section ELSE
+	      "isDaily" := FALSE;
+	      "isWeekiy" := FALSE;
+	      "isManual" := FALSE;
+	      ;
+	  END_CASE;
+	  
+	  
+	END_REGION
+	
+	
+END_FUNCTION
+

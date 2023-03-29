@@ -1,0 +1,19 @@
+﻿FUNCTION "HD_LED" : Int
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : gilewski
+FAMILY : HD
+VERSION : 0.1
+   VAR_INPUT 
+      LED : UInt;
+   END_VAR
+
+
+BEGIN
+	#HD_LED := LED(LADDR := "Local~Common",
+	               LED := #LED);
+	
+	"ERR_GetSoftwareError"(Error := #HD_LED > 9,
+	                       Status := INT_TO_DWORD(#HD_LED),
+	                       Buffer := "ERR_ErrorBufferFull".SoftwareError["ERR_Enum".SoftwareError.LED]);
+END_FUNCTION
+

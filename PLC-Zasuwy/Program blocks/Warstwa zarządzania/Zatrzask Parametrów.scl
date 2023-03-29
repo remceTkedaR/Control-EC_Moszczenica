@@ -1,0 +1,85 @@
+﻿FUNCTION "Zatrzask Parametrów" : Void
+TITLE = Kopiowanie do blkoków instancji 
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Funkcja inicjowana znacznikiem ustawianym przez HMI po wprowadzeniu zmian, kopiuje dane z DB10 (SCADA) do instancji parametryzującej cały proces sterowania.
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2022) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.4)
+	//Pakiet inżynierski:   TIA Portal (V16 Update 5)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+	//Funkcjonalnośc: (Cykliczne pobieranie danych konfiguracyjnych na potrzeby inicjacji danych
+	                    konfiguracji po awarii, restarcie)
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 09.03.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	
+	
+	REGION Kopiowanie z DB10 SCADA
+	  // pobierz dane
+	  IF "FirstScan" = FALSE THEN
+	    "Parametryzacja"."Setting Controll".ModelSterowania := "DB10_instance_SCADA".ModelSterowania;
+	    "Parametryzacja"."Setting Controll".TrybSterowania := "DB10_instance_SCADA".TrybSterowania;
+	    "Parametryzacja"."Setting Controll".setPoziomNapełniania := "DB10_instance_SCADA".setPoziomNapełniania;
+	    "Parametryzacja"."Setting Controll".setPoziomOpróżnianai := "DB10_instance_SCADA".setPoziomOpróżnianai;
+	    "Parametryzacja"."Status drivers".instZ1 := "DB10_instance_SCADA".instZ1;
+	    "Parametryzacja"."Status drivers".instZ2 := "DB10_instance_SCADA".instZ2;
+	    "Parametryzacja"."Status drivers".instZ3 := "DB10_instance_SCADA".instZ3;
+	    "Parametryzacja"."Status drivers".instZ4 := "DB10_instance_SCADA".instZ4;
+	    "Parametryzacja"."Status drivers".instZ5 := "DB10_instance_SCADA".instZ5;
+	    "Parametryzacja"."Status drivers".instZ6 := "DB10_instance_SCADA".instZ6;
+	    "Parametryzacja"."Status drivers".instZ7 := "DB10_instance_SCADA".instZ7;
+	    "Parametryzacja"."Status drivers".instZ8 := "DB10_instance_SCADA".instZ8;
+	    "Parametryzacja"."Status drivers".instZ9 := "DB10_instance_SCADA".instZ9;
+	    "Parametryzacja"."Status drivers".instZ10 := "DB10_instance_SCADA".instZ10;
+	    
+	    // Czasy sterowania zasuwami 
+	    "Parametryzacja"."Time Tanks".Start_napełnianie:= "DB10_instance_SCADA".actDTL_FillingOn ;
+	    "Parametryzacja"."Time Tanks".Stop_napełnianie:= "DB10_instance_SCADA".actDTL_FillingOff ;
+	    "Parametryzacja"."Time Tanks".Start_przetłaczanie_1:=  "DB10_instance_SCADA".actDTL_pumpingOn ;
+	    "Parametryzacja"."Time Tanks".Stop_przetłaczanie_1:= "DB10_instance_SCADA".actDTL_pumpingOff ;
+	    "Parametryzacja"."Time Tanks".Start_dosilanie_1:= "DB10_instance_SCADA".actDTL_RechargingOn ;
+	    "Parametryzacja"."Time Tanks".Stop_dosilanie_1:= "DB10_instance_SCADA".actDTL_RechargingOff ;
+	    
+	    "ProcessMemory_Static_1_setChanging" := FALSE;
+	    ;
+	  END_IF;
+	  
+	  
+	  
+	END_REGION
+	
+	// Zasuwa Z10
+	REGION pobranie nowej wartości położenia Z10
+	  // Pobieraj nową wartośc tylko  gdy jest większa od '0' -
+	  // '0' stan zamknięcia
+	  IF "FirstScan" = FALSE AND "DB10_instance_SCADA".setPołożenieZ10 >= 2  THEN
+	    // Statement section IF
+	    "Parametryzacja"."Setting Controll".setPołożenieZ10 := "DB10_instance_SCADA".setPołożenieZ10;
+	    ;
+	  END_IF;
+	  
+	 
+	  
+	END_REGION
+	
+	REGION Zbiorniki
+	  // bit blokowania zbiornika
+	
+	 
+	  
+	END_REGION
+	
+END_FUNCTION
+

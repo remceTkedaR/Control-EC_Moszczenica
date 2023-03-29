@@ -1,0 +1,71 @@
+﻿FUNCTION "AI_IN" : Void
+TITLE = Przekazanie wartości analogowej
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Mapownie wejść analogowych
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.2)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1214 FW 3.2 .)
+	//Funkcjonalnośc: (Mapowanie wejść analogowych )
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 28.01.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	
+	
+	// odczyt bezpośredni z AI
+	
+	IF "IW78":P >= 0.0 THEN // czy nie uszkodzone rury
+	  IF "IW78":P < 27651 THEN // przerwana pętla prądowa
+	    // to przekazanie wartości
+	    "AI_położenie_Z10" := "IW78":P;
+	    ;
+	  ELSE
+	    "AI_położenie_Z10" := 32767;
+	    ;
+	  END_IF;
+	  
+	  ;
+	END_IF;
+	
+	
+	// odczyt analogów przez OB30
+	(*
+	IF "IW76":P > 0.2 THEN // czy nie uszkodzone rury
+	  IF "IW76":P < 27651 THEN // przerwana pętla prądowa
+	    // to przekazanie wartości
+	    "AI_ciśnienie_B5" := "IW76":P;
+	    ;
+	  ELSE
+	    "AI_ciśnienie_B5" := 32767;
+	    ;
+	  END_IF;
+	  
+	  ;
+	END_IF;
+	
+	*)
+	
+	//Symulacja czujnika B5
+	//"AI_ciśnienie_B5" := "Zmienne_sterujące_zbiorników".testowy1 ;
+	
+	
+	// odczyt poprzez filtr KALMANA funkcja FB11
+	
+	"filtr _kalmana_1_DB"();
+	
+	
+END_FUNCTION
+

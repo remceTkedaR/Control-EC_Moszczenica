@@ -1,0 +1,14 @@
+﻿FUNCTION "LD_ReadLedStatus" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_TEMP 
+      tempCounter : Int;
+   END_VAR
+
+
+BEGIN
+	FOR #tempCounter := 1 TO 6 BY 1 DO
+	    "V_LED".LED[#tempCounter] := "HD_LED"(LED := INT_TO_UINT(IN := #tempCounter));
+	END_FOR;
+END_FUNCTION
+

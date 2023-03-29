@@ -1,0 +1,111 @@
+﻿FUNCTION "Sterowania _Zasuwa_Z10" : Void
+TITLE = Sterowanie zasuwą Z9 odpływu ze zbiorników
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmr
+VERSION : 0.1
+//Otwieranie zasuwy w cyklu przetłaczania, dosilania. PLC Pompownia na podstawie statusu zasuwy Z9 i bitu informującego o otwarciu rozoczyna procedurę przetłaczania lub dosilania
+   VAR_INPUT 
+      isGotowość : Bool;   // bit gotowości
+      isAuto : Bool;   // bit trybu autoamt
+      isOpen : Bool;   // potwierdzenia otwarta
+      isClose : Bool;   // potwierdzenia zamknieta
+      isFilling_zb1 : Bool;   // bit aktywacji napełniania zbiornika
+      isFilling_zb2 : Bool;   // bit aktywacji napełniania zbiornika
+      isFilling_zb3 : Bool;   // bit aktywacji napełniania zbiornika
+      isFilling_zb4 : Bool;   // bit aktywacji napełniania zbiornika
+      isREM : Bool;   // bit trybu automat
+      "actValue-opening_Z10" : Int;   // Zmienna zapamietan w parametryzacji kontroli sterowaia zasuwą Z10
+   END_VAR
+
+   VAR_OUTPUT 
+      setValue_opening_Z10 : Int;   // wartość zadana otwarcia Z10
+      actOpen : Bool;   // bit aktywacji otwierania
+      actClose : Bool;   // bit aktywacji zamykania
+   END_VAR
+
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2022) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.4)
+	//Pakiet inżynierski:   TIA Portal (V16 Update 5)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+	//Funkcjonalnośc: (Sterowanie zasuwą Z10 zasilającej zbiorniki. 
+	                    Sterowanie sygnałem analogowym pozycji otwarci 0-100%)
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 11.05.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	
+	REGION otwieranie Z10
+	  // jesli warunki spełnione
+	  IF #isGotowość
+	    AND #isAuto
+	    AND #isREM
+	    AND #isClose
+	    AND ("DB10_instance_SCADA".TrybSterowania <> 0)
+	    AND ("DB10_instance_SCADA".TrybSterowania <= 3)
+	    
+	  THEN
+	    IF #isFilling_zb1 OR #isFilling_zb2 OR #isFilling_zb3 OR #isFilling_zb4 THEN
+	      IF "Hbit_Zamknieta_Z1" AND"Hbit_Zamknieta_Z3"AND"Hbit_Zamknieta_Z5"AND"Hbit_Zamknieta_Z7" THEN
+	        // Otwieranie
+	        #setValue_opening_Z10 := #"actValue-opening_Z10" ;
+	        #actOpen := TRUE;
+	      ELSE
+	        #actOpen := FALSE;
+	        ;
+	      END_IF;
+	      
+	      ;
+	    END_IF;
+	    
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	
+	
+	
+	REGION zamykanie Z10 
+	  // 
+	  IF #isGotowość
+	    AND #isAuto
+	    AND #isClose = FALSE
+	    AND #isREM
+	    AND ("DB10_instance_SCADA".TrybSterowania <> 0)
+	    AND ("DB10_instance_SCADA".TrybSterowania <= 3)
+	    
+	  THEN
+	    IF #isFilling_zb1  = False
+	      AND #isFilling_zb2 = FALSE
+	      AND #isFilling_zb3 = FALSE
+	      AND #isFilling_zb4 = FALSE
+	    THEN
+	      // Zamykanie 
+	      #setValue_opening_Z10 := 0 ;
+	      #actClose := TRUE;
+	  ELSE
+	    #actClose := FALSE;
+	    
+	      ;
+	    END_IF;
+	    
+	    
+	    ;
+	  END_IF;
+	  
+	  
+	END_REGION
+	
+	
+END_FUNCTION
+

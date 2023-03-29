@@ -1,0 +1,33 @@
+﻿FUNCTION "ERR_ClassGetError" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_TEMP 
+      tempErrorData : "stt_ERR_ComponentGetError";
+      tempNumberErrorID : Int;
+      tempSaveToBuffer : Bool;
+   END_VAR
+
+
+BEGIN
+	IF ("ERR_ErrorBufferFull".Error.ERROR_ID <> 0) THEN
+	    //copy important data 
+	    "ERR_GetErrorFromStructure"(ErrorStructure := "ERR_ErrorBufferFull".Error,
+	                                ErrorData => #tempErrorData);
+	    // search ErrorID
+	    #tempNumberErrorID := "ERR_GetErrorID"(ErrorID := "ERR_ErrorBufferFull".Error.ERROR_ID);
+	    IF (#tempNumberErrorID < 0) THEN
+	        RETURN;//Error ID not exist!
+	    END_IF;
+	    // Compare actual component error and component from buffer
+	    #tempSaveToBuffer := "ERR_CompareGetErrorComponent"(Actual := #tempErrorData,
+	                                                        Buffer := "ERR_ErrorBufferFull".GetError[#tempNumberErrorID]);
+	    IF (#tempSaveToBuffer = TRUE) THEN
+	        "ERR_OverflowBufferControl"(Counter := "ERR_ErrorBufferFull".GetError[#tempNumberErrorID].Counter,
+	                                    Overflow := "ERR_ErrorBufferFull".GetError[#tempNumberErrorID].Overflow);
+	        "ERR_SaveErrorToBuffer"(DataToSave := #tempErrorData,
+	                                        Buffer := "ERR_ErrorBufferFull".GetError[#tempNumberErrorID]);
+	    END_IF;
+	END_IF;
+	
+END_FUNCTION
+

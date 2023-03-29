@@ -1,0 +1,104 @@
+﻿FUNCTION "Sterowania _Zasuwa_Z9" : Void
+TITLE = Sterowanie zasuwą Z9 odpływu ze zbiorników
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmr
+VERSION : 0.1
+//Otwieranie zasuwy w cyklu przetłaczania, dosilania. PLC Pompownia na podstawie statusu zasuwy Z9 i bitu informującego o otwarciu rozoczyna procedurę przetłaczania lub dosilania
+   VAR_INPUT 
+      isGotowość : Bool;   // bit gotowości
+      isAuto : Bool;   // bit trybu autoamt
+      isOpen : Bool;   // potwierdzenia otwarta
+      isClose : Bool;   // potwierdzenia zamknieta
+      isPumping : Bool;   // bit wybrano tryb przetłaczania
+      isRecharging : Bool;   // bit wybrano tryb dosilania
+      isAutPumping : Bool;   // bit wybrano tryb automatycznego sterowania pompownią tryb mieszany dosilania-przetłaczanie
+      isREM : Bool;   // bit przełacznik trybu pracy załaczony
+   END_VAR
+
+   VAR_OUTPUT 
+      setSVMC : Bool;   // bit rozkazu zamyknij w automacie
+      setSVMO : Bool;   // bit rozkazu otwórz w automacie
+   END_VAR
+
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2022) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.4)
+	//Pakiet inżynierski:   TIA Portal (V16 Update 5)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+	//Funkcjonalnośc: (Sterowanie zasuwą Z9 odływu ze zbiorników do pompowni)
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 11.05.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	
+	REGION otwieranie Z9
+	  // jesli warunki spełnione
+	  IF #isGotowość
+	    AND #isAuto
+	    AND #isREM
+	    AND #isClose
+	    AND ("DB10_instance_SCADA".TrybSterowania <> 0)
+	    AND ("DB10_instance_SCADA".TrybSterowania <= 3)
+	    
+	  THEN
+	    IF #isPumping OR #isRecharging OR #isAutPumping THEN
+	      IF ("Hbit_Auto_Manu_Z1" AND "Hbit_Otwarta_Z1") OR ("Hbit_Auto_Manu_Z3" AND "Hbit_Otwarta_Z3") OR ( "Hbit_Auto_Manu_Z5" AND "Hbit_Otwarta_Z5") OR ("Hbit_Auto_Manu_Z7" AND"Hbit_Otwarta_Z7") THEN
+	        // Otwieranie
+	        #setSVMO := TRUE;
+	      ELSE
+	        #setSVMO := FALSE;
+	        ;
+	      END_IF;
+	      
+	      ;
+	    END_IF;
+	    
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	
+	
+	
+	REGION zamykanie Z9 
+	  // 
+	  IF #isGotowość
+	    AND #isAuto
+	    AND #isClose = FALSE
+	    AND #isREM
+	    AND ("DB10_instance_SCADA".TrybSterowania <> 0)
+	    AND ("DB10_instance_SCADA".TrybSterowania <= 3)
+	    
+	  THEN
+	    IF "Zmienne_sterujące_zbiorników".Zbiornik_1.isEptying_Zb  = False
+	      AND "Zmienne_sterujące_zbiorników".Zbiornik_2.isEptying_Zb = FALSE
+	      AND "Zmienne_sterujące_zbiorników".Zbiornik_3.isEptying_Zb = FALSE
+	      AND "Zmienne_sterujące_zbiorników".Zbiornik_4.isEptying_Zb = FALSE
+	    THEN
+	      // Zamykanie 
+	      #setSVMC := TRUE;
+	  ELSE
+	    #setSVMC := FALSE;
+	      ;
+	    END_IF;
+	    
+	    
+	    ;
+	  END_IF;
+	  
+	  
+	END_REGION
+	
+	
+END_FUNCTION
+

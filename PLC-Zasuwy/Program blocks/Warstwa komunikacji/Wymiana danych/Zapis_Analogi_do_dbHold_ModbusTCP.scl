@@ -1,0 +1,45 @@
+﻿FUNCTION "Zapis_Analogi_do_dbHold_ModbusTCP" : Void
+TITLE = Przekazanie wartości 
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Funkcja kopiuje wartości analogowe z db SCADA do db ModbusTCP 
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2022) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.4)
+	//Pakiet inżynierski:   TIA Portal (V16 Update 5)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+	//Funkcjonalnośc: (Przekazanire aktualnego wartości pomiarów analogowych
+	                    do dbHold modbusTCP )
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 09.03.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	// Analogi 
+	
+	REGION Analogi
+	  // 
+	  "dbHold_Sending".data.actB5_bar_magistrala :="DB10_instance_SCADA"."actCiśnienie-magistralaB5";
+	  "dbHold_Sending".data.act_poziom_ZB1:="DB10_instance_SCADA".actPoziomZbiornik_1  ;
+	  "dbHold_Sending".data.act_poziom_ZB2:= "DB10_instance_SCADA".actPoziomZbiornik_2  ;
+	  "dbHold_Sending".data.act_poziom_ZB3:= "DB10_instance_SCADA".actPoziomZbiornik_3  ;
+	  "dbHold_Sending".data.act_poziom_ZB4:=  "DB10_instance_SCADA".actPoziomZbiornik_4 ;
+	  "dbHold_Sending".data.act_przepływ_VF_Q2:="DB10_instance_SCADA".actPrzepływ_Q2;
+	 //dbHold_Sending".datat.act_przepływ-VR_Q2":=  ;
+	  "dbHold_Sending".data.sum_przepływ_Q2:= "DB10_instance_SCADA".sumPrzepływVF_Q2 ;
+	  "dbHold_Sending".data.stat.act_położenie_Z10 :="DB10_instance_SCADA".actPołożenieZ10 ;
+	  
+	END_REGION
+	
+	
+END_FUNCTION
+

@@ -1,0 +1,103 @@
+﻿FUNCTION "Zmienne_SCADA" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.2)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1214 FW 3.2 .)
+	//Funkcjonalnośc: (Kopiowanie bloków danych z - do bloku SCADA )
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 28.01.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	//
+	
+	
+	
+	REGION Przepływomierz
+	  
+	  IF "switch_flow_analog_modbus" THEN
+	    // jeśli True to analog
+	    "DB10_instance_SCADA".actPrzepływ_Q2 := "dbdane".Wielkość_przepływu_Q2_analog;
+	    
+	  ELSE
+	    // jeśli  False to modbus rtu
+	    "DB10_instance_SCADA".actPrzepływ_Q2 := "dbdane".Wielkość_przeływu_Q2;
+	    ;
+	  END_IF;
+	  
+	  // 
+	  "DB10_instance_SCADA".sumPrzepływVF_Q2 := "dbdane".Licznik_objętość_VF_Q2;
+	  "DB10_instance_SCADA".statusPrzepływVR_Q2 := "dbdane"._Stan_urządzenia_Q2;
+	END_REGION
+	
+	REGION Z10 - położenie
+	  // aktualna wartość
+	  "DB10_instance_SCADA".actPołożenieZ10 :="dbtags_Sterowanie"."Z10 Pozycja".encoder;
+	  
+	END_REGION
+	
+	
+	
+	
+	REGION Modbus RTU przekazanie kodu błędu 
+	  // Statement section REGION
+	  "DB10_instance_SCADA".rtu_mpp04_2error_status := "dbTags_master_MPP04_2".modbusMaster.errorStatus;
+	END_REGION
+	
+	// Pompownia
+	REGION Strategia sterowania pompownią
+	  // strategia
+	  "DB10_instance_SCADA".ModelSterowania := "dbHold_download".sterowanie.set_strategia_sterowania;
+	  
+	END_REGION
+	
+	
+	(*
+	Przekazanie wartości analogowych CIŚNIENIE, ZBIORNIKI  z wyborem z filtracją Kolmana / bez
+	*)
+	REGION Analogi ciśnienie B5 i poziom w zbiornikach
+	  // 
+	  IF "switch_Kolman" THEN
+	    // przekaż wartość bezpośrednie z analogów 
+	    "DB10_instance_SCADA"."actCiśnienie-magistralaB5" := "dbtags_Sterowanie"."Analog pomiar".AI_ciśnienie_B5;
+	    "DB10_instance_SCADA".actPoziomZbiornik_1 := "dbtags_Sterowanie"."Analog pomiar".AI_poziom_zbiornik_1;
+	    "DB10_instance_SCADA".actPoziomZbiornik_2 := "dbtags_Sterowanie"."Analog pomiar".AI_poziom_zbiornik_2;
+	    "DB10_instance_SCADA".actPoziomZbiornik_3 := "dbtags_Sterowanie"."Analog pomiar".AI_poziom_zbiornik_3;
+	    "DB10_instance_SCADA".actPoziomZbiornik_4 := "dbtags_Sterowanie"."Analog pomiar".AI_poziom_zbiornik_4;
+	   
+	  ELSE
+	    //przekaż wartość po filtracji Kolmana
+	    "DB10_instance_SCADA"."actCiśnienie-magistralaB5" := "dbtags_Sterowanie"."Analog pomiar".AI_ciśnienie_B5;
+	    "DB10_instance_SCADA".actPoziomZbiornik_1 := "dbtags_Sterowanie"."Analog pomiar".kolman_poziom_zbiornik_1;
+	    "DB10_instance_SCADA".actPoziomZbiornik_2 := "dbtags_Sterowanie"."Analog pomiar".kolman_poziom_zbiornik_2;
+	    "DB10_instance_SCADA".actPoziomZbiornik_3 := "dbtags_Sterowanie"."Analog pomiar".kolman_poziom_zbiornik_3;
+	    "DB10_instance_SCADA".actPoziomZbiornik_4 := "dbtags_Sterowanie"."Analog pomiar".kolman_poziom_zbiornik_4;
+	    
+	    ;
+	  END_IF;
+	  
+	  
+	END_REGION
+	
+	// wartość alarmowa ciśnienia magistrala B5 ustawiana z PLC pompownia
+	"Parametryzacja"."Setting Controll".alarmMin_CiśnienieGranica := "dbHold_download".sterowanie.set_magistrala_alarm_min_bar;
+	
+	  
+	  
+	
+	
+	
+	
+END_FUNCTION
+

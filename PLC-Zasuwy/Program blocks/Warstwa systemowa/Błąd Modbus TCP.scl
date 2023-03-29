@@ -1,0 +1,355 @@
+﻿FUNCTION "Błąd Modbus TCP" : Void
+TITLE = Obsługa błędu
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Funkcja ubsługuje zainicjowany błąd komunikacji Modbus TCP
+   VAR_INPUT 
+      bit_loop : Bool;   // znacznik ostatniego bloku pętli
+   END_VAR
+
+   VAR_IN_OUT 
+      "bit_reset-modbus_tcp" : Bool;   // bit restartu modbus tcp
+   END_VAR
+
+   VAR_TEMP 
+      reset : Bool;
+      reset_1 : Bool;
+   END_VAR
+
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2022) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.4)
+	//Pakiet inżynierski:   TIA Portal (V16 Update 5)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+	//Funkcjonalnośc: (Funkcja ubsługuje zainicjowany błąd komunikacji Modbus TCP )
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 09.03.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	
+	
+	
+	REGION Kontrola staru Modbus TCP
+	  // histereza na start 
+	  IF ("DB31_HMI_AreaPointer".cpuSatus = FALSE) AND ("DB31_HMI_AreaPointer".getPLCMode = 2) THEN
+	    // uruchom timer startu tcp
+	    "memRisingTriger_tmerDisconected" := TRUE;
+	    ;
+	  END_IF;
+	  
+	  
+	END_REGION
+	
+	
+	// Jeśli wystąpi błąd to reset
+	IF "MB_TCP_CLIENT".MB_Client_Receiving.Input.InOut.error
+	  OR "MB_TCP_CLIENT".MB_Client_Receiving_Time.Input.InOut.error
+	  OR "MB_TCP_CLIENT".MB_Client_Receiving_Time.Input.InOut.error
+	  OR "MB_TCP_CLIENT".MB_Client_Sending.Input.InOut.error
+	  OR "MB_TCP_CLIENT".MB_Client_Sending_1.Input.InOut.error
+	  OR "MB_TCP_CLIENT".MB_Client_Sending_3.Input.InOut.error
+	  
+	THEN
+	  // Reset komunikacji
+	  "MB_TCP_CLIENT".MB_Client_Sending.Input.disconnect := TRUE;
+	  "MB_TCP_CLIENT".MB_Client_Receiving_Time.Input.disconnect:= TRUE;
+	  "MB_TCP_CLIENT".MB_Client_Sending_1.Input.disconnect := TRUE;
+	  "MB_TCP_CLIENT".MB_Client_Sending_3.Input.disconnect := TRUE;
+	  "MB_TCP_CLIENT".MB_Client_Receiving.Input.disconnect := FALSE;
+	  "done_modbusTCP_przetw_1" := TRUE;
+	  "done_modbusTCP_przetw_2" := FALSE;
+	  "done_modbusTCP_przetw_3" := FALSE;
+	  "done_modbusTCP_przetw_4" := FALSE;
+	  "done_modbusTCP_przetw_5" := FALSE;
+	  "MB_TCP_CLIENT".MB_Client_Receiving.tagsStep.step := 1;
+	  "MB_TCP_CLIENT".MB_Client_Sending_1.tagsStep.step := 0;
+	  "MB_TCP_CLIENT".MB_Client_Receiving_Time.tagsStep.step := 0;
+	  "MB_TCP_CLIENT".MB_Client_Sending.tagsStep.step := 0;
+	  "MB_TCP_CLIENT".MB_Client_Sending_3.tagsStep.step := 0;
+	  "MB_TCP_CLIENT".MB_Client_Receiving.Input.InOut.error := FALSE;
+	  "MB_TCP_CLIENT".MB_Client_Receiving_Time.Input.InOut.error := FALSE;
+	  "MB_TCP_CLIENT".MB_Client_Sending.Input.InOut.error := FALSE;
+	  "MB_TCP_CLIENT".MB_Client_Sending_2.Input.InOut.error := FALSE;
+	  "MB_TCP_CLIENT".MB_Client_Sending_3.Input.InOut.error := FALSE;
+	  "MB_TCP_CLIENT".MB_Client_Sending_4.Input.InOut.error := FALSE;
+	  "MB_TCP_CLIENT".MB_Client_Receiving.Input.InOut.ERROR_STATUS := 0;
+	  "MB_TCP_CLIENT".MB_Client_Receiving_Time.Input.InOut.ERROR_STATUS := 0;
+	  "MB_TCP_CLIENT".MB_Client_Sending.Input.InOut.ERROR_STATUS := 0;
+	  "MB_TCP_CLIENT".MB_Client_Sending_2.Input.InOut.ERROR_STATUS := 0;
+	  "MB_TCP_CLIENT".MB_Client_Sending_3.Input.InOut.ERROR_STATUS := 0;
+	  "MB_TCP_CLIENT".MB_Client_Sending_4.Input.InOut.ERROR_STATUS := 0;
+	  "memRisingTriger_Data_1" := FALSE;
+	  "memRisingTriger_Data_2" := FALSE;
+	  "memRisingTriger_Data_3" := FALSE;
+	  "memRisingTriger_Data_4" := FALSE;
+	  "memRisingTriger_Data_5" := FALSE;
+	  "memRisingTriger_Data_6" := FALSE;
+	  "memRisingTriger_Data_7" := FALSE;
+	  "memRisingTriger_Data_8" := FALSE;
+	  "memRisingTriger_Data_9" := FALSE;
+	  "memRisingTriger_Data_10" := FALSE;
+	  "memRisingTriger_Data_11" := FALSE;
+	  "memRisingTriger_Data_12" := FALSE;
+	  "memRisingTriger_Data_13" := FALSE;
+	  "memRisingTriger_Data_14" := FALSE;
+	  "memRisingTriger_Data_15" := FALSE;
+	  "memRisingTriger_Data_16" := FALSE;
+	  "memTrig_Client_Receiving_1" := FALSE;
+	  "memTrig_Client_Receiving_2" := FALSE;
+	  "memTrig_Client_Receiving_3" := FALSE;
+	  "memTrig_Client_Receiving_4" := FALSE;
+	  "memTrig_Client_Receiving_5" := FALSE;
+	  "memTrig_Client_Receiving_7" := FALSE;
+	  "memTrig_Client_Receiving_8" := FALSE;
+	  "memTrig_Client_Receiving_9" := FALSE;
+	  "memTrig_Client_Receiving_10" := FALSE;
+	  "memTrig_Client_Receiving_11" := FALSE;
+	  "memTrig_Client_Receiving_12" := FALSE;
+	  "memTrig_Client_Receiving_13" := FALSE;
+	  "memTrig_Client_Receiving_14" := FALSE;
+	  "memTrig_Client_Receiving_15" := FALSE;
+	  "memTrig_Client_Receiving_16" := FALSE;
+	  
+	END_IF;
+	
+	// Jesli pętla MOdbus TCP błąd obiegu
+	IF "done_modbusTCP_przetw_1" = FALSE
+	  AND "done_modbusTCP_przetw_2" = FALSE
+	  AND "done_modbusTCP_przetw_3" = FALSE
+	  AND "done_modbusTCP_przetw_4" = FALSE
+	  AND "done_modbusTCP_przetw_5" = FALSE
+	THEN
+	  "done_modbusTCP_przetw_1":= TRUE
+	  
+	  ;
+	END_IF;
+	
+	//Kasowanie błedu jesli brak bitu error
+	
+	// blok pobierania sterowania
+	IF ("MB_TCP_CLIENT".MB_Client_Receiving.Input.InOut.ERROR_STATUS <> 0)
+	  AND "MB_TCP_CLIENT".MB_Client_Receiving.Input.InOut.error = FALSE
+	THEN
+	  //kasuj błąd
+	  "MB_TCP_CLIENT".MB_Client_Receiving.Input.InOut.ERROR_STATUS := 0;
+	  "memRisingTriger_Data_1" := FALSE;
+	  "memRisingTriger_Data_2" := FALSE;
+	  "memRisingTriger_Data_3" := FALSE;
+	  "memRisingTriger_Data_4" := FALSE;
+	  "memRisingTriger_Data_5" := FALSE;
+	  "memRisingTriger_Data_6" := FALSE;
+	  "memRisingTriger_Data_7" := FALSE;
+	  "memRisingTriger_Data_8" := FALSE;
+	  "memRisingTriger_Data_9" := FALSE;
+	  "memRisingTriger_Data_10" := FALSE;
+	  "memRisingTriger_Data_11" := FALSE;
+	  "memRisingTriger_Data_12" := FALSE;
+	  "memRisingTriger_Data_13" := FALSE;
+	  "memRisingTriger_Data_14" := FALSE;
+	  "memRisingTriger_Data_15" := FALSE;
+	  "memRisingTriger_Data_16" := FALSE;
+	  "memTrig_Client_Receiving_1" := FALSE;
+	  "memTrig_Client_Receiving_2" := FALSE;
+	  "memTrig_Client_Receiving_3" := FALSE;
+	  "memTrig_Client_Receiving_4" := FALSE;
+	  "memTrig_Client_Receiving_5" := FALSE;
+	  "memTrig_Client_Receiving_7" := FALSE;
+	  "memTrig_Client_Receiving_8" := FALSE;
+	  "memTrig_Client_Receiving_9" := FALSE;
+	  "memTrig_Client_Receiving_10" := FALSE;
+	  "memTrig_Client_Receiving_11" := FALSE;
+	  "memTrig_Client_Receiving_12" := FALSE;
+	  "memTrig_Client_Receiving_13" := FALSE;
+	  "memTrig_Client_Receiving_14" := FALSE;
+	  "memTrig_Client_Receiving_15" := FALSE;
+	  "memTrig_Client_Receiving_16" := FALSE;
+	  ;
+	END_IF;
+	
+	// blok pobierania DTL
+	IF ("MB_TCP_CLIENT".MB_Client_Receiving_Time.Input.InOut.ERROR_STATUS <> 0)
+	  AND "MB_TCP_CLIENT".MB_Client_Receiving_Time.Input.InOut.error = FALSE
+	THEN
+	  //kasuj błąd
+	  "MB_TCP_CLIENT".MB_Client_Receiving_Time.Input.InOut.ERROR_STATUS := 0;
+	  "memRisingTriger_Data_1" := FALSE;
+	  "memRisingTriger_Data_2" := FALSE;
+	  "memRisingTriger_Data_3" := FALSE;
+	  "memRisingTriger_Data_4" := FALSE;
+	  "memRisingTriger_Data_5" := FALSE;
+	  "memRisingTriger_Data_6" := FALSE;
+	  "memRisingTriger_Data_7" := FALSE;
+	  "memRisingTriger_Data_8" := FALSE;
+	  "memRisingTriger_Data_9" := FALSE;
+	  "memRisingTriger_Data_10" := FALSE;
+	  "memRisingTriger_Data_11" := FALSE;
+	  "memRisingTriger_Data_12" := FALSE;
+	  "memRisingTriger_Data_13" := FALSE;
+	  "memRisingTriger_Data_14" := FALSE;
+	  "memRisingTriger_Data_15" := FALSE;
+	  "memRisingTriger_Data_16" := FALSE;
+	  "memTrig_Client_Receiving_1" := FALSE;
+	  "memTrig_Client_Receiving_2" := FALSE;
+	  "memTrig_Client_Receiving_3" := FALSE;
+	  "memTrig_Client_Receiving_4" := FALSE;
+	  "memTrig_Client_Receiving_5" := FALSE;
+	  "memTrig_Client_Receiving_7" := FALSE;
+	  "memTrig_Client_Receiving_8" := FALSE;
+	  "memTrig_Client_Receiving_9" := FALSE;
+	  "memTrig_Client_Receiving_10" := FALSE;
+	  "memTrig_Client_Receiving_11" := FALSE;
+	  "memTrig_Client_Receiving_12" := FALSE;
+	  "memTrig_Client_Receiving_13" := FALSE;
+	  "memTrig_Client_Receiving_14" := FALSE;
+	  "memTrig_Client_Receiving_15" := FALSE;
+	  "memTrig_Client_Receiving_16" := FALSE;
+	  ;
+	END_IF;
+	
+	// blok wysyłania analogów
+	IF ("MB_TCP_CLIENT".MB_Client_Sending.Input.InOut.ERROR_STATUS <> 0)
+	  AND "MB_TCP_CLIENT".MB_Client_Sending.Input.InOut.error = FALSE
+	THEN
+	  //kasuj błąd
+	  "MB_TCP_CLIENT".MB_Client_Sending.Input.InOut.ERROR_STATUS := 0;
+	  "memRisingTriger_Data_1" := FALSE;
+	  "memRisingTriger_Data_2" := FALSE;
+	  "memRisingTriger_Data_3" := FALSE;
+	  "memRisingTriger_Data_4" := FALSE;
+	  "memRisingTriger_Data_5" := FALSE;
+	  "memRisingTriger_Data_6" := FALSE;
+	  "memRisingTriger_Data_7" := FALSE;
+	  "memRisingTriger_Data_8" := FALSE;
+	  "memRisingTriger_Data_9" := FALSE;
+	  "memRisingTriger_Data_10" := FALSE;
+	  "memRisingTriger_Data_11" := FALSE;
+	  "memRisingTriger_Data_12" := FALSE;
+	  "memRisingTriger_Data_13" := FALSE;
+	  "memRisingTriger_Data_14" := FALSE;
+	  "memRisingTriger_Data_15" := FALSE;
+	  "memRisingTriger_Data_16" := FALSE;
+	  "memTrig_Client_Receiving_1" := FALSE;
+	  "memTrig_Client_Receiving_2" := FALSE;
+	  "memTrig_Client_Receiving_3" := FALSE;
+	  "memTrig_Client_Receiving_4" := FALSE;
+	  "memTrig_Client_Receiving_5" := FALSE;
+	  "memTrig_Client_Receiving_7" := FALSE;
+	  "memTrig_Client_Receiving_8" := FALSE;
+	  "memTrig_Client_Receiving_9" := FALSE;
+	  "memTrig_Client_Receiving_10" := FALSE;
+	  "memTrig_Client_Receiving_11" := FALSE;
+	  "memTrig_Client_Receiving_12" := FALSE;
+	  "memTrig_Client_Receiving_13" := FALSE;
+	  "memTrig_Client_Receiving_14" := FALSE;
+	  "memTrig_Client_Receiving_15" := FALSE;
+	  "memTrig_Client_Receiving_16" := FALSE;
+	  ;
+	END_IF;
+	
+	// blok wysyłąnia statusów
+	IF ("MB_TCP_CLIENT".MB_Client_Sending_1.Input.InOut.ERROR_STATUS <> 0)
+	  AND "MB_TCP_CLIENT".MB_Client_Sending_1.Input.InOut.error = FALSE
+	THEN
+	  //kasuj błąd
+	  "MB_TCP_CLIENT".MB_Client_Sending_1.Input.InOut.ERROR_STATUS := 0;
+	  "memRisingTriger_Data_1" := FALSE;
+	  "memRisingTriger_Data_2" := FALSE;
+	  "memRisingTriger_Data_3" := FALSE;
+	  "memRisingTriger_Data_4" := FALSE;
+	  "memRisingTriger_Data_5" := FALSE;
+	  "memRisingTriger_Data_6" := FALSE;
+	  "memRisingTriger_Data_7" := FALSE;
+	  "memRisingTriger_Data_8" := FALSE;
+	  "memRisingTriger_Data_9" := FALSE;
+	  "memRisingTriger_Data_10" := FALSE;
+	  "memRisingTriger_Data_11" := FALSE;
+	  "memRisingTriger_Data_12" := FALSE;
+	  "memRisingTriger_Data_13" := FALSE;
+	  "memRisingTriger_Data_14" := FALSE;
+	  "memRisingTriger_Data_15" := FALSE;
+	  "memRisingTriger_Data_16" := FALSE;
+	  "memTrig_Client_Receiving_1" := FALSE;
+	  "memTrig_Client_Receiving_2" := FALSE;
+	  "memTrig_Client_Receiving_3" := FALSE;
+	  "memTrig_Client_Receiving_4" := FALSE;
+	  "memTrig_Client_Receiving_5" := FALSE;
+	  "memTrig_Client_Receiving_7" := FALSE;
+	  "memTrig_Client_Receiving_8" := FALSE;
+	  "memTrig_Client_Receiving_9" := FALSE;
+	  "memTrig_Client_Receiving_10" := FALSE;
+	  "memTrig_Client_Receiving_11" := FALSE;
+	  "memTrig_Client_Receiving_12" := FALSE;
+	  "memTrig_Client_Receiving_13" := FALSE;
+	  "memTrig_Client_Receiving_14" := FALSE;
+	  "memTrig_Client_Receiving_15" := FALSE;
+	  "memTrig_Client_Receiving_16" := FALSE;
+	  ;
+	END_IF;
+	
+	// blok wysyłania parametrów
+	IF ("MB_TCP_CLIENT".MB_Client_Sending_3.Input.InOut.ERROR_STATUS <> 0)
+	  AND "MB_TCP_CLIENT".MB_Client_Sending_3.Input.InOut.error = FALSE
+	THEN
+	  //kasuj błąd
+	  "MB_TCP_CLIENT".MB_Client_Sending_3.Input.InOut.ERROR_STATUS := 0;
+	  "memRisingTriger_Data_1" := FALSE;
+	  "memRisingTriger_Data_2" := FALSE;
+	  "memRisingTriger_Data_3" := FALSE;
+	  "memRisingTriger_Data_4" := FALSE;
+	  "memRisingTriger_Data_5" := FALSE;
+	  "memRisingTriger_Data_6" := FALSE;
+	  "memRisingTriger_Data_7" := FALSE;
+	  "memRisingTriger_Data_8" := FALSE;
+	  "memRisingTriger_Data_9" := FALSE;
+	  "memRisingTriger_Data_10" := FALSE;
+	  "memRisingTriger_Data_11" := FALSE;
+	  "memRisingTriger_Data_12" := FALSE;
+	  "memRisingTriger_Data_13" := FALSE;
+	  "memRisingTriger_Data_14" := FALSE;
+	  "memRisingTriger_Data_15" := FALSE;
+	  "memRisingTriger_Data_16" := FALSE;
+	  "memTrig_Client_Receiving_1" := FALSE;
+	  "memTrig_Client_Receiving_2" := FALSE;
+	  "memTrig_Client_Receiving_3" := FALSE;
+	  "memTrig_Client_Receiving_4" := FALSE;
+	  "memTrig_Client_Receiving_5" := FALSE;
+	  "memTrig_Client_Receiving_7" := FALSE;
+	  "memTrig_Client_Receiving_8" := FALSE;
+	  "memTrig_Client_Receiving_9" := FALSE;
+	  "memTrig_Client_Receiving_10" := FALSE;
+	  "memTrig_Client_Receiving_11" := FALSE;
+	  "memTrig_Client_Receiving_12" := FALSE;
+	  "memTrig_Client_Receiving_13" := FALSE;
+	  "memTrig_Client_Receiving_14" := FALSE;
+	  "memTrig_Client_Receiving_15" := FALSE;
+	  "memTrig_Client_Receiving_16" := FALSE;
+	  ;
+	END_IF;
+	
+	
+	IF ("Clock_0.625Hz" = TRUE) AND ("memTrig_loop_error" = TRUE)   THEN
+	  // Aktywuj błąd przerwanie pętli modbu tcp
+	  "Dane_ComunicationControlHMI"."CoordinationPLC-PLC" := 24;
+	  ;
+	END_IF;
+	
+	
+	
+	
+	
+	
+	#reset := FALSE;
+	
+	
+END_FUNCTION
+

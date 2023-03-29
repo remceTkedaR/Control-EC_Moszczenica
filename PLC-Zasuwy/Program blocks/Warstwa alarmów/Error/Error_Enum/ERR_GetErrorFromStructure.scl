@@ -1,0 +1,20 @@
+﻿FUNCTION "ERR_GetErrorFromStructure" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      ErrorStructure {InstructionName := 'ErrorStruct'; LibVersion := '1.0'} : ErrorStruct;
+   END_VAR
+
+   VAR_OUTPUT 
+      ErrorData : "stt_ERR_ComponentGetError";
+   END_VAR
+
+
+BEGIN
+	#ErrorData.BlockNumber := #ErrorStructure.CODE_ADDRESS.CB_NUMBER;
+	#ErrorData.BlockType := #ErrorStructure.CODE_ADDRESS.BLOCK_TYPE;
+	#ErrorData.MemoryArea := #ErrorStructure.DATA_ADDRESS.AREA;
+	#ErrorData.NumberDB := #ErrorStructure.DATA_ADDRESS.DB_NUMBER;
+	
+END_FUNCTION
+

@@ -1,0 +1,43 @@
+﻿FUNCTION "Zapis_Status_Napedów_do_dbHold_ModbusTCP" : Void
+TITLE = Przekazanie ststusu napedu
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Funkcja przekazuje aktualny status napędu z bloku db SCADA do bloku db Hold Modbus TCP
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2022) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.4)
+	//Pakiet inżynierski:   TIA Portal (V16 Update 5)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+	//Funkcjonalnośc: (Przekazanire aktualnego statusu napędu do bloku 
+	                    danych dbHold modbusTCP )
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 09.03.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	REGION Zasuwy Status Napędu
+	  // przeazanie
+	  "dbHold_Sending".data.stat.status_Z1:="DB10_instance_SCADA".instZ1  ;
+	  "dbHold_Sending".data.stat.status_Z2:= "DB10_instance_SCADA".instZ2 ;
+	  "dbHold_Sending".data.stat.status_Z3:= "DB10_instance_SCADA".instZ3 ;
+	  "dbHold_Sending".data.stat.status_Z4:= "DB10_instance_SCADA".instZ4 ;
+	  "dbHold_Sending".data.stat.status_Z5:= "DB10_instance_SCADA".instZ5 ;
+	  "dbHold_Sending".data.stat.status_Z6:= "DB10_instance_SCADA".instZ6 ;
+	  "dbHold_Sending".data.stat.status_Z7:= "DB10_instance_SCADA".instZ7 ;
+	  "dbHold_Sending".data.stat.status_Z8:= "DB10_instance_SCADA".instZ8 ;
+	  "dbHold_Sending".data.stat.status_Z9:= "DB10_instance_SCADA".instZ9 ;
+	  "dbHold_Sending".data.stat.status_Z10:= "DB10_instance_SCADA".instZ10 ;
+	  
+	END_REGION
+	
+END_FUNCTION
+

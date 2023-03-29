@@ -1,0 +1,432 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Document>
+  <Engineering version="V16" />
+  <DocumentInfo>
+    <Created>2023-03-29T11:03:17.249399Z</Created>
+    <ExportSetting>WithDefaults</ExportSetting>
+    <InstalledProducts>
+      <Product>
+        <DisplayName>Totally Integrated Automation Portal</DisplayName>
+        <DisplayVersion>V16 Update 6</DisplayVersion>
+      </Product>
+      <OptionPackage>
+        <DisplayName>TIA Portal Version Control Interface</DisplayName>
+        <DisplayVersion>V16 Update 2</DisplayVersion>
+      </OptionPackage>
+      <OptionPackage>
+        <DisplayName>TIA Portal Openness</DisplayName>
+        <DisplayVersion>V16 Update 6</DisplayVersion>
+      </OptionPackage>
+      <Product>
+        <DisplayName>STEP 7 Professional</DisplayName>
+        <DisplayVersion>V16 Update 6</DisplayVersion>
+      </Product>
+      <OptionPackage>
+        <DisplayName>STEP 7 Safety</DisplayName>
+        <DisplayVersion>V16</DisplayVersion>
+      </OptionPackage>
+      <Product>
+        <DisplayName>WinCC Advanced</DisplayName>
+        <DisplayVersion>V16 Update 6</DisplayVersion>
+      </Product>
+    </InstalledProducts>
+  </DocumentInfo>
+  <SW.Blocks.OB ID="0">
+    <AttributeList>
+      <HeaderAuthor />
+      <HeaderFamily />
+      <HeaderName />
+      <HeaderVersion>0.1</HeaderVersion>
+      <Interface><Sections xmlns="http://www.siemens.com/automation/Openness/SW/Interface/v4">
+  <Section Name="Input">
+    <Member Name="IO_State" Datatype="Word" Accessibility="Public" Informative="true">
+      <Comment>
+        <MultiLanguageText Lang="en-US">IO state of the HW object</MultiLanguageText>
+      </Comment>
+    </Member>
+    <Member Name="LADDR" Datatype="HW_ANY" Accessibility="Public" Informative="true">
+      <Comment>
+        <MultiLanguageText Lang="en-US">Hardware identifier</MultiLanguageText>
+      </Comment>
+    </Member>
+    <Member Name="Channel" Datatype="UInt" Accessibility="Public" Informative="true">
+      <Comment>
+        <MultiLanguageText Lang="en-US">Channel number</MultiLanguageText>
+      </Comment>
+    </Member>
+    <Member Name="MultiError" Datatype="Bool" Accessibility="Public" Informative="true">
+      <Comment>
+        <MultiLanguageText Lang="en-US">=true if more than one error is present</MultiLanguageText>
+      </Comment>
+    </Member>
+  </Section>
+  <Section Name="Temp">
+    <Member Name="RetVal_RD_SYS_T" Datatype="Int">
+      <Comment>
+        <MultiLanguageText Lang="en-US">//Status of the instruction RD_SYS_T: Read time-of-day</MultiLanguageText>
+        <MultiLanguageText Lang="pl-PL">//Status of the instruction RD_SYS_T: Read time-of-day</MultiLanguageText>
+      </Comment>
+    </Member>
+  </Section>
+  <Section Name="Constant" />
+</Sections></Interface>
+      <IsIECCheckEnabled>false</IsIECCheckEnabled>
+      <MemoryLayout>Optimized</MemoryLayout>
+      <Name>Diagnostic error interrupt</Name>
+      <Number>82</Number>
+      <ProgrammingLanguage>LAD</ProgrammingLanguage>
+      <SecondaryType>DiagnosticErrorInterrupt</SecondaryType>
+      <SetENOAutomatically>false</SetENOAutomatically>
+    </AttributeList>
+    <ObjectList>
+      <MultilingualText ID="1" CompositionName="Comment">
+        <ObjectList>
+          <MultilingualTextItem ID="2" CompositionName="Items">
+            <AttributeList>
+              <Culture>en-US</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+          <MultilingualTextItem ID="3" CompositionName="Items">
+            <AttributeList>
+              <Culture>pl-PL</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+        </ObjectList>
+      </MultilingualText>
+      <SW.Blocks.CompileUnit ID="4" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource />
+          <ProgrammingLanguage>LAD</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="5" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="6" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="7" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="8" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="9" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="A" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <SW.Blocks.CompileUnit ID="B" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource><StructuredText xmlns="http://www.siemens.com/automation/Openness/SW/NetworkSource/StructuredText/v3">
+  <Access Scope="GlobalVariable" UId="21">
+    <Symbol UId="22">
+      <Component Name="EX012_ErrorBuffer_OB82" UId="23" />
+      <Token Text="." UId="24" />
+      <Component Name="OB82ErrorCounter" UId="25" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="26" />
+  <Token Text=":=" UId="27" />
+  <Blank Num="1" UId="28" />
+  <Access Scope="GlobalVariable" UId="29">
+    <Symbol UId="30">
+      <Component Name="EX012_ErrorBuffer_OB82" UId="31" />
+      <Token Text="." UId="32" />
+      <Component Name="OB82ErrorCounter" UId="33" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="34" />
+  <Token Text="+" UId="35" />
+  <Blank Num="1" UId="36" />
+  <Access Scope="LiteralConstant" UId="37">
+    <Constant UId="38">
+      <ConstantValue UId="40">1</ConstantValue>
+    </Constant>
+  </Access>
+  <Token Text=";" UId="41" />
+  <NewLine Num="1" UId="42" />
+  <LineComment Inserted="false" NoClosingBracket="false" UId="43">
+    <Text UId="44">ochrona przed przepełnieniem tabeli</Text>
+  </LineComment>
+  <NewLine Num="1" UId="45" />
+  <Token Text="IF" UId="46" />
+  <Blank Num="1" UId="47" />
+  <Token Text="(" UId="48" />
+  <Access Scope="GlobalVariable" UId="49">
+    <Symbol UId="50">
+      <Component Name="EX012_ErrorBuffer_OB82" UId="51" />
+      <Token Text="." UId="52" />
+      <Component Name="OB82ErrorCounter" UId="53" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="54" />
+  <Token Text="&gt;" UId="55" />
+  <Blank Num="1" UId="56" />
+  <Access Scope="GlobalConstant" UId="57">
+    <Constant Name="CONST_BUFFER_OB82" UId="58" />
+  </Access>
+  <Token Text=")" UId="61" />
+  <Blank Num="1" UId="62" />
+  <Token Text="THEN" UId="63" />
+  <NewLine Num="1" UId="64" />
+  <Blank Num="2" UId="65" />
+  <Access Scope="GlobalVariable" UId="66">
+    <Symbol UId="67">
+      <Component Name="EX012_ErrorBuffer_OB82" UId="68" />
+      <Token Text="." UId="69" />
+      <Component Name="OB82ErrorCounter" UId="70" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="71" />
+  <Token Text=":=" UId="72" />
+  <Blank Num="1" UId="73" />
+  <Access Scope="LiteralConstant" UId="74">
+    <Constant UId="75">
+      <ConstantValue UId="77">1</ConstantValue>
+    </Constant>
+  </Access>
+  <Token Text=";" UId="78" />
+  <NewLine Num="1" UId="79" />
+  <Token Text="END_IF" UId="80" />
+  <Token Text=";" UId="81" />
+  <NewLine Num="1" UId="82" />
+  <LineComment Inserted="false" NoClosingBracket="false" UId="83">
+    <Text UId="84">Wystąpił błąd czasu</Text>
+  </LineComment>
+  <NewLine Num="1" UId="85" />
+  <Access Scope="LocalVariable" UId="86">
+    <Symbol UId="87">
+      <Component Name="RetVal_RD_SYS_T" UId="88" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="89" />
+  <Token Text=":=" UId="90" />
+  <Blank Num="1" UId="91" />
+  <Access Scope="Call" UId="92">
+    <Instruction Name="RD_LOC_T" UId="93">
+      <Token Text="(" UId="94" />
+      <Parameter Name="OUT" UId="95">
+        <Blank Num="1" UId="96" />
+        <Token Text="=&gt;" UId="97" />
+        <Blank Num="1" UId="98" />
+        <Access Scope="GlobalVariable" UId="99">
+          <Symbol UId="100">
+            <Component Name="EX012_ErrorBuffer_OB82" UId="101" />
+            <Token Text="." UId="102" />
+            <Component Name="ErrorDataOB82" UId="103">
+              <Token Text="[" UId="104" />
+              <Access Scope="GlobalVariable" UId="105">
+                <Symbol UId="106">
+                  <Component Name="EX012_ErrorBuffer_OB82" UId="107" />
+                  <Token Text="." UId="108" />
+                  <Component Name="OB82ErrorCounter" UId="109" />
+                </Symbol>
+              </Access>
+              <Token Text="]" UId="110" />
+            </Component>
+            <Token Text="." UId="111" />
+            <Component Name="ErrorTimestamp" UId="112" />
+          </Symbol>
+        </Access>
+      </Parameter>
+      <Token Text=")" UId="114" />
+    </Instruction>
+  </Access>
+  <Token Text=";" UId="115" />
+  <NewLine Num="1" UId="116" />
+  <LineComment Inserted="false" NoClosingBracket="false" UId="117">
+    <Text UId="118">Zapis błedu do buffora (ErrorBuffor)</Text>
+  </LineComment>
+  <NewLine Num="1" UId="119" />
+  <Access Scope="GlobalVariable" UId="120">
+    <Symbol UId="121">
+      <Component Name="EX012_ErrorBuffer_OB82" UId="122" />
+      <Token Text="." UId="123" />
+      <Component Name="ErrorDataOB82" UId="124">
+        <Token Text="[" UId="125" />
+        <Access Scope="GlobalVariable" UId="126">
+          <Symbol UId="127">
+            <Component Name="EX012_ErrorBuffer_OB82" UId="128" />
+            <Token Text="." UId="129" />
+            <Component Name="OB82ErrorCounter" UId="130" />
+          </Symbol>
+        </Access>
+        <Token Text="]" UId="131" />
+      </Component>
+      <Token Text="." UId="132" />
+      <Component Name="IO_State" UId="133" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="134" />
+  <Token Text=":=" UId="135" />
+  <Blank Num="1" UId="136" />
+  <Access Scope="LocalVariable" UId="137">
+    <Symbol UId="138">
+      <Component Name="IO_State" UId="139" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="140" />
+  <NewLine Num="1" UId="141" />
+  <Access Scope="GlobalVariable" UId="142">
+    <Symbol UId="143">
+      <Component Name="EX012_ErrorBuffer_OB82" UId="144" />
+      <Token Text="." UId="145" />
+      <Component Name="ErrorDataOB82" UId="146">
+        <Token Text="[" UId="147" />
+        <Access Scope="GlobalVariable" UId="148">
+          <Symbol UId="149">
+            <Component Name="EX012_ErrorBuffer_OB82" UId="150" />
+            <Token Text="." UId="151" />
+            <Component Name="OB82ErrorCounter" UId="152" />
+          </Symbol>
+        </Access>
+        <Token Text="]" UId="153" />
+      </Component>
+      <Token Text="." UId="154" />
+      <Component Name="LADDR" UId="155" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="156" />
+  <Token Text=":=" UId="157" />
+  <Blank Num="1" UId="158" />
+  <Access Scope="LocalVariable" UId="159">
+    <Symbol UId="160">
+      <Component Name="LADDR" UId="161" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="162" />
+  <NewLine Num="1" UId="163" />
+  <Access Scope="GlobalVariable" UId="164">
+    <Symbol UId="165">
+      <Component Name="EX012_ErrorBuffer_OB82" UId="166" />
+      <Token Text="." UId="167" />
+      <Component Name="ErrorDataOB82" UId="168">
+        <Token Text="[" UId="169" />
+        <Access Scope="GlobalVariable" UId="170">
+          <Symbol UId="171">
+            <Component Name="EX012_ErrorBuffer_OB82" UId="172" />
+            <Token Text="." UId="173" />
+            <Component Name="OB82ErrorCounter" UId="174" />
+          </Symbol>
+        </Access>
+        <Token Text="]" UId="175" />
+      </Component>
+      <Token Text="." UId="176" />
+      <Component Name="Channel" UId="177" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="178" />
+  <Token Text=":=" UId="179" />
+  <Blank Num="1" UId="180" />
+  <Access Scope="LocalVariable" UId="181">
+    <Symbol UId="182">
+      <Component Name="Channel" UId="183" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="184" />
+  <NewLine Num="1" UId="185" />
+  <Access Scope="GlobalVariable" UId="186">
+    <Symbol UId="187">
+      <Component Name="EX012_ErrorBuffer_OB82" UId="188" />
+      <Token Text="." UId="189" />
+      <Component Name="ErrorDataOB82" UId="190">
+        <Token Text="[" UId="191" />
+        <Access Scope="GlobalVariable" UId="192">
+          <Symbol UId="193">
+            <Component Name="EX012_ErrorBuffer_OB82" UId="194" />
+            <Token Text="." UId="195" />
+            <Component Name="OB82ErrorCounter" UId="196" />
+          </Symbol>
+        </Access>
+        <Token Text="]" UId="197" />
+      </Component>
+      <Token Text="." UId="198" />
+      <Component Name="MultiError" UId="199" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="200" />
+  <Token Text=":=" UId="201" />
+  <Blank Num="1" UId="202" />
+  <Access Scope="LocalVariable" UId="203">
+    <Symbol UId="204">
+      <Component Name="MultiError" UId="205" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="206" />
+</StructuredText></NetworkSource>
+          <ProgrammingLanguage>SCL</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="C" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="D" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="E" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="F" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="10" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="11" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <MultilingualText ID="12" CompositionName="Title">
+        <ObjectList>
+          <MultilingualTextItem ID="13" CompositionName="Items">
+            <AttributeList>
+              <Culture>en-US</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+          <MultilingualTextItem ID="14" CompositionName="Items">
+            <AttributeList>
+              <Culture>pl-PL</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+        </ObjectList>
+      </MultilingualText>
+    </ObjectList>
+  </SW.Blocks.OB>
+</Document>

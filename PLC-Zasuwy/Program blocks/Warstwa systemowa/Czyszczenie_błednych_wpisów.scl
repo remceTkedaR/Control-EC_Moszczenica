@@ -1,0 +1,237 @@
+﻿FUNCTION "Czyszczenie_błednych_wpisów" : Void
+TITLE = Korekta błednego wpisu
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Program kontroluje błedny wpis wartości poza granicą liczby określającej czas (godziny, minuty) W razie wpisania złej wartości wypełna komurkę zerami
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2022) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.4)
+	//Pakiet inżynierski:   TIA Portal (V16 Update 5)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+	//Funkcjonalnośc: (Kontrola błednego wpisy wartości liczbowej czasu, wartości.
+	                   Jeśli wartość poza zakresem wypełnieni komórki zerami)
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 05.05.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	
+	
+	//poziomu
+	
+	//napełnianie
+	IF "DB10_instance_SCADA".setPoziomNapełniania < 0
+	  OR "DB10_instance_SCADA".setPoziomNapełniania > 1000
+	  OR "dbHold_Sending".data.stat.control.set_poziom_napełniania <0
+	  OR "dbHold_Sending".data.stat.control.set_poziom_napełniania > 1000
+	THEN
+	  // wypełnij zerami
+	  "DB10_instance_SCADA".setPoziomNapełniania := 0;
+	  "tempdbHold_SendingTCP".sterowanie.set_poziom_napełniania := 0;
+	  "dbHold_Sending".data.stat.control.set_poziom_napełniania := 0;
+	  "dbHold_download".sterowanie.set_poziom_napełniania := 0;
+	  ;
+	END_IF;
+	
+	//opróżnianie
+	IF "DB10_instance_SCADA".setPoziomOpróżnianai < 0
+	  OR "DB10_instance_SCADA".setPoziomOpróżnianai > 1000
+	  OR "dbHold_Sending".data.stat.control.set_poziom_opróżniania < 0
+	  OR "dbHold_Sending".data.stat.control.set_poziom_opróżniania > 1000
+	  OR "DB10_instance_SCADA".setPoziomOpróżnianai >= "DB10_instance_SCADA".setPoziomNapełniania
+	  OR "dbHold_Sending".data.stat.control.set_poziom_opróżniania >= "dbHold_Sending".data.stat.control.set_poziom_napełniania
+	THEN
+	  // wypełnij zerami
+	  "DB10_instance_SCADA".setPoziomOpróżnianai := 0;
+	  "tempdbHold_SendingTCP".sterowanie.set_poziom_opróżniania := 0;
+	  "dbHold_Sending".data.stat.control.set_poziom_opróżniania := 0;
+	  ;
+	END_IF;
+	
+	
+	// Zadawane położenie zasuwy Z10 
+	IF "DB10_instance_SCADA".setPołożenieZ10 < 0
+	  OR "DB10_instance_SCADA".setPołożenieZ10 > 100
+	  OR "dbHold_Sending".data.stat.control.control_2.set_położenie_Z10 < 0
+	  OR "dbHold_Sending".data.stat.control.control_2.set_położenie_Z10 > 100
+	THEN
+	  // wypełnij zerami      
+	  "DB10_instance_SCADA".setPołożenieZ10 := 0;
+	  "tempdbHold_SendingTCP".sterowanie.set_położenie_Z10 := 0;
+	  "dbHold_Sending".data.stat.control.control_2.set_położenie_Z10 := 0;
+	  ;
+	END_IF;
+	
+	// Strategia sterowania zbiornikami
+	
+	
+	// Czasy 
+	// napełnianie
+	
+	IF "DB10_instance_SCADA".actDTL_FillingOn.HOUR < 0
+	  OR "DB10_instance_SCADA".actDTL_FillingOn.HOUR > 23
+	  OR "tempdbHold_SendingTCP".start_napełnianie.HOUR < 0
+	  OR "tempdbHold_SendingTCP".start_napełnianie.HOUR > 23
+	THEN
+	  // wypełnij zerami
+	  "DB10_instance_SCADA".actDTL_FillingOn.HOUR := 0;
+	  "tempdbHold_SendingTCP".start_napełnianie.HOUR := 0;
+	  "dbHold_download".SendingTimes.start_napełnianie.HOUR := 0;
+	  "dbHold_Sending".data."Time".start_napełnianie.HOUR:= 0;
+	  ;
+	END_IF;
+	
+	IF "DB10_instance_SCADA".actDTL_FillingOn.MINUTE < 0
+	  OR "DB10_instance_SCADA".actDTL_FillingOn.MINUTE > 60
+	  OR "dbHold_Sending".data."Time".start_napełnianie.MINUTE < 0
+	  OR "dbHold_Sending".data."Time".start_napełnianie.MINUTE > 60
+	THEN
+	  // wypełnij zerami
+	  "DB10_instance_SCADA".actDTL_FillingOn.MINUTE := 0;
+	  "tempdbHold_SendingTCP".start_napełnianie.MINUTE := 0;
+	  "dbHold_Sending".data."Time".start_napełnianie.MINUTE := 0;
+	  ;
+	END_IF;
+	
+	// opróżnianie
+	IF "DB10_instance_SCADA".actDTL_FillingOff.HOUR < 0
+	  OR "DB10_instance_SCADA".actDTL_FillingOff.HOUR > 23
+	  OR "dbHold_Sending".data."Time".Stop_napełnianie.HOUR < 0
+	  OR "dbHold_Sending".data."Time".Stop_napełnianie.HOUR > 23
+	THEN
+	  // wypełnij zerami
+	  "DB10_instance_SCADA".actDTL_FillingOff.HOUR := 0;
+	  "tempdbHold_SendingTCP".Stop_napełnianie.HOUR := 0;
+	  "dbHold_Sending".data."Time".Stop_napełnianie.HOUR := 0;
+	  ;
+	END_IF;
+	
+	IF "DB10_instance_SCADA".actDTL_FillingOff.MINUTE < 0
+	  OR "DB10_instance_SCADA".actDTL_FillingOff.MINUTE > 60
+	  OR "dbHold_Sending".data."Time".Stop_napełnianie.MINUTE < 0
+	  OR "dbHold_Sending".data."Time".Stop_napełnianie.MINUTE > 60
+	THEN
+	  // wypełnij zerami
+	  "DB10_instance_SCADA".actDTL_FillingOff.MINUTE := 0;
+	  "tempdbHold_SendingTCP".Stop_napełnianie.MINUTE := 0;
+	  "dbHold_Sending".data."Time".Stop_napełnianie.MINUTE := 0;
+	  ;
+	END_IF;
+	
+	// przetłaczanie
+	IF "DB10_instance_SCADA".actDTL_pumpingOn.HOUR < 0
+	  OR "DB10_instance_SCADA".actDTL_pumpingOn.HOUR > 23
+	  OR "dbHold_Sending".data."Time".Start_przetłaczanie_1.HOUR < 0
+	  OR "dbHold_Sending".data."Time".Start_przetłaczanie_1.HOUR > 23
+	THEN
+	  // wypełnij zerami
+	  "DB10_instance_SCADA".actDTL_pumpingOn.HOUR := 0;
+	  "tempdbHold_SendingTCP".Start_przetłaczanie_1.HOUR := 0;
+	  "dbHold_Sending".data."Time".Start_przetłaczanie_1.HOUR := 0;
+	  ;
+	END_IF;
+	
+	IF "DB10_instance_SCADA".actDTL_pumpingOn.MINUTE < 0
+	  OR "DB10_instance_SCADA".actDTL_pumpingOn.MINUTE > 60
+	  OR "dbHold_Sending".data."Time".Start_przetłaczanie_1.MINUTE < 0
+	  OR "dbHold_Sending".data."Time".Start_przetłaczanie_1.MINUTE > 60
+	THEN
+	  // wypełnij zerami
+	  "DB10_instance_SCADA".actDTL_pumpingOn.MINUTE := 0;
+	  "tempdbHold_SendingTCP".Start_przetłaczanie_1.MINUTE := 0;
+	  "dbHold_Sending".data."Time".Start_przetłaczanie_1.MINUTE := 0;
+	  ;
+	END_IF;
+	
+	// stop przetłaczanie
+	IF "DB10_instance_SCADA".actDTL_pumpingOff.HOUR < 0
+	  OR "DB10_instance_SCADA".actDTL_pumpingOff.HOUR > 23
+	  OR "dbHold_Sending".data."Time".Stop_przetłaczanie_1.HOUR < 0
+	  OR "dbHold_Sending".data."Time".Stop_przetłaczanie_1.HOUR > 23
+	THEN
+	  // wypełnij zerami
+	  "DB10_instance_SCADA".actDTL_pumpingOff.HOUR := 0;
+	  "tempdbHold_SendingTCP".Stop_przetłaczanie_1.HOUR := 0;
+	  "dbHold_Sending".data."Time".Stop_przetłaczanie_1.HOUR := 0;
+	  ;
+	END_IF;
+	
+	IF "DB10_instance_SCADA".actDTL_pumpingOff.MINUTE < 0
+	  OR "DB10_instance_SCADA".actDTL_pumpingOff.MINUTE > 60
+	  OR "dbHold_Sending".data."Time".Stop_przetłaczanie_1.MINUTE < 0
+	  OR "dbHold_Sending".data."Time".Stop_przetłaczanie_1.MINUTE > 60
+	THEN
+	  // wypełnij zerami
+	  "DB10_instance_SCADA".actDTL_pumpingOff.MINUTE := 0;
+	  "tempdbHold_SendingTCP".Stop_przetłaczanie_1.MINUTE := 0;
+	  "dbHold_Sending".data."Time".Stop_przetłaczanie_1.MINUTE := 0;
+	  ;
+	END_IF;
+	
+	//dosilanie
+	IF "DB10_instance_SCADA".actDTL_RechargingOn.HOUR < 0
+	  OR "DB10_instance_SCADA".actDTL_RechargingOn.HOUR > 23
+	  OR "dbHold_Sending".data."Time".Start_dosilanie_1.HOUR < 0
+	  OR "dbHold_Sending".data."Time".Start_dosilanie_1.HOUR > 23
+	THEN
+	  // wypełnij zerami
+	  "DB10_instance_SCADA".actDTL_RechargingOn.HOUR := 0;
+	  "tempdbHold_SendingTCP".Start_dosilanie_1.HOUR := 0;
+	  "dbHold_Sending".data."Time".Start_dosilanie_1.HOUR := 0;
+	  ;
+	END_IF;
+	
+	IF "DB10_instance_SCADA".actDTL_RechargingOn.MINUTE < 0
+	  OR "DB10_instance_SCADA".actDTL_RechargingOn.MINUTE > 60
+	  OR "dbHold_Sending".data."Time".Start_dosilanie_1.MINUTE < 0
+	  OR "dbHold_Sending".data."Time".Start_dosilanie_1.MINUTE > 60
+	THEN
+	  // wypełnij zerami
+	  "DB10_instance_SCADA".actDTL_RechargingOn.MINUTE := 0;
+	  "tempdbHold_SendingTCP".Start_dosilanie_1.MINUTE := 0;
+	  "dbHold_Sending".data."Time".Start_dosilanie_1.MINUTE := 0;
+	  ;
+	END_IF;
+	
+	// stop dosilanie
+	IF "DB10_instance_SCADA".actDTL_RechargingOff.HOUR < 0
+	  OR "DB10_instance_SCADA".actDTL_RechargingOff.HOUR > 23
+	  OR "dbHold_Sending".data."Time".Stop_dosilanie_1.HOUR < 0
+	  OR "dbHold_Sending".data."Time".Stop_dosilanie_1.HOUR > 23
+	THEN
+	  // wypełnij zerami
+	  "DB10_instance_SCADA".actDTL_RechargingOff.HOUR := 0;
+	  "tempdbHold_SendingTCP".Stop_dosilanie_1.HOUR := 0;
+	  "dbHold_Sending".data."Time".Stop_dosilanie_1.HOUR := 0;
+	  ;
+	END_IF;
+	
+	IF "DB10_instance_SCADA".actDTL_RechargingOff.MINUTE < 0
+	  OR "DB10_instance_SCADA".actDTL_RechargingOff.MINUTE > 60
+	  OR "dbHold_Sending".data."Time".Stop_dosilanie_1.MINUTE < 0
+	  OR "dbHold_Sending".data."Time".Stop_dosilanie_1.MINUTE > 60
+	THEN
+	  // wypełnij zerami
+	  "DB10_instance_SCADA".actDTL_RechargingOff.MINUTE := 0;
+	  "tempdbHold_SendingTCP".Stop_dosilanie_1.MINUTE := 0;
+	  "dbHold_Sending".data."Time".Stop_dosilanie_1.MINUTE := 0;
+	  ;
+	END_IF;
+	
+	
+	
+	
+	
+	
+	
+END_FUNCTION
+

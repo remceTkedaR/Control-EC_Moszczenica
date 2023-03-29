@@ -1,0 +1,20 @@
+﻿FUNCTION "ERR_CompareSoftwareError" : Bool
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      Actual : DWord;
+      Buffer : "stt_ERR_SoftwareError";
+   END_VAR
+
+   VAR_TEMP 
+      tempCounter : USInt;
+   END_VAR
+
+
+BEGIN
+	//searching difference
+	#ERR_CompareSoftwareError := #Buffer.Status[#Buffer.Counter] <> #Actual;
+	
+	
+END_FUNCTION
+

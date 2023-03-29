@@ -1,0 +1,24 @@
+﻿FUNCTION "ERR_ResetOB80" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_TEMP 
+      tempCounter : Int;
+      tempStructure : "stt_ERR_OB80";
+   END_VAR
+
+
+BEGIN
+	//structure initialization
+	#tempStructure.Counter := 0;
+	#tempStructure.Overflow := 0;
+	FOR #tempCounter := 0 TO 4 BY 1 DO
+	    #tempStructure.OBnr[#tempCounter] := 0;
+	END_FOR;
+	//Reset buffer
+	FOR #tempCounter := 0 TO 5 BY 1 DO
+	    "ERR_ErrorOB".OB80[#tempCounter] := #tempStructure;
+	END_FOR;
+	
+	
+END_FUNCTION
+

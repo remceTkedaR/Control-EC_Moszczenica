@@ -1,0 +1,24 @@
+﻿FUNCTION "ERR_ResetSoftwareError" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_TEMP 
+      tempCounter : Int;
+      tempStructure : "stt_ERR_SoftwareError";
+   END_VAR
+
+
+BEGIN
+	//structure initialization
+	#tempStructure.Counter := 0;
+	#tempStructure.Overflow := FALSE;
+	FOR #tempCounter := 0 TO 4 BY 1 DO
+	    #tempStructure.Status[#tempCounter] := 0;
+	END_FOR;
+	//Reset buffer
+	FOR #tempCounter := 0 TO 4 BY 1 DO
+	    "ERR_ErrorBufferFull".SoftwareError[#tempCounter] := #tempStructure;
+	END_FOR;
+	
+	
+END_FUNCTION
+

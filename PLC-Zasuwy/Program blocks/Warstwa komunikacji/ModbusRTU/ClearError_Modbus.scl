@@ -1,0 +1,97 @@
+﻿FUNCTION "ClearError_Modbus" : Void
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+
+BEGIN
+	
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.4)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+	//Funkcjonalnośc: (Obsługa błedów na magistrali Modbus RTU, inicjacja pętli po konfliktach )
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 17.11.2021 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	
+	
+	REGION MPP04-2 Modbau RTU
+	  // Sprawdzanie czy 
+	  IF "dbTags_master_MPP04_2".step = 27 THEN
+	    // Statement section IF
+	    "dbTags_master_MPP04_2".modbusMaster.error := FALSE;
+	    "dbTags_master_MPP04_2".modbusMaster.busy := FALSE;
+	    "dbTags_master_MPP04_2".modbusMaster.status := 0;
+	    //  "dbTags_master_MPP04_2".modbusMaster.errorStatus := 0;
+	    "setErrorModbsmasterMPP04_2" := FALSE;
+	    "dbTags_master_MPP04_2".step := 1;
+	    
+	    ;
+	  END_IF;
+	  
+	  
+	END_REGION
+	
+	//Modbus RTU Error Code RESET
+	REGION Modbus RTU Error Code
+	  // Ustaw reset modbus rtu
+	  IF "DB10_instance_SCADA".rtu_step_reset THEN
+	    // Ustawienie domyślnych strtowych 
+	    "dbTags_master_MPP04_2".step := 12;
+	   //"dbTags_master_MPP04_2".step := 25;
+	
+	    "DB10_instance_SCADA".rtu_step_reset := 0;
+	    ;
+	  END_IF;
+	  
+	  
+	END_REGION
+	
+	// Ustawienie Błędu Modbus RTU 
+	REGION Set Fault Modbus RTU 
+	  // Jeśli zmienna kodu błędu różna od 0 to ustaw znacznik w błędu Modbus w bloku danych SCADA
+	  // i przekaż wartość błędów
+	  IF %DB10.DBX68.4 = TRUE OR"comunication_alarm_modbus_rtu" THEN
+	    // przekazanie bładu statusu 
+	    "DB10_instance_SCADA".rtu_mpp04_2error_status := "dbTags_master_MPP04_2".modbusMaster.errorStatus;
+	 ELSE
+	    ;
+	    ;
+	  END_IF;
+	  
+	  
+	  // Modbus przekaż bit do instancji SCADA Alarm ostrzeżenie usterka z Modbau RTU
+	  // Przynajmniej jeden slave nie odpowiada
+	  IF 
+	    "dbTags_master_MPP04_2".step = 27
+	  THEN
+	    %DB10.DBX68.4 := TRUE;
+	
+	    ;
+	  ELSE
+	    %DB10.DBX68.4 := FALSE;
+	    
+	  END_IF;
+	  
+	  
+	  
+	  
+	  
+	  
+	END_REGION
+	
+	
+	
+	
+	
+END_FUNCTION
+

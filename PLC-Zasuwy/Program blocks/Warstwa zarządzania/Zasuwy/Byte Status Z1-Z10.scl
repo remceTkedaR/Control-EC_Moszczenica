@@ -1,0 +1,44 @@
+﻿FUNCTION_BLOCK "Byte Status Z1-Z10"
+TITLE = Status napędów
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Funkcja kompije status napędu z instancji DB10 do znaczników.
+//Persowanie danych napędów.
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.4)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+	//Funkcjonalnośc: (Byte statusu napędów Zasuw Z1-Z10 )
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 17.11.2021 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	REGION Status Zasuw
+	  // przekazanie wartości wartości z DB10 do słowa znacznika
+	  "Byte_Status_Z1" := "DB10_instance_SCADA".instZ1;
+	  "Byte_Status_Z2" := "DB10_instance_SCADA".instZ2;
+	  "Byte_Status_Z3" := "DB10_instance_SCADA".instZ3;
+	  "Byte_Status_Z4" := "DB10_instance_SCADA".instZ4;
+	  "Byte_Status_Z5" := "DB10_instance_SCADA".instZ5;
+	  "Byte_Status_Z6" := "DB10_instance_SCADA".instZ6;
+	  "Byte_Status_Z7" := "DB10_instance_SCADA".instZ7;
+	  "Byte_Status_Z8" := "DB10_instance_SCADA".instZ8;
+	  "Byte_Status_Z9" := "DB10_instance_SCADA".instZ9;
+	  "Byte_Status_Z10" := "DB10_instance_SCADA".instZ10;
+	  
+	  
+	END_REGION
+	
+END_FUNCTION_BLOCK
+

@@ -1,0 +1,182 @@
+﻿FUNCTION "D_QUT" : Void
+TITLE = Przekazanie wartości 
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Przekazanie wartościna na wyjście cyfrowe (sterowanie wyjściem)
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.2)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1214 FW 3.2 .)
+	//Funkcjonalnośc: (Sterowanie wyjścieami cyfrowymi )
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 28.01.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	
+	REGION Z10
+	  // przekazanie wartości na wyjście
+	  "Q2.5":="CMD_Open_Z_10" ;
+	  "Q2.6":="CMD_Close_Z_10" ;
+	  IF "CMD_Awaria_Z_10" AND "Clock_2Hz" THEN
+	    // Sygnalizacja awarii mruganie
+	    "Q2.7" := TRUE;
+	  ELSE
+	    "Q2.7" := FALSE;
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION Z1
+	  // przekazanie wartości na wyjście
+	  "Q0.3" := "CMD_Open_Z_1";
+	  "Q0.4" := "CMD_Close_Z_1";
+	  IF "CMD_Awaria_Z_1" AND "Clock_2Hz" THEN
+	    // Sygnalizacja awarii mruganie
+	    "Q0.5" := TRUE;
+	  ELSE
+	    "Q0.5" := FALSE;
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION Z2
+	  // przekazanie wartości na wyjście
+	  "Q3.0" := "CMD_Open_Z_2";
+	  "Q3.1" := "CMD_Close_Z_2";
+	  IF "CMD_Awaria_Z_2" AND "Clock_2Hz" THEN
+	    // Sygnalizacja awarii mruganie
+	    "Q3.2" := TRUE;
+	  ELSE
+	    "Q3.2" := FALSE;
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION Z3
+	  // przekazanie wartości na wyjście
+	  "Q0.6" := "CMD_Open_Z_3";
+	  "Q0.7" := "CMD_Close_Z_3";
+	  IF "CMD_Awaria_Z_3" AND "Clock_2Hz" THEN
+	    // Sygnalizacja awarii mruganie
+	    "Q1.0" := TRUE;
+	  ELSE
+	    "Q1.0" := FALSE;
+	    ;
+	  END_IF;
+	 
+	END_REGION
+	
+	REGION Z4
+	  // przekazanie wartości na wyjście
+	  "Q3.4" := "CMD_Open_Z_4";
+	  "Q3.5" := "CMD_Close_Z_4";
+	  IF "CMD_Awaria_Z_4" AND "Clock_2Hz" THEN
+	    // Sygnalizacja awarii mruganie
+	    "Q3.6" := TRUE;
+	  ELSE
+	    "Q3.6" := FALSE;
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION Z5
+	  // przekazanie wartości na wyjście
+	  "Q1.1" := "CMD_Open_Z_5";
+	  "Q2.0" := "CMD_Close_Z_5";
+	  IF "CMD_Awaria_Z_5" AND "Clock_2Hz" THEN
+	    // Sygnalizacja awarii mruganie
+	    "Q2.1" := TRUE;
+	  ELSE
+	    "Q2.1" := FALSE;
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION Z6
+	  // przekazanie wartości na wyjście
+	  "Q3.7" := "CMD_Open_Z_6";
+	  "Q4.0" := "CMD_Close_Z_6";
+	  IF "CMD_Awaria_Z_6" AND "Clock_2Hz" THEN
+	    // Sygnalizacja awarii mruganie
+	    "Q4.1" := TRUE;
+	  ELSE
+	    "Q4.1" := FALSE;
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION Z7
+	  // przekazanie wartości na wyjście
+	  "Q2.2" := "CMD_Open_Z_7";
+	  "Q2.3" := "CMD_Close_Z_7";
+	  IF "CMD_Awaria_Z_7" AND "Clock_2Hz" THEN
+	    // Sygnalizacja awarii mruganie
+	    "Q2.4" := TRUE;
+	  ELSE
+	    "Q2.4" := FALSE;
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION Z8
+	  // przekazanie wartości na wyjście
+	  "Q4.2" := "CMD_Open_Z_8";
+	  "Q4.3" := "CMD_Close_Z_8";
+	  IF "CMD_Awaria_Z_8" AND "Clock_2Hz" THEN
+	    // Sygnalizacja awarii mruganie
+	    "Q4.4" := TRUE;
+	  ELSE
+	    "Q4.4" := FALSE;
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION Z9
+	  // przekazanie wartości na wyjście
+	  "Q0.0" := "CMD_Open_Z_9";
+	  "Q0.1" := "CMD_Close_Z_9";
+	  IF "CMD_Awaria_Z_9" AND "Clock_2Hz" THEN
+	    // Sygnalizacja awarii mruganie
+	    "Q0.2" := TRUE;
+	  ELSE
+	    "Q0.2" := FALSE;
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+END_FUNCTION
+

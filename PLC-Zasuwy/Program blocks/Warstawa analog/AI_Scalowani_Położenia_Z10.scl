@@ -1,0 +1,98 @@
+﻿FUNCTION_BLOCK "AI_Scalowani_Położenia_Z10"
+TITLE = Detekcja błędu położenia
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Przekazanie do skalowania wartości z zakresu 0-27648
+   VAR_INPUT 
+      actAI_położenie_Z10 { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Word;   // aktualny sygnał analogowy położenia Z10
+   END_VAR
+
+   VAR_OUTPUT 
+      isPosition : Bool;   // bit zasuwa na pozycji
+   END_VAR
+
+   VAR_TEMP 
+      tmpAI_położenie_Z10 : Word;   // pomocniczy sygnał analogowy położenia Z10
+      tmpSetVectorZ10 : Int;   // zadane położenie
+      tempActVector_Z10 : Int;   // odczytane położenie
+   END_VAR
+
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.2)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1214 FW 3.2 .)
+	//Funkcjonalnośc: (Detekcja błędu i skalowanie wejść analogowych połóżenie Z10 )
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 28.01.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	REGION Detekcja przekroczenia zakresu analogowego nadajnika Z10
+	  // Przekazanie wartości położenia wtedy gdy jest w skali 4-20mA
+	  // Jeśli przewód odłączony lub sygnał poza zakresem wprzkazanie wartości '0' 
+	  
+	  // Wartość zawysoka
+	  IF (#actAI_położenie_Z10 >= "analog_error_H") THEN
+	    // Przekazanie wartości domyślnej 0
+	    #tmpAI_położenie_Z10 := 0;
+	    ;
+	  END_IF;
+	  // Wartość poprawna
+	  IF (#actAI_położenie_Z10 <= "analog_error_H") AND (#actAI_położenie_Z10 >= 0) THEN
+	    // przekazanie własciwego sygnału 
+	    #tmpAI_położenie_Z10 := #actAI_położenie_Z10;
+	    ;
+	  END_IF;
+	  
+	  
+	  
+	END_REGION
+	
+	
+	REGION Położenie zasuwy Z10
+	  // Konwersja i skalowanie 
+	  // Jesli bedzie konieczne do dostroić parametr x0 około 5600 ( wartość zera z nadajnika)
+	  "dbtags_Sterowanie"."Z10 Pozycja".encoder := "SclScaleLinearInt"(x := #tmpAI_położenie_Z10,
+	                                                               yMin := 0,
+	                                                               yMax := 100,
+	                                                               x0 := 0,
+	                                                               y0 := 0,
+	                                                               x1 := 27648,
+	                                                               y1 := 100);
+	  
+	END_REGION
+	
+	// ustawienie bitu Z10 na pozycji na potrzeby HMI
+	REGION _name_
+	  // 
+	  #tmpSetVectorZ10 := "DB10_instance_SCADA".setPołożenieZ10;
+	  #tempActVector_Z10 := "DB10_instance_SCADA".actPołożenieZ10;
+	  
+	  IF #tempActVector_Z10 = #tmpSetVectorZ10 THEN
+	    // ustaw znacznik zasuwa na pozycji
+	    #isPosition := TRUE;
+	  ELSE
+	    #isPosition:= FALSE
+	    ;
+	  END_IF;
+	  
+	  
+	  
+	  
+	END_REGION
+	
+	
+	
+	
+END_FUNCTION_BLOCK
+

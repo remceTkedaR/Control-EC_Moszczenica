@@ -1,0 +1,163 @@
+﻿FUNCTION "AI_IN_Scalowanie" : Void
+TITLE = Konwersja wartości procesowej 
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Obsługa przetworników analogowych. Konwersja i skalowanie wartości procesowych. 
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.2)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1214 FW 3.2 .)
+	//Funkcjonalnośc: (Konwersja i skalowanie wejść analogowych )
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 28.01.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	// Odczyt analogów poprzez filtr Kolmana
+	REGION Analogi filtr kolmana ciśnienie sieci B5 i zbiorniki Zb1 - 4 
+	  // Konwersja i skalowanie pomiarów z wyjścia funkcji filtru Kolmana (FB11)
+	  //zbiornik 1
+	  IF "KALMAN_DB".kalman_napiecie[0] > 9.9 THEN
+	    // błąd pomiaru (przerwa w obwodzie) ustaw 0
+	    "dbtags_Sterowanie"."Analog pomiar".kolman_poziom_zbiornik_1 := 0.0;
+	  ELSE
+	    // pomiar ok
+	    "dbtags_Sterowanie"."Analog pomiar".kolman_poziom_zbiornik_1 := (100 * "KALMAN_DB".kalman_napiecie[0]);
+	    ;
+	  END_IF;
+	  // zbiornik 2
+	  IF "KALMAN_DB".kalman_napiecie[1] > 9.9 THEN
+	    // błąd pomiaru (przerwa w obwodzie) ustaw 0
+	    "dbtags_Sterowanie"."Analog pomiar".kolman_poziom_zbiornik_2 := 0.0;
+	  ELSE
+	    // pomiar ok
+	    "dbtags_Sterowanie"."Analog pomiar".kolman_poziom_zbiornik_2 := (100 * "KALMAN_DB".kalman_napiecie[1]);
+	    ;
+	  END_IF;
+	  // zbiornik 3
+	  IF "KALMAN_DB".kalman_napiecie[2] > 9.9 THEN
+	    // błąd pomiaru (przerwa w obwodzie) ustaw 0
+	    "dbtags_Sterowanie"."Analog pomiar".kolman_poziom_zbiornik_3 := 0.0;
+	  ELSE
+	    // pomiar ok
+	    "dbtags_Sterowanie"."Analog pomiar".kolman_poziom_zbiornik_3 := (100 * "KALMAN_DB".kalman_napiecie[2]);
+	    ;
+	  END_IF;
+	  // zbiornik 4
+	  IF "KALMAN_DB".kalman_napiecie[3] > 9.9 THEN
+	    // błąd pomiaru (przerwa w obwodzie) ustaw 0
+	    "dbtags_Sterowanie"."Analog pomiar".kolman_poziom_zbiornik_4 := 0.0;
+	  ELSE
+	    // pomiar ok
+	    "dbtags_Sterowanie"."Analog pomiar".kolman_poziom_zbiornik_4 := (100 * "KALMAN_DB".kalman_napiecie[3]);
+	    ;
+	  END_IF;
+	  
+	  // Ciśnienie B5 magistrala
+	  IF "KALMAN_DB".kalman_napiecie[4] >= 23.0 THEN
+	    //błąd pomiaru ustawienie max 
+	    "dbtags_Sterowanie"."Analog pomiar".ciśnienie_B5 := 0.0;
+	  ELSE
+	    // pomiar ok
+	    "dbtags_Sterowanie"."Analog pomiar".ciśnienie_B5 := "KALMAN_DB".kalman_napiecie[4];
+	    ;
+	  END_IF;
+	  
+	  
+	END_REGION
+	
+	
+	REGION Przepływomierz
+	  // Konwersja i skalowanie
+	  "dbdane".Wielkość_przepływu_Q2_analog := "SclScaleLinearIntToReal"(x := "AI_przepływ",
+	                                                                    yMin := "Parametryzacja"."Setting analog".minPrzepływomierz_Q2,
+	                                                                    yMax := "Parametryzacja"."Setting analog".maxPrzepływomierz_Q2,
+	                                                                    y0 := "Parametryzacja"."Setting analog".minPrzepływomierz_Q2,
+	                                                                    x0 := 0, x1 := 27648,
+	                                                                    y1 := "Parametryzacja"."Setting analog".maxPrzepływomierz_Q2);
+	END_REGION
+	
+	REGION Ciśnienie B5
+	  // Konwersja i skalowanie
+	  "dbtags_Sterowanie"."Analog pomiar".AI_ciśnienie_B5 := "SclScaleLinearIntToReal"(x := "AI_ciśnienie_B5",
+	                                                                                 yMin := "Parametryzacja"."Setting analog".minPrzetwornikCiśnienia_B5,
+	                                                                                 yMax := "Parametryzacja"."Setting analog".maxPrzetwornikCiśnienia_B5,
+	                                                                                 y0 := "Parametryzacja"."Setting analog".minPrzetwornikCiśnienia_B5,
+	                                                                                 x0 := 0,
+	                                                                                 x1 := 27648,
+	                                                                                 y1 := "Parametryzacja"."Setting analog".maxPrzetwornikCiśnienia_B5);
+	END_REGION
+	
+	
+	REGION Poziom w zbiornikach 
+	  // Konwersja i skalowanie pomiarów z wejść analogowych
+	  // Zbiornik 1
+	  "dbtags_Sterowanie"."Analog pomiar".AI_poziom_zbiornik_1 := "SclScaleLinearIntToReal"(x := "AI_poziom_zbiornik_1",
+	                                                                         yMin := "Parametryzacja"."Setting analog".minSondaHydro,
+	                                                                         yMax := "Parametryzacja"."Setting analog".maxSondaHydro,
+	                                                                         y0 := "Parametryzacja"."Setting analog".minSondaHydro,
+	                                                                         x0 := 0,
+	                                                                         x1 := 27648,
+	                                                                         y1 := "Parametryzacja"."Setting analog".maxSondaHydro);
+	  
+	  // Zbiornik 2
+	"dbtags_Sterowanie"."Analog pomiar".AI_poziom_zbiornik_2 := "SclScaleLinearIntToReal"(x := "AI_poziom_zbiornik_2",
+	                                                                         yMin := "Parametryzacja"."Setting analog".minSondaHydro,
+	                                                                         yMax := "Parametryzacja"."Setting analog".maxSondaHydro,
+	                                                                         y0 := "Parametryzacja"."Setting analog".minSondaHydro,
+	                                                                         x0 := 0,
+	                                                                         x1 := 27648,
+	                                                                         y1 := "Parametryzacja"."Setting analog".maxSondaHydro);
+	  
+	  // Zbiornik 3
+	"dbtags_Sterowanie"."Analog pomiar".AI_poziom_zbiornik_3 := "SclScaleLinearIntToReal"(x := "AI_poziom_zbiornik_3",
+	                                                                         yMin := "Parametryzacja"."Setting analog".minSondaHydro,
+	                                                                         yMax := "Parametryzacja"."Setting analog".maxSondaHydro,
+	                                                                         y0 := "Parametryzacja"."Setting analog".minSondaHydro,
+	                                                                         x0 := 0,
+	                                                                         x1 := 27648,
+	                                                                         y1 := "Parametryzacja"."Setting analog".maxSondaHydro);
+	  
+	  // Zbiornik 4
+	"dbtags_Sterowanie"."Analog pomiar".AI_poziom_zbiornik_4 := "SclScaleLinearIntToReal"(x := "AI_poziom_zbiornik_4",
+	                                                                         yMin := "Parametryzacja"."Setting analog".minSondaHydro,
+	                                                                         yMax := "Parametryzacja"."Setting analog".maxSondaHydro,
+	                                                                         y0 := "Parametryzacja"."Setting analog".minSondaHydro,
+	                                                                         x0 := 0,
+	                                                                         x1 := 27648,
+	                                                                         y1 := "Parametryzacja"."Setting analog".maxSondaHydro);
+	  
+	END_REGION
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+END_FUNCTION
+

@@ -1,0 +1,27 @@
+﻿FUNCTION "ERR_ResetGetError" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_TEMP 
+      tempCounter : Int;
+      tempStructure : "stt_ERR_GetError";
+   END_VAR
+
+
+BEGIN
+	//structure initialization
+	#tempStructure.Counter := 0;
+	#tempStructure.Overflow := FALSE;
+	FOR #tempCounter := 0 TO 4 BY 1 DO
+	    #tempStructure.Component[#tempCounter].BlockNumber := 0;
+	    #tempStructure.Component[#tempCounter].BlockType := 0;
+	    #tempStructure.Component[#tempCounter].MemoryArea := 0;
+	    #tempStructure.Component[#tempCounter].NumberDB := 0;
+	END_FOR;
+	//Reset buffer
+	FOR #tempCounter := 0 TO 27 BY 1 DO
+	    "ERR_ErrorBufferFull".GetError[#tempCounter] := #tempStructure;
+	END_FOR;
+	
+	
+END_FUNCTION
+

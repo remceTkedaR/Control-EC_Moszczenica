@@ -1,0 +1,113 @@
+﻿FUNCTION_BLOCK "Alarm_magistrala_B5"
+TITLE = Alarm ciśnieia na magistrali czyjnik B5
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Zarządzanie alarmami od ciśnienia na magistrali (B5) DN500
+   VAR_OUTPUT 
+      bit_alarm_magistrala_min { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool := false;   // bit alarmmagistrala awaria niskie ciśnienie
+      setControl_alarm_B5 { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool;   // Załczenie sterowania zbiornikami w trybie awarii na magistrali
+   END_VAR
+
+   VAR_IN_OUT 
+      bit_off_alarm_niskie_magistrala { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool;   // bit koniec alarmu niskie bar magistrala
+   END_VAR
+
+   VAR 
+      bit_normalne_magistrala { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool;   // bit detekcjinormalnego cisnienia magistrala
+      memTriger_Strategia { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool;
+      bit_niskie_magistrala { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool;   // bit detekcji niskiego cisnienia magistrala
+   END_VAR
+
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.4)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+	//Funkcjonalnośc: (Kontrola stanu ciśnienia na magistrali DN500, B5. Kontrola
+	                   poziomu w zbiornikach i zarządznie wrybem awaryjnym otwarcia 
+	                   Z9, odpływów ze zbiorników i zamknięcia dolotu do zbiorników
+	                                                   )
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 17.11.2021 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	
+	REGION Kontrola  ciśnieia magistrali, alarm niskie magistrala czujnik B5
+	  
+	  // Kontrola ciśnienia zasilania z magistrali B5
+	  // Detekcja zaistnienia awarii zasilania na magistrali
+	  IF "DB10_instance_SCADA"."actCiśnienie-magistralaB5" < "Parametryzacja"."Setting Controll".alarmMin_CiśnienieGranica THEN
+	    // Ustaw bit za niskie ciśnienie
+	    #bit_niskie_magistrala := TRUE;
+	  ELSE
+	    
+	    ;
+	  END_IF;
+	  
+	  
+	  
+	  // Sprawdzanie powrotu zasilania z magistrali czujnik B5
+	  IF "DB10_instance_SCADA"."actCiśnienie-magistralaB5" > 7.4 THEN
+	    // Ustaw bit normalne ciśnienie
+	    #bit_normalne_magistrala := TRUE;
+	    
+	  ELSE
+	    #bit_normalne_magistrala := FALSE;
+	    ;
+	  END_IF;
+	  
+	  //Histerez na powrót normalnego zasilania z magistrali
+	   "IEC_Timer_reserAlarmNiskie_cisnienie_DB".TON(IN:=#bit_normalne_magistrala,
+	                                                PT:=T#5M,
+	                                                Q=>#bit_off_alarm_niskie_magistrala);
+	  
+	
+	  IF #bit_off_alarm_niskie_magistrala THEN
+	    // kasowanie alarm niskie magistrala
+	    #bit_niskie_magistrala := FALSE;
+	    ;
+	  END_IF;
+	  
+	  
+	  // Histereza na ustawienie alarmu "niskie ćiśnienie na magistrali"
+	  "IEC_Timer_setAlarmNiskie_ciśnienie_DB".TON(IN := #bit_niskie_magistrala,
+	                                              PT := T#14M,
+	                                              Q => #bit_alarm_magistrala_min);
+	  
+	
+	  
+	END_REGION
+	
+	
+	
+	REGION Awaryjne uruchamianie sterowania zbiornikami
+	  // jeśli alarm magistrali
+	  IF  #bit_alarm_magistrala_min  THEN
+	    // ustaw znacznik
+	    #setControl_alarm_B5 := TRUE;
+	    ;
+	  END_IF;
+	  
+	  // Jeśli koniec alarmu i zamknieta Z9  
+	  IF #bit_off_alarm_niskie_magistrala AND "Hbit_Zamknieta_Z9" THEN
+	    // resetuj znacznik 
+	    #setControl_alarm_B5 := FALSE;
+	    ;
+	  END_IF;
+	  
+	  
+	  
+	END_REGION
+	
+END_FUNCTION_BLOCK
+

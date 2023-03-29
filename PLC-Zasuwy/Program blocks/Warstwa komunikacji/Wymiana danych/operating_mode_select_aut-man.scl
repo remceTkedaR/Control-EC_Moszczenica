@@ -1,0 +1,730 @@
+﻿FUNCTION_BLOCK "operating_mode_select_aut-man"
+TITLE = Przełącznik Trybu Pracy Napędów
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Funkcja przeprowadza sptawdzenie stanu zmiany sygnału  na zmiennych wyboru trybu pracy napeów i jesli strwierdzi zmianę stanu zmennej to wykonuje zmianę trybu na AUT
+   VAR 
+      setTrig_Z1 : Bool;   // bit pomocniczy przełączenia trybu
+      setTrig_Z2 : Bool := false;   // bit pomocniczy przełączenia trybu
+      setTrig_Z3 : Bool := false;   // bit pomocniczy przełączenia trybu
+      setTrig_Z4 : Bool := false;   // bit pomocniczy przełączenia trybu
+      setTrig_Z5 : Bool := false;   // bit pomocniczy przełączenia trybu
+      setTrig_Z6 : Bool := false;   // bit pomocniczy przełączenia trybu
+      setTrig_Z7 : Bool := false;   // bit pomocniczy przełączenia trybu
+      setTrig_Z8 : Bool := false;   // bit pomocniczy przełączenia trybu
+      setTrig_Z9 : Bool := false;   // bit pomocniczy przełączenia trybu
+      setTrig_Z10 : Bool := false;   // bit pomocniczy przełączenia trybu
+      set_aut_man_Z1 : Bool;   // bit pomocniczy sterowania trybem
+      set_aut_man_Z2 : Bool := false;   // bit pomocniczy sterowania trybem
+      set_aut_man_Z3 : Bool := false;   // bit pomocniczy sterowania trybem
+      set_aut_man_Z4 : Bool := false;   // bit pomocniczy sterowania trybem
+      set_aut_man_Z5 : Bool := false;   // bit pomocniczy sterowania trybem
+      set_aut_man_Z6 : Bool := false;   // bit pomocniczy sterowania trybem
+      set_aut_man_Z7 : Bool := false;   // bit pomocniczy sterowania trybem
+      set_aut_man_Z8 : Bool := false;   // bit pomocniczy sterowania trybem
+      set_aut_man_Z9 : Bool := false;   // bit pomocniczy sterowania trybem
+      set_aut_man_Z10 : Bool := false;   // bit pomocniczy sterowania trybem
+   END_VAR
+
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.2)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1214 FW 3.2 .)
+	//Funkcjonalnośc: (Pzetwarzanie sygnałów z MT101 protokołem Modbus RTU. 
+	                    Wybór Trybu Pracy Napędu)
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 17.06.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	//--- Wybór Trybu Pracy Aut/Man Sterowanie Otwórz/ Zamknij
+	
+	REGION //Drive Motor Z1 ustaw na  Automat/Manual/Otwarta/Zamknięta
+	  IF %DB58.DBX14.0 OR %DB58.DBX17.4 THEN
+	    // przełączniki bistabilny każdy stan Hi powoduje zmianę przełącznika 
+	    #set_aut_man_Z1 := TRUE;
+	  ELSE
+	    #set_aut_man_Z1 := FALSE;
+	    ;
+	  END_IF;
+	  
+	  IF %DB10.DBX6.0 = FALSE THEN
+	    // przełącznik bistabilny
+	    "R_TRIG_DB_AUT_Z1"(CLK := #set_aut_man_Z1,
+	                       Q => #setTrig_Z1);
+	    ;
+	  END_IF;
+	  // przełącz na automat
+	  IF #setTrig_Z1 = TRUE AND %DB58.DBX14.0 = TRUE THEN
+	    %DB10.DBX6.7 := TRUE;
+	    ;
+	  END_IF;
+	  //przełącz na manual
+	  IF #setTrig_Z1 = TRUE AND %DB58.DBX17.4 = TRUE THEN
+	    %DB10.DBX6.7 := FALSE;
+	    ;
+	  END_IF;
+	  
+	  IF (%DB10.DBX7.7 = TRUE AND %DB58.DBX14.0 = TRUE) OR (%DB10.DBX7.7 = FALSE AND %DB58.DBX17.4 = TRUE) THEN
+	    // Wyczyść całą zmienną
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instConrol_ManAut_1 := 0;
+	    "dbHold_Sending".data.stat.control.control_2.set_res_bity_tryb_napędów_1 := 0;
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instConrol_ManAut_2 := 0;
+	    "dbHold_Sending".data.stat.control.control_2.set_res_bity_tryb_napędów_2 := 0;
+	    %DB58.DBX14.0 := FALSE;
+	    %DB58.DBX17.4:= FALSE
+	    ;
+	  END_IF;
+	  
+	  // sterowanie OTWIERANIE - ZAMYKANIE
+	  // Otwórz/
+	  // przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  %DB10.DBX6.4 := %DB58.DBX10.0; //ustawienie bitu otwieranie
+	  IF %DB58.DBX10.0 AND %DB10.DBX7.1 THEN
+	    //jeśli ustawiony bit otwierania z modbus i potwierdzone otwarcie 
+	    %DB58.DBX10.0 := FALSE; // kasuj bit roskazu
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_1 := 0;
+	 
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_2 := 0;
+	   
+	   
+	    ;
+	  END_IF;
+	  //Zamknij
+	  //przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  %DB10.DBX6.5 := %DB58.DBX13.4; //ustawienie bitu zamykanie
+	  IF %DB58.DBX13.4 AND %DB10.DBX7.3 = FALSE THEN
+	    //jeśli ustawiony bit zamykanie z modbus i potwierdzone zamknięcie 
+	    %DB58.DBX13.4 := FALSE; // kasuj bit roskazu
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_1 := 0;
+	
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_2 := 0;
+	    
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	
+	REGION //Drive Motor Z2 ustaw na  Automat/Manual/Otwarta/Zamknięta
+	  IF %DB58.DBX14.1 OR %DB58.DBX17.5 THEN
+	    //przełączniki bistabilny każdy stan Hi powoduje zmianę przełącznika  
+	    #set_aut_man_Z2 := TRUE;
+	  ELSE
+	    #set_aut_man_Z2 := FALSE;
+	    ;
+	  END_IF;
+	  
+	  IF %DB10.DBX8.0 = FALSE THEN
+	    //przełącznik bistabilny
+	    "R_TRIG_DB_AUT_Z2"(CLK :=#set_aut_man_Z2,
+	                       Q => #setTrig_Z2);
+	    ;
+	  END_IF;
+	  // przełącz na automat
+	  IF #setTrig_Z2 = TRUE AND %DB58.DBX14.1 = TRUE THEN
+	    %DB10.DBX8.7 := TRUE;
+	    ;
+	  END_IF;
+	  //przełącz na manual
+	  IF #setTrig_Z2 = TRUE AND %DB58.DBX17.5 = TRUE THEN
+	    %DB10.DBX8.7 := FALSE;
+	    ;
+	  END_IF;
+	  
+	  IF (%DB10.DBX9.7 = TRUE AND %DB58.DBX14.1 = TRUE) OR (%DB10.DBX9.7 = FALSE AND %DB58.DBX17.5 = TRUE) THEN
+	    // Wyczyść całą zmienną
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instConrol_ManAut_1 := 0;
+	    "dbHold_Sending".data.stat.control.control_2.set_res_bity_tryb_napędów_1 := 0;
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instConrol_ManAut_2 := 0;
+	    "dbHold_Sending".data.stat.control.control_2.set_res_bity_tryb_napędów_2 := 0;
+	    %DB58.DBX14.1 := FALSE;
+	    %DB58.DBX17.5 := FALSE;
+	    ;
+	  END_IF;
+	  
+	  // sterowanie OTWIERANIE - ZAMYKANIE
+	  // Otwórz/
+	  // przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  %DB10.DBX8.4 := %DB58.DBX10.1; //ustawienie bitu otwieranie
+	  IF %DB58.DBX10.1 AND %DB10.DBX9.1 THEN
+	    //jeśli ustawiony bit otwierania z modbus i potwierdzone otwarcie 
+	    %DB58.DBX10.1 := FALSE; // kasuj bit roskazu
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_1 := 0;
+	    
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_2 := 0;
+	    
+	    
+	    ;
+	  END_IF;
+	  //Zamknij
+	  //przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  %DB10.DBX8.5 := %DB58.DBX13.5; //ustawienie bitu zamykanie
+	  IF %DB58.DBX13.5 AND %DB10.DBX9.3 = FALSE THEN
+	    //jeśli ustawiony bit zamykanie z modbus i potwierdzone zamknięcie 
+	    %DB58.DBX13.5 := FALSE; // kasuj bit roskazu
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_1 := 0;
+	    
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_2 := 0;
+	    
+	    ;
+	  END_IF;
+	  
+	  
+	END_REGION
+	
+	
+	REGION //Drive Motor Z3 ustaw na  Automat/Manual/Otwarta/Zamknięta
+	  IF %DB58.DBX14.2 OR %DB58.DBX17.6 THEN
+	    //przełączniki bistabilny każdy stan Hi powoduje zmianę przełącznika  
+	    #set_aut_man_Z3 := TRUE;
+	  ELSE
+	    #set_aut_man_Z3 := FALSE
+	    ;
+	  END_IF;
+	  
+	  IF %DB10.DBX10.0 = FALSE THEN
+	    // przełącznik bistabilny
+	    "R_TRIG_DB_AUT_Z3"(CLK := #set_aut_man_Z3,
+	                       Q => #setTrig_Z3);
+	    ;
+	  END_IF;
+	  // przełącz na automat
+	  IF #setTrig_Z3 = TRUE AND %DB58.DBX14.2 = TRUE THEN
+	    %DB10.DBX10.7 := TRUE;
+	    ;
+	  END_IF;
+	  //przełącz na manual
+	  IF #setTrig_Z3 = TRUE AND %DB58.DBX17.6 = TRUE THEN
+	    %DB10.DBX10.7 := FALSE;
+	    ;
+	  END_IF;
+	  
+	  IF (%DB10.DBX11.7 = TRUE AND %DB58.DBX14.2) OR (%DB10.DBX11.7 = FALSE AND %DB58.DBX17.6) THEN
+	    // Wyczyść całą zmienną
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instConrol_ManAut_1 := 0;
+	    "dbHold_Sending".data.stat.control.control_2.set_res_bity_tryb_napędów_1 := 0;
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instConrol_ManAut_2 := 0;
+	    "dbHold_Sending".data.stat.control.control_2.set_res_bity_tryb_napędów_2 := 0;
+	    %DB58.DBX14.2 := FALSE;
+	    %DB58.DBX17.6 := FALSE
+	    ;
+	  END_IF;
+	  
+	  // sterowanie OTWIERANIE - ZAMYKANIE
+	  // Otwórz/
+	  // przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  %DB10.DBX10.4 := %DB58.DBX10.2; //ustawienie bitu otwieranie
+	  IF %DB58.DBX10.2 AND %DB10.DBX11.1 THEN
+	    //jeśli ustawiony bit otwierania z modbus i potwierdzone otwarcie 
+	    %DB58.DBX10.2 := FALSE; // kasuj bit roskazu
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_1 := 0;
+	    
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_2 := 0;
+	    
+	    
+	    ;
+	  END_IF;
+	  //Zamknij
+	  //przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  %DB10.DBX10.5 := %DB58.DBX13.6; //ustawienie bitu zamykanie
+	  IF %DB58.DBX13.6 AND %DB10.DBX11.3 = FALSE THEN
+	    //jeśli ustawiony bit zamykanie z modbus i potwierdzone zamknięcie 
+	    %DB58.DBX13.6 := FALSE; // kasuj bit roskazu
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_1 := 0;
+	    
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_2 := 0;
+	    
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	
+	REGION //Drive Motor Z4 ustaw na  Automat/Manual/Otwarta/Zamknięta
+	  IF %DB58.DBX14.3 OR %DB58.DBX17.7 THEN
+	    //przełączniki bistabilny każdy stan Hi powoduje zmianę przełącznika 
+	    #set_aut_man_Z4 := TRUE;
+	  ELSE
+	    #set_aut_man_Z4 := FALSE
+	    ;
+	  END_IF;
+	  
+	  IF %DB10.DBX12.0 = FALSE THEN
+	    // przełącznik bistabilny
+	    "R_TRIG_DB_AUT_Z4"(CLK := #set_aut_man_Z4,
+	                       Q => #setTrig_Z4);
+	    ;
+	  END_IF;
+	  
+	  IF #setTrig_Z4 = TRUE AND %DB58.DBX14.3 = TRUE THEN
+	    %DB10.DBX12.7 := TRUE;
+	    ;
+	  END_IF;
+	  
+	  IF #setTrig_Z4 = TRUE AND %DB58.DBX17.7 = TRUE THEN
+	    %DB10.DBX12.7 := FALSE;
+	    ;
+	  END_IF;
+	  
+	  IF (%DB10.DBX13.7 = TRUE AND %DB58.DBX14.3 = TRUE) OR (%DB10.DBX13.7 = FALSE AND %DB58.DBX17.7 = TRUE) THEN
+	    // Wyczyść całą zmienną
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instConrol_ManAut_1 := 0;
+	    "dbHold_Sending".data.stat.control.control_2.set_res_bity_tryb_napędów_1 := 0;
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instConrol_ManAut_2 := 0;
+	    "dbHold_Sending".data.stat.control.control_2.set_res_bity_tryb_napędów_2 := 0;
+	    %DB58.DBX14.3 := FALSE;
+	    %DB58.DBX17.7 := FALSE;
+	    ;
+	  END_IF;
+	  
+	  // sterowanie OTWIERANIE - ZAMYKANIE
+	  // Otwórz/
+	  // przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  %DB10.DBX12.4 := %DB58.DBX10.3; //ustawienie bitu otwieranie
+	  IF %DB58.DBX10.3 AND %DB10.DBX13.1 THEN
+	    //jeśli ustawiony bit otwierania z modbus i potwierdzone otwarcie 
+	    %DB58.DBX10.3 := FALSE; // kasuj bit roskazu
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_1 := 0;
+	    
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_2 := 0;
+	    
+	    
+	    ;
+	  END_IF;
+	  //Zamknij
+	  //przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  %DB10.DBX12.5 := %DB58.DBX13.7; //ustawienie bitu zamykanie
+	  IF %DB58.DBX13.7 AND %DB10.DBX13.3 = FALSE THEN
+	    //jeśli ustawiony bit zamykanie z modbus i potwierdzone zamknięcie 
+	    %DB58.DBX13.7 := FALSE; // kasuj bit roskazu
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_1 := 0;
+	    
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_2 := 0;
+	    
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION //Drive Motor Z5 ustaw na  Automat/Manual/Otwarta/Zamknięta
+	  IF %DB58.DBX14.4 OR %DB58.DBX16.0 THEN
+	    // //przełączniki bistabilny każdy stan Hi powoduje zmianę przełącznika 
+	    #set_aut_man_Z5 := TRUE;
+	  ELSE
+	    #set_aut_man_Z5 := FALSE
+	    ;
+	  END_IF;
+	  
+	  IF %DB10.DBX14.0 = FALSE THEN
+	    // gdy brak awarii
+	    "R_TRIG_DB_AUT_Z5"(CLK := #set_aut_man_Z5,
+	                       Q => #setTrig_Z5);
+	    ;
+	  END_IF;
+	  // przełącz na automat
+	  IF #setTrig_Z5 = TRUE AND %DB58.DBX14.4 THEN
+	    %DB10.DBX14.7 := TRUE;
+	    ;
+	  END_IF;
+	  // przełącz na manual
+	  IF #setTrig_Z5 = TRUE AND %DB58.DBX16.0 THEN
+	    %DB10.DBX14.7 := FALSE;
+	    ;
+	  END_IF;
+	  
+	  IF (%DB10.DBX15.7 = TRUE AND %DB58.DBX14.4 = TRUE) OR (%DB10.DBX15.7 = FALSE AND %DB58.DBX16.0 = TRUE) THEN
+	    // Wyczyść całą zmienną
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instConrol_ManAut_1 := 0;
+	    "dbHold_Sending".data.stat.control.control_2.set_res_bity_tryb_napędów_1 := 0;
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instConrol_ManAut_2 := 0;
+	    "dbHold_Sending".data.stat.control.control_2.set_res_bity_tryb_napędów_2 := 0;
+	    %DB58.DBX14.4 := FALSE;
+	    %DB58.DBX16.0 := FALSE
+	    ;
+	  END_IF;
+	  
+	  // sterowanie OTWIERANIE - ZAMYKANIE
+	  // Otwórz/
+	  // przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  %DB10.DBX14.4 := %DB58.DBX10.4; //ustawienie bitu otwieranie
+	  IF %DB58.DBX10.4 AND %DB10.DBX15.1 THEN
+	    //jeśli ustawiony bit otwierania z modbus i potwierdzone otwarcie 
+	    %DB58.DBX10.4 := FALSE; // kasuj bit roskazu
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_1 := 0;
+	    
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_2 := 0;
+	    
+	    
+	    ;
+	  END_IF;
+	  //Zamknij
+	  //przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  %DB10.DBX14.5 := %DB58.DBX12.0; //ustawienie bitu zamykanie
+	  IF %DB58.DBX12.0 AND %DB10.DBX15.3 = FALSE THEN
+	    //jeśli ustawiony bit zamykanie z modbus i potwierdzone zamknięcie 
+	    %DB58.DBX12.0 := FALSE; // kasuj bit roskazu
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_1 := 0;
+	    
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_2 := 0;
+	    
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	
+	REGION //Drive Motor Z6 ustaw na  Automat/Manual/Otwarta/Zamknięta
+	  IF %DB58.DBX14.5 OR %DB58.DBX16.1 THEN
+	    // przełączniki bistabilny każdy stan Hi powoduje zmianę przełącznika 
+	    #set_aut_man_Z6 := TRUE;
+	  ELSE
+	    #set_aut_man_Z6 := FALSE
+	    ;
+	  END_IF;
+	  
+	  IF %DB10.DBX16.0 = FALSE THEN
+	    // przełącznik bistabilny
+	    "R_TRIG_DB_AUT_Z6"(CLK := #set_aut_man_Z6,
+	                       Q => #setTrig_Z6);
+	    ;
+	  END_IF;
+	  // przełącz na automat
+	  IF #setTrig_Z6 = TRUE AND %DB58.DBX14.5 = TRUE THEN
+	    %DB10.DBX16.7 := TRUE;
+	    ;
+	  END_IF;
+	  // przełącz na manual
+	  IF #setTrig_Z6 = TRUE AND %DB58.DBX16.1 = TRUE THEN
+	    %DB10.DBX16.7 := FALSE;
+	    ;
+	  END_IF;
+	  
+	  IF (%DB10.DBX17.7 = TRUE AND %DB58.DBX14.5) OR (%DB10.DBX17.7 = FALSE AND %DB58.DBX16.1) THEN
+	    // Wyczyść całą zmienną
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instConrol_ManAut_1 := 0;
+	    "dbHold_Sending".data.stat.control.control_2.set_res_bity_tryb_napędów_1 := 0;
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instConrol_ManAut_2 := 0;
+	    "dbHold_Sending".data.stat.control.control_2.set_res_bity_tryb_napędów_2 := 0;
+	    %DB58.DBX14.5 := FALSE;
+	    %DB58.DBX16.1 := FALSE
+	    ;
+	  END_IF;
+	  
+	  
+	  // sterowanie OTWIERANIE - ZAMYKANIE
+	  // Otwórz/
+	  // przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  %DB10.DBX16.4 := %DB58.DBX10.5; //ustawienie bitu otwieranie
+	  IF %DB58.DBX10.5 AND %DB10.DBX17.1 THEN
+	    //jeśli ustawiony bit otwierania z modbus i potwierdzone otwarcie 
+	    %DB58.DBX10.5 := FALSE; // kasuj bit roskazu
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_1 := 0;
+	    
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_2 := 0;
+	    
+	    
+	    ;
+	  END_IF;
+	  //Zamknij
+	  //przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  %DB10.DBX16.5 := %DB58.DBX12.1; //ustawienie bitu zamykanie
+	  IF %DB58.DBX12.1 AND %DB10.DBX17.3 = FALSE THEN
+	    //jeśli ustawiony bit zamykanie z modbus i potwierdzone zamknięcie 
+	    %DB58.DBX12.1 := FALSE; // kasuj bit roskazu
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_1 := 0;
+	    
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_2 := 0;
+	    
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION //Drive Motor Z7 ustaw na  Automat/Manual/Otwarta/Zamknięta
+	  IF %DB58.DBX14.6 OR %DB58.DBX16.2 THEN
+	    // przełączniki bistabilny każdy stan Hi powoduje zmianę przełącznika 
+	    #set_aut_man_Z7 := TRUE;
+	  ELSE
+	    #set_aut_man_Z7 := FALSE
+	    ;
+	  END_IF;
+	  
+	  IF %DB10.DBX18.0 = FALSE THEN
+	    // przełącznik bistabilny
+	    "R_TRIG_DB_AUT_Z7"(CLK := #set_aut_man_Z7,
+	                       Q => #setTrig_Z7);
+	    ;
+	  END_IF;
+	  // przełącz na automat
+	  IF #setTrig_Z7 = TRUE AND %DB58.DBX14.6 = TRUE THEN
+	    %DB10.DBX18.7 := TRUE;
+	    ;
+	  END_IF;
+	  // przełącz na manual
+	  IF #setTrig_Z7 = TRUE AND %DB58.DBX16.2 = TRUE THEN
+	    %DB10.DBX18.7 := FALSE;
+	    ;
+	  END_IF;
+	  
+	  IF (%DB10.DBX19.7 = TRUE AND %DB58.DBX14.6) OR (%DB10.DBX19.7 = TRUE AND %DB58.DBX16.2) THEN
+	    // Wyczyść całą zmienną
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instConrol_ManAut_1 := 0;
+	    "dbHold_Sending".data.stat.control.control_2.set_res_bity_tryb_napędów_1 := 0;
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instConrol_ManAut_2 := 0;
+	    "dbHold_Sending".data.stat.control.control_2.set_res_bity_tryb_napędów_2 := 0;
+	    %DB58.DBX14.6 := FALSE;
+	    %DB58.DBX16.2 := FALSE
+	    ;
+	  END_IF;
+	  
+	  // sterowanie OTWIERANIE - ZAMYKANIE
+	  // Otwórz/
+	  // przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  %DB10.DBX18.4 := %DB58.DBX10.6; //ustawienie bitu otwieranie
+	  IF %DB58.DBX10.6 AND %DB10.DBX19.1 THEN
+	    //jeśli ustawiony bit otwierania z modbus i potwierdzone otwarcie 
+	    %DB58.DBX10.6 := FALSE; // kasuj bit roskazu
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_1 := 0;
+	    
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_2 := 0;
+	    
+	    
+	    ;
+	  END_IF;
+	  //Zamknij
+	  //przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  %DB10.DBX18.5 := %DB58.DBX12.2; //ustawienie bitu zamykanie
+	  IF %DB58.DBX12.2 AND %DB10.DBX19.3 = FALSE THEN
+	    //jeśli ustawiony bit zamykanie z modbus i potwierdzone zamknięcie 
+	    %DB58.DBX12.2 := FALSE; // kasuj bit roskazu
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_1 := 0;
+	    
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_2 := 0;
+	    
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	
+	
+	
+	REGION //Drive Motor Z8 ustaw na  Automat/Manual/Otwarta/Zamknięta
+	  IF %DB58.DBX14.7 OR %DB58.DBX16.3 THEN
+	  // przełączniki bistabilny każdy stan Hi powoduje zmianę przełącznika 
+	    #set_aut_man_Z8 := TRUE;
+	  ELSE
+	    #set_aut_man_Z8:= FALSE
+	  ;
+	END_IF;
+	
+	IF %DB10.DBX20.0 = FALSE THEN
+	  // przełącznik bistabilny
+	  "R_TRIG_DB_AUT_Z8"(CLK := #set_aut_man_Z8,
+	                     Q => #setTrig_Z8);
+	  ;
+	END_IF;
+	// przełącz na automat
+	IF #setTrig_Z8 = TRUE AND %DB58.DBX14.7 = TRUE THEN
+	  %DB10.DBX20.7 := TRUE;
+	  ;
+	END_IF;
+	// przełącz na manual 
+	IF #setTrig_Z8 = TRUE AND %DB58.DBX16.3 = TRUE THEN
+	  %DB10.DBX20.7 := FALSE;
+	  ;
+	END_IF;
+	
+	IF (%DB10.DBX21.7 = TRUE AND %DB58.DBX14.7) OR (%DB10.DBX21.7 = FALSE AND %DB58.DBX16.3) THEN
+	  // Wyczyść całą zmienną
+	  "dbHoldRegSlave_to_MT101".Status_Sterowanie.instConrol_ManAut_1 := 0;
+	  "dbHold_Sending".data.stat.control.control_2.set_res_bity_tryb_napędów_1 := 0;
+	  "dbHoldRegSlave_to_MT101".Status_Sterowanie.instConrol_ManAut_2 := 0;
+	  "dbHold_Sending".data.stat.control.control_2.set_res_bity_tryb_napędów_2 := 0;
+	  %DB58.DBX14.7 := FALSE;
+	  %DB58.DBX16.3 := FALSE
+	  ;
+	END_IF;
+	
+	// sterowanie OTWIERANIE - ZAMYKANIE
+	// Otwórz/
+	// przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	%DB10.DBX20.4 := %DB58.DBX10.7; //ustawienie bitu otwieranie
+	IF %DB58.DBX10.7 AND %DB10.DBX21.1 THEN
+	  //jeśli ustawiony bit otwierania z modbus i potwierdzone otwarcie 
+	  %DB58.DBX10.7 := FALSE; // kasuj bit roskazu
+	  "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_1 := 0;
+	  
+	  "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_2 := 0;
+	  
+	  
+	  ;
+	END_IF;
+	//Zamknij
+	//przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	%DB10.DBX20.5 := %DB58.DBX12.3; //ustawienie bitu zamykanie
+	IF %DB58.DBX12.3 AND %DB10.DBX21.3 = FALSE THEN
+	  //jeśli ustawiony bit zamykanie z modbus i potwierdzone zamknięcie 
+	  %DB58.DBX12.3 := FALSE; // kasuj bit roskazu
+	  "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_1 := 0;
+	  
+	  "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_2 := 0;
+	  
+	  ;
+	END_IF;
+	  
+	END_REGION
+	
+	
+	REGION //Drive Motor Z9 ustaw na  Automat/Manual/Otwarta/Zamknięta
+	  IF %DB58.DBX17.0  OR %DB58.DBX16.4THEN
+	    //przełączniki bistabilny każdy stan Hi powoduje zmianę przełącznika 
+	    #set_aut_man_Z9 := TRUE;
+	  ELSE
+	    #set_aut_man_Z9:= FALSE
+	    ;
+	  END_IF;
+	  IF %DB10.DBX22.0 = FALSE THEN
+	    // przełaącznik bistabilny
+	    "R_TRIG_DB_AUT_Z9"(CLK := #set_aut_man_Z9,
+	                       Q => #setTrig_Z9);
+	    ;
+	  END_IF;
+	  // przełąćż na automat
+	  IF #setTrig_Z9 = TRUE AND %DB58.DBX17.0 = TRUE THEN
+	    %DB10.DBX22.7 := TRUE;
+	    ;
+	  END_IF;
+	  // przełąćż na manual
+	  IF #setTrig_Z9 = TRUE AND %DB58.DBX16.4 = TRUE THEN
+	    %DB10.DBX22.7 := FALSE;
+	    ;
+	  END_IF;
+	  
+	  IF (%DB10.DBX23.7 = TRUE AND %DB58.DBX17.0) OR (%DB10.DBX23.7 = TRUE AND %DB58.DBX16.4) THEN
+	    // Wyczyść całą zmienną
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instConrol_ManAut_2 := 0;
+	    "dbHold_Sending".data.stat.control.control_2.set_res_bity_tryb_napędów_2 := 0;
+	    %DB58.DBX17.0 := FALSE;
+	    %DB58.DBX16.4 := FALSE
+	    ;
+	  END_IF;
+	  
+	  // sterowanie OTWIERANIE - ZAMYKANIE
+	  // Otwórz/
+	  // przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  %DB10.DBX22.4 := %DB58.DBX13.0; //ustawienie bitu otwieranie
+	  IF %DB58.DBX13.0 AND %DB10.DBX23.1 THEN
+	    //jeśli ustawiony bit otwierania z modbus i potwierdzone otwarcie 
+	    %DB58.DBX13.0 := FALSE; // kasuj bit roskazu
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_1 := 0;
+	    
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_2 := 0;
+	    
+	    
+	    ;
+	  END_IF;
+	  //Zamknij
+	  //przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	  %DB10.DBX22.5 := %DB58.DBX12.4; //ustawienie bitu zamykanie
+	  IF %DB58.DBX12.4 AND %DB10.DBX23.3 = FALSE THEN
+	    //jeśli ustawiony bit zamykanie z modbus i potwierdzone zamknięcie 
+	    %DB58.DBX12.4 := FALSE; // kasuj bit roskazu
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_1 := 0;
+	    
+	    "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_2 := 0;
+	    
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	
+	REGION //Drive Motor Z10 ustaw na  Automat/Manual/Otwarta/Zamknięta
+	  IF %DB58.DBX17.1 OR %DB58.DBX16.5 THEN
+	    //przełączniki bistabilny każdy stan Hi powoduje zmianę przełącznika 
+	    #set_aut_man_Z10 := TRUE;
+	  ELSE
+	    #set_aut_man_Z10:= FALSE
+	  ;
+	END_IF;
+	IF %DB10.DBX24.0 = FALSE THEN
+	  // przełącznik bistabilny
+	  "R_TRIG_DB_AUT_Z10"(CLK := #set_aut_man_Z10,
+	                      Q => #setTrig_Z10);
+	  ;
+	END_IF;
+	// przełącz na automat
+	IF #setTrig_Z10 = TRUE AND %DB58.DBX17.1 = TRUE THEN
+	  %DB10.DBX24.7 := TRUE;
+	  ;
+	END_IF;
+	// przełącz na manual
+	IF #setTrig_Z10 = TRUE AND %DB58.DBX16.5 = TRUE THEN
+	  %DB10.DBX24.7 := FALSE;
+	  ;
+	END_IF;
+	
+	IF (%DB10.DBX25.7 = TRUE AND %DB58.DBX17.1) OR (%DB10.DBX25.7 = FALSE AND %DB58.DBX16.5) THEN
+	  // Wyczyść całą zmienną
+	  "dbHoldRegSlave_to_MT101".Status_Sterowanie.instConrol_ManAut_2 := 0;
+	  "dbHold_Sending".data.stat.control.control_2.set_res_bity_tryb_napędów_2 := 0;
+	  %DB58.DBX17.0 := FALSE;
+	  %DB58.DBX16.5 := FALSE
+	  ;
+	END_IF;
+	
+	// sterowanie OTWIERANIE - ZAMYKANIE
+	// Otwórz/
+	// przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	%DB10.DBX24.4 := %DB58.DBX13.1; //ustawienie bitu otwieranie
+	IF %DB58.DBX13.1 AND %DB10.DBX25.1 THEN
+	  //jeśli ustawiony bit otwierania z modbus i potwierdzone otwarcie 
+	  %DB58.DBX13.1 := FALSE; // kasuj bit roskazu
+	  "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_1 := 0;
+	  
+	  "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_2 := 0;
+	  
+	  
+	  ;
+	END_IF;
+	//Zamknij
+	//przekazanie bitu roskazu z bloku modbus rtu do bloku statusu napędu
+	%DB10.DBX24.5 := %DB58.DBX12.5; //ustawienie bitu zamykanie
+	IF %DB58.DBX12.5 AND %DB10.DBX25.3 = FALSE THEN
+	  //jeśli ustawiony bit zamykanie z modbus i potwierdzone zamknięcie 
+	  %DB58.DBX12.5 := FALSE; // kasuj bit roskazu
+	  "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_1 := 0;
+	  
+	  "dbHoldRegSlave_to_MT101".Status_Sterowanie.instControllDrivers_2 := 0;
+	  
+	  ;
+	END_IF;
+	  
+	END_REGION
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+END_FUNCTION_BLOCK
+

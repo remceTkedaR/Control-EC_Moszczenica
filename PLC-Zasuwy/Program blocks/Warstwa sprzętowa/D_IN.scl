@@ -1,0 +1,244 @@
+﻿FUNCTION "D_IN" : Void
+TITLE = Przekazanie wartości
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Mapownaie wejść cyfrowych
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.2)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1214 FW 3.2 .)
+	//Funkcjonalnośc: (Mapowanie wejść cyfrowych )
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 28.01.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	// Zbiorniki pływaki minimum
+	REGION pływaki
+	  // przekazanie stanu
+	  "float_min_tank_1" := "I2.5";
+	  "float_min_tank_2" := "I2.6";
+	  "float_min_tank_3" := "I2.7";
+	  "float_min_tank_4" := "I3.0";
+	  "float_max_tank_1" := "I5.5";
+	  "float_max_tank_2" := "I5.6";
+	  "float_max_tank_3" := "I5.7";
+	  "float_max_tank_4" := "I6.0";
+	  
+	  
+	END_REGION
+	
+	
+	
+	// Zasuwy
+	"inputREM_Zasuwy" := "I6.1";
+	
+	REGION ZASUWA Z1 
+	  // przekazanie wartości wspólne z MODACT MOK250 i AUMA
+	  
+	  "inputREMT_Z_1" := "inputREM_Zasuwy";
+	  "inputOtwartaZ_1" := "I0.5";
+	  "inputZamkniętaZ_1" := "I0.6";
+	  "inputRuch_Z_1" := "I0.3";
+	 // 
+	  //momentówki normalny stan 1 awaria 0
+	  "inputAwariaMomentZ_1" := "I0.4";
+	  
+	  // przekazanie wartości z AUMA
+	  "inputAumagotowośćZ_1" := "I6.4";
+	  "inputAumaautomatZ_1" := "I6.3";
+	  "inputAumalokalneZ_1" := "I6.2";
+	  
+	  
+	END_REGION
+	
+	REGION ZASUWA Z2 
+	  // przekazanie wartości wspólne z MODACT MOK250 i AUMA
+	  
+	  "inputREMT_Z_2" := "inputREM_Zasuwy";
+	  "inputOtwartaZ_2" := "I3.7";
+	  "inputZamkniętaZ_2" := "I4.0";
+	  "inputRuch_Z_2" := "I3.5";
+	  //momentówki normalny stan 1 awaria 0
+	  "inputAwariaMomentZ_2" := "I3.6";
+	  
+	  // przekazanie wartości z AUMA
+	  "inputAumagotowośćZ_2" := "I6.7";
+	  "inputAumaautomatZ_2" := "I6.6";
+	  "inputAumalokalneZ_2" := "I6.5";
+	  
+	  
+	END_REGION
+	
+	REGION ZASUWA Z3 
+	  // przekazanie wartości wspólne z MODACT MOK250 i AUMA
+	  
+	  "inputREMT_Z_3" := "inputREM_Zasuwy";
+	  "inputOtwartaZ_3" := "I1.1";
+	  "inputZamkniętaZ_3" := "I1.2";
+	  "inputRuch_Z_3" := "I0.7";
+	  //momentówki normalny stan 1 awaria 0
+	  "inputAwariaMomentZ_3" := "I1.0";
+	  
+	  // przekazanie wartości z AUMA
+	  "inputAumagotowośćZ_3" := "I7.2";
+	  "inputAumaautomatZ_3" := "I7.1";
+	  "inputAumalokalneZ_3" := "I7.0";
+	  
+	  
+	END_REGION
+	
+	REGION ZASUWA Z4 
+	  // przekazanie wartości wspólne z MODACT MOK250 i AUMA
+	  
+	  "inputREMT_Z_4" := "inputREM_Zasuwy";
+	  "inputOtwartaZ_4" := "I4.3";
+	  "inputZamkniętaZ_4" := "I4.4";
+	  "inputRuch_Z_4" := "I4.1";
+	  //momentówki normalny stan 1 awaria 0
+	  "inputAwariaMomentZ_4" := "I4.2";
+	  
+	  // przekazanie wartości z AUMA
+	  "inputAumagotowośćZ_4" := "I7.5";
+	  "inputAumaautomatZ_4" := "I7.4";
+	  "inputAumalokalneZ_4" := "I7.3";
+	  
+	  
+	END_REGION
+	
+	REGION ZASUWA Z5 
+	  // przekazanie wartości wspólne z MODACT MOK250 i AUMA
+	  
+	  "inputREMT_Z_5" := "inputREM_Zasuwy";
+	  "inputOtwartaZ_5" := "I1.5";
+	  "inputZamkniętaZ_5" := "I2.0";
+	  "inputRuch_Z_5" := "I1.3";
+	  //momentówki normalny stan 1 awaria 0
+	  "inputAwariaMomentZ_5" := "I1.4";
+	  
+	  // przekazanie wartości z AUMA
+	  "inputAumagotowośćZ_5" := "I8.0";
+	  "inputAumaautomatZ_5" := "I7.7";
+	  "inputAumalokalneZ_5" := "I7.6";
+	  
+	  
+	END_REGION
+	
+	REGION ZASUWA Z6 
+	  // przekazanie wartości wspólne z MODACT MOK250 i AUMA
+	  
+	  "inputREMT_Z_6" := "inputREM_Zasuwy";
+	  "inputOtwartaZ_6" := "I4.7";
+	  "inputZamkniętaZ_6" := "I5.0";
+	  "inputRuch_Z_6" := "I4.5";
+	  //momentówki normalny stan 1 awaria 0
+	  "inputAwariaMomentZ_6" := "I4.6";
+	  
+	  // przekazanie wartości z AUMA
+	  "inputAumagotowośćZ_6" := "I8.3";
+	  "inputAumaautomatZ_6" := "I8.2";
+	  "inputAumalokalneZ_6" := "I8.1";
+	  
+	  
+	END_REGION
+	
+	REGION ZASUWA Z7 
+	  // przekazanie wartości wspólne z MODACT MOK250 i AUMA
+	  
+	  "inputREMT_Z_7" := "inputREM_Zasuwy";
+	  "inputOtwartaZ_7" := "I2.3";
+	  "inputZamkniętaZ_7" := "I2.4";
+	  "inputRuch_Z_7" := "I2.1";
+	  //momentówki normalny stan 1 awaria 0
+	  "inputAwariaMomentZ_7" := "I2.2";
+	  
+	  // przekazanie wartości z AUMA
+	  "inputAumagotowośćZ_7" := "I8.6";
+	  "inputAumaautomatZ_7" := "I8.5";
+	  "inputAumalokalneZ_7" := "I8.4";
+	  
+	  
+	END_REGION
+	
+	REGION ZASUWA Z8 
+	  // przekazanie wartości wspólne z MODACT MOK250 i AUMA
+	  
+	  "inputREMT_Z_8" := "inputREM_Zasuwy";
+	  "inputOtwartaZ_8" := "I5.3";
+	  "inputZamkniętaZ_8" := "I5.4";
+	  "inputRuch_Z_8" := "I5.1";
+	  //momentówki normalny stan 1 awaria 0
+	  "inputAwariaMomentZ_8" := "I5.2";
+	  
+	  // przekazanie wartości z AUMA
+	  "inputAumagotowośćZ_8" := "I9.1";
+	  "inputAumaautomatZ_8" := "I9.0";
+	  "inputAumalokalneZ_8" := "I8.7";
+	  
+	  
+	END_REGION
+	
+	REGION ZASUWA Z9
+	  // przekazanie wartości wspólne z MODACT MOK250 i AUMA
+	  
+	  "inputREMT_Z_9" := "inputREM_Zasuwy";
+	  "inputOtwartaZ_9" := "I0.2";
+	  "inputZamkniętaZ_9" := "I10.0";
+	  "inputRuch_Z_9" := "I0.0";
+	  //momentówki normalny stan 1 awaria 0
+	  "inputAwariaMomentZ_9" := "I0.1";
+	  
+	  // przekazanie wartości z AUMA
+	  "inputAumagotowośćZ_9" := "I9.4";
+	  "inputAumaautomatZ_9" := "I9.3";
+	  "inputAumalokalneZ_9" := "I9.2";
+	  
+	  
+	END_REGION
+	
+	
+	REGION ZASUWA Z10 
+	  // przekazanie wartości  AUMA
+	  
+	  "inputREMT_Z_10" := "inputREM_Zasuwy";
+	  IF "I3.3" = TRUE OR ("DB10_instance_SCADA".actPołożenieZ10 >= 3) THEN
+	    // też otwarta 
+	    "inputOtwartaZ_10" := TRUE;
+	  ELSE
+	    "inputOtwartaZ_10" := FALSE;
+	    ;
+	  END_IF;
+	  
+	  "inputOtwartaZ_10" := "I3.3";
+	  IF ("DB10_instance_SCADA".actPołożenieZ10 <= 1) OR  ("I3.4" = TRUE) THEN
+	    // też zamknieta
+	    "isClose_od_położenia" := TRUE;
+	  ELSE
+	    "isClose_od_położenia" := FALSE;
+	    ;
+	  END_IF;
+	  
+	  "inputZamkniętaZ_10" := "I3.4";
+	  "inputRuch_Z_10" := "I3.1";
+	  //Auma nie wystawia osobnego sygnału awaria momentu wszystko na gotowość
+	  //"inputAwariaMomentZ_10" := ;
+	  
+	  // przekazanie wartości z AUMA
+	  "inputAumagotowośćZ_10" := "I9.7";
+	  "inputAumaautomatZ_10" := "I9.6";
+	  "inputAumalokalneZ_10" := "I9.5";
+	  
+	  
+	END_REGION
+END_FUNCTION
+

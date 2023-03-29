@@ -1,0 +1,294 @@
+﻿FUNCTION "Alarmy" : Void
+TITLE = KOntrola zabezpieczen momentowych
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Jesli obwód przerwany to błąd od momentu
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2022) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.4)
+	//Pakiet inżynierski:   TIA Portal (V16 Update 5)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+	//Funkcjonalnośc: (Kontrola awarii od sytku momoentowego napędu )
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 09.03.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	REGION przekazanie do db stan styków momentowych Z1 - Z9
+	  // przekazywanie stanu stykuów dla wszystkich napedów
+	  %DB10.DBX69.0 := "setAlarm_Moment_Z_1";
+	  %DB10.DBX69.1 := "setAlarm_Moment_Z_2";
+	  %DB10.DBX69.2 := "setAlarm_Moment_Z_3";
+	  %DB10.DBX69.3 := "setAlarm_Moment_Z_4";
+	  %DB10.DBX69.4 := "setAlarm_Moment_Z_5";
+	  %DB10.DBX69.5 := "setAlarm_Moment_Z_6";
+	  %DB10.DBX69.6 := "setAlarm_Moment_Z_7";
+	  %DB10.DBX69.7 := "setAlarm_Moment_Z_8";
+	  %DB10.DBX68.7 := "setAlarm_Moment_Z_9";
+	  %DB10.DBX68.6 := "setAlarm_Moment_Z_10";
+	  
+	  
+	END_REGION
+	
+	
+	REGION Z1
+	  // styk momentu
+	  IF "inputAwariaMomentZ_1" = False THEN
+	    // ustaw alarm
+	    "setAlarm_Moment_Z_1" := TRUE;
+	  ELSE
+	    "setAlarm_Moment_Z_1" := FALSE;
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION Z2
+	  // styk momentu
+	  IF "inputAwariaMomentZ_2" = False THEN
+	    // ustaw alarm
+	    "setAlarm_Moment_Z_2" := TRUE;
+	  ELSE
+	    "setAlarm_Moment_Z_2" := FALSE
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION Z3
+	  // styk momentu
+	  IF "inputAwariaMomentZ_3" = False THEN
+	    // ustaw alarm
+	    "setAlarm_Moment_Z_3" := TRUE;
+	  ELSE
+	    "setAlarm_Moment_Z_3" := FALSE
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION Z4
+	  // styk momentu
+	  IF "inputAwariaMomentZ_4" = False THEN
+	    // ustaw alarm
+	    "setAlarm_Moment_Z_4" := TRUE;
+	  ELSE
+	    "setAlarm_Moment_Z_4" := FALSE
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION Z5
+	  // styk momentu
+	  IF "inputAwariaMomentZ_5" = False THEN
+	    // ustaw alarm
+	    "setAlarm_Moment_Z_5" := TRUE;
+	  ELSE
+	    "setAlarm_Moment_Z_5" := FALSE
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION Z6
+	  // styk momentu
+	  IF "inputAwariaMomentZ_6" = False THEN
+	    // ustaw alarm
+	    "setAlarm_Moment_Z_6" := TRUE;
+	  ELSE
+	    "setAlarm_Moment_Z_6" := FALSE
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION Z7
+	  // styk momentu
+	  IF "inputAwariaMomentZ_7" = False THEN
+	    // ustaw alarm
+	    "setAlarm_Moment_Z_7" := TRUE;
+	  ELSE
+	    "setAlarm_Moment_Z_7" := FALSE
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION Z8
+	  // styk momentu
+	  IF "inputAwariaMomentZ_8" = False THEN
+	    // ustaw alarm
+	    "setAlarm_Moment_Z_8" := TRUE;
+	  ELSE
+	    "setAlarm_Moment_Z_8" := FALSE
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION Z9
+	  // styk momentu
+	  IF "inputAwariaMomentZ_9" = False THEN
+	    // ustaw alarm
+	    "setAlarm_Moment_Z_9" := TRUE;
+	  ELSE
+	    "setAlarm_Moment_Z_9" := FALSE
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	
+	
+	REGION Alarm zbiorczy napedów 
+	  //Z1
+	  IF "isGotowość_Z_1" =  FALSE THEN
+	    // ustaw sygnał awarii
+	    %DB10.DBX6.0 := TRUE;
+	    %DB10.DBX7.0 := TRUE;
+	    
+	
+	    ;
+	  END_IF;
+	  
+	  //Z2
+	  IF "isGotowość_Z_2" = FALSE THEN
+	    // ustaw sygnał awarii
+	    %DB10.DBX8.0 := TRUE;
+	    %DB10.DBX9.0 := TRUE;
+	    
+	    ;
+	  END_IF;
+	  
+	
+	  //Z3
+	  IF "isGotowość_Z_3" = FALSE THEN
+	    // ustaw sygnał awarii
+	    %DB10.DBX10.0 := TRUE;
+	    %DB10.DBX11.0 := TRUE;
+	   
+	    ;
+	  END_IF;
+	  
+	  //Z4
+	  IF "isGotowość_Z_4" = FALSE THEN
+	    // ustaw sygnał awarii
+	    %DB10.DBX12.0 := TRUE;
+	    %DB10.DBX13.0 := TRUE;
+	   
+	    ;
+	  END_IF;
+	  
+	
+	  //Z5
+	  IF "isGotowość_Z_5" = FALSE THEN
+	    // ustaw sygnał awarii
+	    %DB10.DBX14.0 := TRUE;
+	    %DB10.DBX15.0 := TRUE;
+	    
+	    ;
+	  END_IF;
+	  
+	  //Z6
+	  IF "isGotowość_Z_6" = FALSE THEN
+	    // ustaw sygnał awarii
+	    %DB10.DBX16.0 := TRUE;
+	    %DB10.DBX17.0 := TRUE;
+	   
+	    ;
+	  END_IF;
+	  
+	  //Z7
+	  IF "isGotowość_Z_7" = FALSE THEN
+	    // ustaw sygnał awarii
+	    %DB10.DBX18.0 := TRUE;
+	    %DB10.DBX19.0 := TRUE;
+	    
+	    ;
+	  END_IF;
+	  
+	  //Z8
+	  IF "isGotowość_Z_8" = FALSE THEN
+	    // ustaw sygnał awarii
+	    %DB10.DBX20.0 := TRUE;
+	    %DB10.DBX21.0 := TRUE;
+	   
+	    ;
+	  END_IF;
+	  
+	
+	  //Z9
+	  IF "isGotowość_Z_9" = FALSE THEN
+	    // ustaw sygnał awarii
+	    %DB10.DBX22.0 := TRUE;
+	    %DB10.DBX23.0 := TRUE;
+	    
+	    
+	    ;
+	  END_IF;
+	  
+	  //Z10
+	  IF "isGotowość_Z_10" =  FALSE THEN
+	    // ustaw sygnał awarii
+	    %DB10.DBX24.0 := TRUE;
+	    %DB10.DBX25.0 := TRUE;
+	    
+	    
+	    ;
+	  END_IF;
+	  
+	
+	  
+	  
+	END_REGION
+	
+	REGION Modbus RTU Q1 przepływomierz Zasuwy
+	  // Jeśli błąd komunikacji to zerowanie przepływu chwilowego
+	  
+	  IF "dbTags_master_MPP04_2".modbusMaster.errorStatus <> 0 THEN
+	    // zerwowanie przepływu
+	    "dbMasterData".data6_Wielkość_przeływu_Adres_0.data[0] := 0;
+	    "dbMasterData".data6_Wielkość_przeływu_Adres_0.data[1] := 0
+	    ;
+	  END_IF;
+	  
+	END_REGION
+	
+	REGION HMI info alarmy
+	  // gdy w cyklu napełniania wystąpi alarm od niskiego ciśnienia na magistrali
+	  IF "setAlarmNiskie_magistrala" AND ("HMI.Filing1"
+	    OR "HMI.Filing2"  //jest czas na napełnianie
+	    OR "HMI.Filing3"  //jest czas na napełnianie
+	    OR "HMI.Filing4") //jest czas na napełnianie
+	  THEN
+	    // ustaw bit informacji do HMI przerwane napełnianie 
+	    "HMI.StopFiling" := True;
+	  ELSE
+	    "HMI.StopFiling" := FALSE
+	    ;
+	  END_IF;
+	  
+	  
+	END_REGION
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+END_FUNCTION
+

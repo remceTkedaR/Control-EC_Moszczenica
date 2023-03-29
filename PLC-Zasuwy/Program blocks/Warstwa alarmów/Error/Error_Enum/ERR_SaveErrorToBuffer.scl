@@ -1,0 +1,22 @@
+﻿FUNCTION "ERR_SaveErrorToBuffer" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      DataToSave : "stt_ERR_ComponentGetError";
+   END_VAR
+
+   VAR_IN_OUT 
+      Buffer : "stt_ERR_GetError";
+   END_VAR
+
+   VAR_TEMP 
+      tempCounter : USInt;
+   END_VAR
+
+
+BEGIN
+	//#tempCounter := #PlaceToSave.Counter;
+	//#PlaceToSave.Component[#tempCounter] := #DataToSave;   
+	#Buffer.Component[#Buffer.Counter] := #DataToSave;
+END_FUNCTION
+

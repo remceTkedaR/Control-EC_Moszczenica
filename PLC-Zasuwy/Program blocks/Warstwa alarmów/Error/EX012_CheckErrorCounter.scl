@@ -1,0 +1,27 @@
+﻿FUNCTION "EX012_CheckErrorCounter" : Bool
+TITLE = EX012_CheckErrorCounter
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : RTEcmer
+FAMILY : EX012
+VERSION : 0.1
+//Licznik błedów
+   VAR_INPUT 
+      CounterValue : USInt;
+   END_VAR
+
+   VAR_IN_OUT 
+      PreviousCounterValue : USInt;
+   END_VAR
+
+
+BEGIN
+	IF (#CounterValue <> #PreviousCounterValue) THEN
+	    #EX012_CheckErrorCounter := TRUE;
+	    #PreviousCounterValue := #CounterValue;
+	ELSE
+	    #EX012_CheckErrorCounter := FALSE;
+	END_IF;
+	    
+	    
+END_FUNCTION
+

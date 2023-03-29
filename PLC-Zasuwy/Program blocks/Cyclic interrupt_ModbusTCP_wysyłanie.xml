@@ -1,0 +1,485 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Document>
+  <Engineering version="V16" />
+  <DocumentInfo>
+    <Created>2023-03-29T11:03:18.5834771Z</Created>
+    <ExportSetting>WithDefaults</ExportSetting>
+    <InstalledProducts>
+      <Product>
+        <DisplayName>Totally Integrated Automation Portal</DisplayName>
+        <DisplayVersion>V16 Update 6</DisplayVersion>
+      </Product>
+      <OptionPackage>
+        <DisplayName>TIA Portal Version Control Interface</DisplayName>
+        <DisplayVersion>V16 Update 2</DisplayVersion>
+      </OptionPackage>
+      <OptionPackage>
+        <DisplayName>TIA Portal Openness</DisplayName>
+        <DisplayVersion>V16 Update 6</DisplayVersion>
+      </OptionPackage>
+      <Product>
+        <DisplayName>STEP 7 Professional</DisplayName>
+        <DisplayVersion>V16 Update 6</DisplayVersion>
+      </Product>
+      <OptionPackage>
+        <DisplayName>STEP 7 Safety</DisplayName>
+        <DisplayVersion>V16</DisplayVersion>
+      </OptionPackage>
+      <Product>
+        <DisplayName>WinCC Advanced</DisplayName>
+        <DisplayVersion>V16 Update 6</DisplayVersion>
+      </Product>
+    </InstalledProducts>
+  </DocumentInfo>
+  <SW.Blocks.OB ID="0">
+    <AttributeList>
+      <AutoNumber>true</AutoNumber>
+      <HeaderAuthor />
+      <HeaderFamily />
+      <HeaderName />
+      <HeaderVersion>0.1</HeaderVersion>
+      <Interface><Sections xmlns="http://www.siemens.com/automation/Openness/SW/Interface/v4">
+  <Section Name="Input">
+    <Member Name="Initial_Call" Datatype="Bool" Accessibility="Public" Informative="true">
+      <Comment>
+        <MultiLanguageText Lang="en-US">Initial call of this OB</MultiLanguageText>
+      </Comment>
+    </Member>
+    <Member Name="Event_Count" Datatype="Int" Accessibility="Public" Informative="true">
+      <Comment>
+        <MultiLanguageText Lang="en-US">Events discarded</MultiLanguageText>
+      </Comment>
+    </Member>
+  </Section>
+  <Section Name="Temp" />
+  <Section Name="Constant" />
+</Sections></Interface>
+      <IsIECCheckEnabled>false</IsIECCheckEnabled>
+      <MemoryLayout>Optimized</MemoryLayout>
+      <Name>Cyclic interrupt_ModbusTCP_wysyłanie</Name>
+      <Number>30</Number>
+      <ProgrammingLanguage>LAD</ProgrammingLanguage>
+      <SecondaryType>CyclicInterrupt</SecondaryType>
+      <SetENOAutomatically>false</SetENOAutomatically>
+    </AttributeList>
+    <ObjectList>
+      <MultilingualText ID="1" CompositionName="Comment">
+        <ObjectList>
+          <MultilingualTextItem ID="2" CompositionName="Items">
+            <AttributeList>
+              <Culture>en-US</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+          <MultilingualTextItem ID="3" CompositionName="Items">
+            <AttributeList>
+              <Culture>pl-PL</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+        </ObjectList>
+      </MultilingualText>
+      <SW.Blocks.CompileUnit ID="4" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource />
+          <ProgrammingLanguage>LAD</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="5" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="6" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="7" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="8" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="9" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="A" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text>Odczyt poziomów w zbiornku </Text>
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <SW.Blocks.CompileUnit ID="B" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource><StructuredText xmlns="http://www.siemens.com/automation/Openness/SW/NetworkSource/StructuredText/v3">
+  <Access Scope="GlobalVariable" UId="21">
+    <Symbol UId="22">
+      <Component Name="AI_poziom_zbiornik_1" UId="23" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="24" />
+  <Token Text=":=" UId="25" />
+  <Blank Num="1" UId="26" />
+  <Access Scope="GlobalVariable" UId="27">
+    <Symbol UId="28">
+      <Component Name="IW68" UId="29" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="30" />
+  <NewLine Num="1" UId="31" />
+  <Access Scope="GlobalVariable" UId="32">
+    <Symbol UId="33">
+      <Component Name="AI_poziom_zbiornik_2" UId="34" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="35" />
+  <Token Text=":=" UId="36" />
+  <Blank Num="1" UId="37" />
+  <Access Scope="GlobalVariable" UId="38">
+    <Symbol UId="39">
+      <Component Name="IW70" UId="40" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="41" />
+  <NewLine Num="1" UId="42" />
+  <Access Scope="GlobalVariable" UId="43">
+    <Symbol UId="44">
+      <Component Name="AI_poziom_zbiornik_3" UId="45" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="46" />
+  <Token Text=":=" UId="47" />
+  <Blank Num="1" UId="48" />
+  <Access Scope="GlobalVariable" UId="49">
+    <Symbol UId="50">
+      <Component Name="IW72" UId="51" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="52" />
+  <NewLine Num="1" UId="53" />
+  <Access Scope="GlobalVariable" UId="54">
+    <Symbol UId="55">
+      <Component Name="AI_poziom_zbiornik_4" UId="56" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="57" />
+  <Token Text=":=" UId="58" />
+  <Blank Num="1" UId="59" />
+  <Access Scope="GlobalVariable" UId="60">
+    <Symbol UId="61">
+      <Component Name="IW74" UId="62" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="63" />
+  <NewLine Num="2" UId="64" />
+  <Access Scope="GlobalVariable" UId="65">
+    <Symbol UId="66">
+      <Component Name="AI_położenie_Z10" UId="67" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="68" />
+  <Token Text=":=" UId="69" />
+  <Blank Num="1" UId="70" />
+  <Access Scope="GlobalVariable" UId="71">
+    <Symbol UId="72">
+      <Component Name="IW78" UId="73" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="74" />
+</StructuredText></NetworkSource>
+          <ProgrammingLanguage>SCL</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="C" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="D" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="E" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="F" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="10" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="11" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text>Odczyt poziomów w zbiornku </Text>
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <SW.Blocks.CompileUnit ID="12" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource><StructuredText xmlns="http://www.siemens.com/automation/Openness/SW/NetworkSource/StructuredText/v3">
+  <NewLine Num="1" UId="21" />
+  <Token Text="IF" UId="22" />
+  <Blank Num="1" UId="23" />
+  <Access Scope="GlobalVariable" UId="24">
+    <Symbol UId="25">
+      <Component Name="IW76" UId="26" />
+      <Token Text=":P" UId="27" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="28" />
+  <Token Text="&gt;" UId="29" />
+  <Blank Num="1" UId="30" />
+  <Access Scope="LiteralConstant" UId="31">
+    <Constant UId="32">
+      <ConstantValue UId="34">0.2</ConstantValue>
+    </Constant>
+  </Access>
+  <Blank Num="1" UId="35" />
+  <Token Text="THEN" UId="36" />
+  <Blank Num="1" UId="37" />
+  <LineComment Inserted="false" NoClosingBracket="false" UId="38">
+    <Text UId="39"> czy nie uszkodzone rury</Text>
+  </LineComment>
+  <NewLine Num="1" UId="40" />
+  <Blank Num="2" UId="41" />
+  <Token Text="IF" UId="42" />
+  <Blank Num="1" UId="43" />
+  <Access Scope="GlobalVariable" UId="44">
+    <Symbol UId="45">
+      <Component Name="IW76" UId="46" />
+      <Token Text=":P" UId="47" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="48" />
+  <Token Text="&lt;" UId="49" />
+  <Blank Num="1" UId="50" />
+  <Access Scope="LiteralConstant" UId="51">
+    <Constant UId="52">
+      <ConstantValue UId="54">27651</ConstantValue>
+    </Constant>
+  </Access>
+  <Blank Num="1" UId="55" />
+  <Token Text="THEN" UId="56" />
+  <Blank Num="1" UId="57" />
+  <LineComment Inserted="false" NoClosingBracket="false" UId="58">
+    <Text UId="59"> przerwana pętla prądowa</Text>
+  </LineComment>
+  <NewLine Num="1" UId="60" />
+  <Blank Num="4" UId="61" />
+  <LineComment Inserted="false" NoClosingBracket="false" UId="62">
+    <Text UId="63"> to przekazanie wartości</Text>
+  </LineComment>
+  <NewLine Num="1" UId="64" />
+  <Blank Num="4" UId="65" />
+  <Access Scope="GlobalVariable" UId="66">
+    <Symbol UId="67">
+      <Component Name="AI_ciśnienie_B5" UId="68" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="69" />
+  <Token Text=":=" UId="70" />
+  <Blank Num="1" UId="71" />
+  <Access Scope="GlobalVariable" UId="72">
+    <Symbol UId="73">
+      <Component Name="IW76" UId="74" />
+      <Token Text=":P" UId="75" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="76" />
+  <NewLine Num="1" UId="77" />
+  <Blank Num="4" UId="78" />
+  <Token Text=";" UId="79" />
+  <NewLine Num="1" UId="80" />
+  <Blank Num="2" UId="81" />
+  <Token Text="ELSE" UId="82" />
+  <NewLine Num="1" UId="83" />
+  <Blank Num="4" UId="84" />
+  <Access Scope="GlobalVariable" UId="85">
+    <Symbol UId="86">
+      <Component Name="AI_ciśnienie_B5" UId="87" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="88" />
+  <Token Text=":=" UId="89" />
+  <Blank Num="1" UId="90" />
+  <Access Scope="LiteralConstant" UId="91">
+    <Constant UId="92">
+      <ConstantValue UId="94">32767</ConstantValue>
+    </Constant>
+  </Access>
+  <Token Text=";" UId="95" />
+  <NewLine Num="1" UId="96" />
+  <Blank Num="4" UId="97" />
+  <Token Text=";" UId="98" />
+  <NewLine Num="1" UId="99" />
+  <Blank Num="2" UId="100" />
+  <Token Text="END_IF" UId="101" />
+  <Token Text=";" UId="102" />
+  <NewLine Num="1" UId="103" />
+  <Blank Num="2" UId="104" />
+  <NewLine Num="1" UId="105" />
+  <Blank Num="2" UId="106" />
+  <Token Text=";" UId="107" />
+  <NewLine Num="1" UId="108" />
+  <Token Text="END_IF" UId="109" />
+  <Token Text=";" UId="110" />
+  <NewLine Num="2" UId="111" />
+</StructuredText></NetworkSource>
+          <ProgrammingLanguage>SCL</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="13" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="14" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="15" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="16" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="17" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="18" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text>Ciśnienie magistrala</Text>
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <SW.Blocks.CompileUnit ID="19" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource><StructuredText xmlns="http://www.siemens.com/automation/Openness/SW/NetworkSource/StructuredText/v3">
+  <NewLine Num="1" UId="21" />
+</StructuredText></NetworkSource>
+          <ProgrammingLanguage>SCL</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="1A" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="1B" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="1C" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text>Odczyt w FC5</Text>
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="1D" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="1E" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="1F" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text>Położenie zasuwy Z10</Text>
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <SW.Blocks.CompileUnit ID="20" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource />
+          <ProgrammingLanguage>LAD</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="21" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="22" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="23" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="24" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="25" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="26" CompositionName="Items">
+                <AttributeList>
+                  <Culture>pl-PL</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <MultilingualText ID="27" CompositionName="Title">
+        <ObjectList>
+          <MultilingualTextItem ID="28" CompositionName="Items">
+            <AttributeList>
+              <Culture>en-US</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+          <MultilingualTextItem ID="29" CompositionName="Items">
+            <AttributeList>
+              <Culture>pl-PL</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+        </ObjectList>
+      </MultilingualText>
+    </ObjectList>
+  </SW.Blocks.OB>
+</Document>

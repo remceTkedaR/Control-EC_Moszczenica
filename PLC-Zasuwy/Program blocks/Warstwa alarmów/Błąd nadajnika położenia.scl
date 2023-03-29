@@ -1,0 +1,71 @@
+﻿FUNCTION "Błąd nadajnika położenia" : Void
+TITLE = Detekcja błędu nadajnika
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : rtecmer
+VERSION : 0.1
+//Funkcja w oparciu o sygnały z czujników krańcowych położenia prądu 4-20mA nadajnika ustala czy wystąpił błąd nadajnika
+   VAR_INPUT 
+      isOpen : Bool;   // sygnał potwierdzenia otwarcia
+      isClose : Bool;   // sygnał potwierdzenia zamknięcia
+      actPosition : Word;   // sygnał aktualnego położenie 4-20mA
+   END_VAR
+
+   VAR_OUTPUT 
+      isError_Position : Bool;   // sygnalizacja błędu pozycji
+   END_VAR
+
+
+BEGIN
+	(*
+	//=============================================================================
+	//(JZWiK S.A Radosław Tecmer)
+	//(c)Copyright (2021) All Rights Reserved
+	//-----------------------------------------------------------------------------
+	//Testowane z:   (system docelowy z  FW 4.4)
+	//Pakiet inżynierski:   TIA Portal (V14 Sp1 Update 9)
+	//Ograniczenia:  ( - )
+	//Wymagania:  (minimalne S7-1200 CPU 1215C FW 4.2 .)
+	//Funkcjonalnośc: (Detekcja błędu nadajnika prądowego
+	//                  w oparciu o czujniki krańcowe położenia )
+	//-----------------------------------------------------------------------------
+	//Zmainy wprowadzone:
+	//Wersja  Data       Osoba wprowadzająca zmiany - ekspert
+	//01.00.00 05.02.2022 (Tecmer Radosław - twórca) Pieresza wersja 01.00.00
+	//=============================================================================
+	*)
+	
+	REGION Bład na Otwarcie
+	  // Jeśli sygnał z krańcówki otwarta =1
+	  IF #isOpen THEN
+	    IF (#actPosition >= 28538) OR (#actPosition < 27381)  THEN
+	      // ustaw sygnał błędu
+	      #isError_Position := TRUE;
+	    END_IF;
+	    
+	    // koniec
+	    ;
+	  END_IF;
+	  
+	 
+	  
+	END_REGION
+	
+	REGION Bład na Zamknięcie
+	  // Jeśli sygnał z krancówki zamknięta =1
+	  IF #isClose THEN
+	    IF (#actPosition > 268 AND #actPosition < 65529) THEN
+	      // ustaw sygnał błedu
+	      #isError_Position := TRUE;
+	    END_IF;
+	    
+	    // koniec
+	    ;
+	  END_IF;
+	  
+	  
+	  
+	END_REGION
+	
+	
+END_FUNCTION
+
